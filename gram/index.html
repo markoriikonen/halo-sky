@@ -53,7 +53,8 @@ canvas#gram { display: block; background: #fff; border-radius: 3px; }
 
   <div class="panel">
     <div class="controls">
-      <label class="f">Place <input id="name" class="w" type="text" placeholder="name"></label>
+      <label class="f">Place <input id="name" class="w" type="text" placeholder="type a site, or any name" list="sites" autocomplete="off"></label>
+      <datalist id="sites"></datalist>
       <label class="f">Latitude <input id="lat" class="n" type="number" step="0.01" min="-90" max="90"></label>
       <label class="f">Longitude <input id="lon" class="n" type="number" step="0.01" min="-180" max="180"></label>
       <div class="f" style="display:grid;gap:4px;font-size:13px;color:var(--muted)">Gram
@@ -68,6 +69,7 @@ canvas#gram { display: block; background: #fff; border-radius: 3px; }
       <button class="go" id="go" type="button">Draw gram</button>
     </div>
     <p class="hint" id="avail"></p>
+    <p class="hint">Pick one of the 2,000 Fingerprints sites from the Place list to fill in its coordinates, or type any place with its own latitude and longitude.</p>
     <p class="hint" id="seasonnote" hidden></p>
   </div>
 
@@ -133,6 +135,25 @@ if (P.get("season")) {
   $("seasonnote").hidden = false;
   $("seasonnote").textContent = `Period set from the Fingerprints viewer: the site's ${P.get("season") === "worst" ? "quiet" : "active"} high-cloud season${P.get("sdates") ? " (" + P.get("sdates") + ")" : ""}, rounded to whole months.`;
 }
+
+// ---------- site list (the Fingerprints sites, from this repository)
+const SITES = new Map();
+Promise.all(["locations_current", "locations_new", "locations_admin_100km", "locations_extra"].map(f =>
+  fetch(`../locations/${f}.csv`).then(r => r.ok ? r.text() : "").catch(() => ""))).then(texts => {
+  texts.forEach(txt => {
+    const rows = txt.trim().split(/\r?\n/); if (rows.length < 2) return;
+    const head = rows[0].split(","), iN = head.indexOf("name"), iA = head.indexOf("lat"), iO = head.indexOf("lon");
+    rows.slice(1).forEach(line => {
+      const c = line.match(/("([^"]|"")*"|[^,]*)(,|$)/g).map(x => x.replace(/,$/, "").replace(/^"|"$/g, "").replace(/""/g, '"'));
+      if (c[iN] && !isNaN(+c[iA]) && !isNaN(+c[iO])) SITES.set(c[iN], [+c[iA], +c[iO]]);
+    });
+  });
+  $("sites").innerHTML = [...SITES.keys()].sort((a, b) => a.localeCompare(b)).map(n => `<option value="${n.replace(/"/g, "&quot;")}">`).join("");
+});
+$("name").addEventListener("change", () => {
+  const s = SITES.get($("name").value.trim());
+  if (s) { $("lat").value = s[0].toFixed(2); $("lon").value = s[1].toFixed(2); }
+});
 
 // ---------- fetching
 function period() {

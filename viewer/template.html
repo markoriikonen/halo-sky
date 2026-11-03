@@ -101,6 +101,9 @@ svg.yc { display: block; width: 100%; height: auto; margin-top: 6px; }
 .ycq { fill: rgba(var(--ink), .10); }
 .sstats { font-family: var(--f-data); font-size: 12px; color: var(--muted); display: grid; gap: 2px; }
 .yclab { font-size: 11px; color: var(--muted); }
+.gramlinks { font-size: 13px; color: var(--muted); }
+.gramlinks a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 2px; }
+.gramlinks a:hover { text-decoration-color: currentColor; }
 .sstats b { color: var(--fg); font-weight: 500; }
 .stripbox { overflow-x: auto; }
 canvas#strip { display: block; max-width: 100%; height: auto; image-rendering: pixelated; }
@@ -509,6 +512,7 @@ function fpCard(s) {
   }
   const yc = yearCurve(s, { month: month || 0 });
   if (yc) { const d = document.createElement("div"); d.innerHTML = yc + `<div class="yclab">Year: high cloud ≥ 20% as thin, medium and sheet cover; line: ${measLabel()}${month ? `; shaded: ${MONTHS[month]}` : ""}</div>`; card.appendChild(d); }
+  if (typeof gramLinks === "function") { const d = document.createElement("div"); d.innerHTML = gramLinks(s); card.appendChild(d); }
   return card;
 }
 function addSite(name) { if (!picked.includes(name)) { picked.push(name); update(); } }
@@ -563,6 +567,36 @@ function update() {
   rankList(document.getElementById("bot"), ranked.slice(-20).reverse());
 }
 
+
+// ---- links to the Halo Sky Gram page (GitHub Pages; it fetches from Open-Meteo's free API)
+const GRAM_URL = "https://markoriikonen.github.io/halo-sky/gram/";
+function gramLink(s, year, month, months, label, extra = {}) {
+  const q = new URLSearchParams({ name: s.n, lat: s.la, lon: s.lo, type: year >= 2024 ? "height" : "lmh", year, month, months, ...extra });
+  return `<a class="gramlink" href="${GRAM_URL}?${q}" target="_blank" rel="noopener">${label}</a>`;
+}
+function lastCompleteYear(month, months) {          // latest year whose chosen months have all passed
+  const now = new Date(), y = now.getUTCFullYear(), m = now.getUTCMonth() + 1;
+  const endMonth = month + months - 1;              // may run past 12 into next year
+  return (y * 12 + m) > (y * 12 + endMonth) ? y : y - 1;
+}
+function seasonMonths(startPentad, lenPentads) {    // whole months covering a season
+  const d0 = new Date(Date.UTC(2023, 0, 1 + startPentad * 5)), d1 = new Date(Date.UTC(2023, 0, (startPentad + lenPentads) * 5));
+  const m0 = d0.getUTCMonth() + 1, span = (d1.getUTCFullYear() - 2023) * 12 + d1.getUTCMonth() + 1 - m0 + 1;
+  return { month: m0, months: Math.min(12, span) };
+}
+function gramLinks(s) {
+  if (mode === "season") {
+    const w = seasonOf(s); if (!w) return "";
+    const out = [];
+    [["best", w.actStart, "active season"], ["worst", w.quietStart, "quiet season"]].forEach(([k, st, lab]) => {
+      const { month, months } = seasonMonths(st, sLen), y = lastCompleteYear(month, months);
+      out.push(gramLink(s, y, month, months, `${lab} ${y}${month + months - 1 > 12 ? "–" + String(y + 1).slice(2) : ""}`, { season: k, sdates: pSpan(st, sLen) }));
+    });
+    return `<div class="gramlinks">Gram: ${out.join(" · ")}</div>`;
+  }
+  const m = month || Math.max(1, new Date().getUTCMonth()), y = lastCompleteYear(m, 1);
+  return `<div class="gramlinks">Gram: ${gramLink(s, y, m, 1, `${MONTHS[m]} ${y}`)} · ${gramLink(s, y - 1, m, 1, `${MONTHS[m]} ${y - 1}`)}</div>`;
+}
 // ===================== Seasons mode =====================
 const SEASON_URL = "data/season.js";               // sets window.FP_SEASON
 let SSET = null, seasonReady = false;
@@ -765,7 +799,8 @@ function seasonCard(s) {
   card.innerHTML = `<div class="head"><span class="name">${s.n}</span><span class="chip"><button type="button" aria-label="Remove ${s.n}">Remove</button></span></div>
     <div class="meta">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""} · ${measLabel()}</div>
     ${yearCurve(s, { big: true, season: true }) || ""}
-    <div class="sstats">${stats}</div>`;
+    <div class="sstats">${stats}</div>
+    ${gramLinks(s)}`;
   card.querySelector("button").addEventListener("click", () => { picked = picked.filter(n => n !== s.n); update(); });
   return card;
 }
