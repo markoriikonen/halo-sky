@@ -80,7 +80,7 @@ canvas#gram { display: block; background: #fff; border-radius: 3px; }
     <div id="status">Choose a place and period, then Draw gram.</div>
   </div>
 
-  <p class="note">Data: ECMWF IFS via <a href="https://open-meteo.com/">Open-Meteo</a>, licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Height gram: IFS 0.25° (about 25 km) temperature, cloud cover and geopotential height on 13 pressure levels, available from January 2024; cloud cover on pressure levels is derived from relative humidity. Low/mid/high: IFS HRES 9 km, from January 2017; ECMWF splits the bands at 0.8 and 0.45 of surface pressure (dashed lines in the height gram). Each gram is fetched directly from Open-Meteo's free, non-commercial API by your browser; no key is used.</p>
+  <p class="note">Data: ECMWF IFS via <a href="https://open-meteo.com/">Open-Meteo</a>, licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Height gram: IFS 0.25° (about 25 km) temperature and cloud cover on 13 pressure levels, with heights worked out from temperature and surface pressure, available from January 2024; cloud cover on pressure levels is derived from relative humidity. Low/mid/high: IFS HRES 9 km, from January 2017; ECMWF splits the bands at 0.8 and 0.45 of surface pressure (dashed lines in the height gram). Each gram is fetched directly from Open-Meteo's free, non-commercial API by your browser; no key is used.</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
@@ -174,7 +174,7 @@ async function draw() {
     const lmh = await getJSON(`${base}&hourly=cloud_cover_low,cloud_cover_mid,cloud_cover_high&models=ecmwf_ifs`, "low/mid/high cloud");
     let lev = null, levErr = null;
     if (gtype === "height") {
-      const vars = ["surface_pressure", ...["temperature", "cloud_cover", "geopotential_height"].flatMap(v => LEVELS.map(L => `${v}_${L}hPa`))];
+      const vars = ["surface_pressure", ...["temperature", "cloud_cover"].flatMap(v => LEVELS.map(L => `${v}_${L}hPa`))];
       try { lev = await getJSON(`${base}&hourly=${vars.join(",")}&models=ecmwf_ifs025`, "pressure levels", 90000); }
       catch (e) { levErr = e.message; }
     }
@@ -310,6 +310,31 @@ function render(lmh, lev, site) {
   cv.onmouseleave = () => { tip.hidden = true; };
 }
 
+// Heights of the pressure levels above the model ground, from the hypsometric equation:
+// dz = (R T / g) ln(p_lower / p_upper), integrated upward from the surface pressure.
+// (Fetching geopotential height instead would make the request a third larger.)
+function levelHeights(h, i, ground) {
+  const Rd = 287.05, g = 9.80665, out = [];
+  const ps = h.surface_pressure ? h.surface_pressure[i] : null;
+  const lv = LEVELS.map(p => ({ p, t: h[`temperature_${p}hPa`][i], c: h[`cloud_cover_${p}hPa`][i] }))
+    .filter(o => o.t != null).sort((a, b) => b.p - a.p);                    // surface upward
+  if (lv.length < 2) return out;
+  let p0 = ps != null ? ps : 1013.25 * Math.pow(1 - 2.25577e-5 * ground, 5.25588), z0 = ground;
+  const above = lv.filter(o => o.p < p0);
+  if (!above.length) return out;
+  let t0 = above[0].t;                                                     // surface temperature ~ lowest level above ground
+  above.forEach(o => {
+    const tm = (t0 + o.t) / 2 + 273.15;
+    z0 += Rd * tm / g * Math.log(p0 / o.p);
+    out.push({ p: o.p, z: z0, t: o.t, c: o.c == null ? 0 : o.c });
+    p0 = o.p; t0 = o.t;
+  });
+  if (above.length < lv.length) {                                          // levels underground: below the model ground
+    lv.filter(o => o.p >= (ps || 1e9)).forEach(o => out.push({ p: o.p, z: ground - 50 * (o.p - (ps || o.p)) / 5, t: o.t, c: 0 }));
+  }
+  return out;
+}
+
 function drawHeight(ctx, lev, n, X, yPlot, plotW, plotH, pxH, mL) {
   const h = lev.hourly, rows = plotH, ground = lev.elevation;
   const zg = Array.from({ length: rows }, (_, r) => Z_TOP - (r + 0.5) * DZ);     // row 0 at the top
@@ -318,11 +343,7 @@ function drawHeight(ctx, lev, n, X, yPlot, plotW, plotH, pxH, mL) {
   const bounds = SIGMA.map(() => new Array(n).fill(NaN));
   const img = new ImageData(n, rows);
   for (let i = 0; i < n; i++) {
-    const L = [];
-    LEVELS.forEach(p => {
-      const z = h[`geopotential_height_${p}hPa`][i], t = h[`temperature_${p}hPa`][i], c = h[`cloud_cover_${p}hPa`][i];
-      if (z != null && t != null) L.push({ p, z, t, c: c == null ? 0 : c });
-    });
+    const L = levelHeights(h, i, ground);
     if (L.length >= 2) {
       L.sort((a, b) => a.z - b.z);
       const zl = L.map(o => o.z), tl = L.map(o => o.t), cl = L.map(o => o.c);
