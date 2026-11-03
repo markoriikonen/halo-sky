@@ -1,0 +1,11 @@
+# never commit the Open-Meteo key
+apikey.txt
+**/apikey.txt
+# pulled data stays local (large; regenerate with the scripts)
+stats9km/
+layer25km/
+profiles25km/
+layer_windows/
+*.npz
+*.json.gz
+__pycache__/

@@ -1,0 +1,860 @@
+<title>Halo Sky Fingerprints</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap">
+<style>
+/* Layout: controls, then a world map coloured by the chosen halo window, then side-by-side site fingerprints and rankings. */
+:root {
+  --bg: #f6f7f8; --fg: #1c2329; --muted: #5d6973; --panel: #ffffff; --rule: #d8dfe4;
+  --ocean: #e3eaee; --land: #fbfbfa; --coast: #bcc7ce; --grat: #cfd8de;
+  --ink: 28, 35, 41;              /* rgb of fingerprint shading */
+  --on-ink: #ffffff; --win: #c4402f; --sel: #c4402f; --winline: rgba(205, 110, 30, .85);
+  --f-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11171c; --fg: #e3e8ec; --muted: #94a2ad; --panel: #182129; --rule: #2a3843;
+    --ocean: #16222b; --land: #24313a; --coast: #3d4d58; --grat: #22313b;
+    --ink: 227, 232, 236; --on-ink: #11171c; --win: #ff8a73; --sel: #ff8a73; --winline: rgba(240, 170, 90, .7); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11171c; --fg: #e3e8ec; --muted: #94a2ad; --panel: #182129; --rule: #2a3843;
+  --ocean: #16222b; --land: #24313a; --coast: #3d4d58; --grat: #22313b;
+  --ink: 227, 232, 236; --on-ink: #11171c; --win: #ff8a73; --sel: #ff8a73; --winline: rgba(240, 170, 90, .7); color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.5;
+  padding-block: 28px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 18px; }
+h1 { font-family: var(--f-display); font-weight: 500; font-size: clamp(26px, 3.2vw, 36px); margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+h2 { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+.lede { margin: 6px 0 0; color: var(--muted); max-width: 72ch; }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px; min-width: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: end; }
+.months { display: flex; flex-wrap: wrap; gap: 4px; }
+.months button {
+  font: 500 13px var(--f-data); color: var(--fg); background: transparent; border: 1px solid var(--rule);
+  border-radius: 4px; padding: 4px 8px; cursor: pointer; min-width: 38px;
+}
+.months button[aria-pressed="true"] { background: rgb(var(--ink)); color: var(--on-ink); border-color: rgb(var(--ink)); }
+.months button:focus-visible, .chip button:focus-visible, input:focus-visible { outline: 2px solid var(--win); outline-offset: 1px; }
+.slider { display: grid; gap: 4px; font-size: 13px; color: var(--muted); min-width: 200px; }
+.slider b { color: var(--fg); font-family: var(--f-data); font-weight: 500; }
+.slider input { width: 100%; accent-color: var(--win); }
+.slider select { font: inherit; font-size: 14px; color: var(--fg); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 5px 7px; }
+label.tog { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer; align-self: center; }
+.site.off { fill: none !important; stroke: var(--muted); stroke-width: .8; }
+[hidden] { display: none !important; }
+.mapbox { position: relative; }
+svg#map { display: block; width: 100%; height: auto; }
+.sphere { fill: var(--ocean); stroke: var(--coast); stroke-width: .8; }
+.grat { fill: none; stroke: var(--grat); stroke-width: .6; }
+.land { fill: var(--land); stroke: var(--coast); stroke-width: .5; }
+.site { stroke: rgba(0,0,0,.35); stroke-width: .5; cursor: pointer; }
+.site.on { stroke: var(--sel); stroke-width: 2.2; }
+.sphere, .grat, .land, .site { vector-effect: non-scaling-stroke; }
+svg#map { cursor: grab; } svg#map:active { cursor: grabbing; }
+.zoombtns { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; gap: 4px; }
+.zoombtns button { font: 500 16px/1 var(--f-data); width: 30px; height: 30px; padding: 0; color: var(--fg);
+  background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; cursor: pointer; }
+.zoombtns button:hover { border-color: var(--muted); }
+.zoombtns button.reset { font-size: 12px; }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 6px 9px; font-size: 13px; box-shadow: 0 2px 10px rgba(0,0,0,.15); white-space: nowrap; }
+.tip .c { font-family: var(--f-data); font-size: 12px; color: var(--muted); }
+.legend { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-top: 8px; }
+.legend canvas { width: 220px; height: 10px; border-radius: 2px; }
+.legend .ends { font-family: var(--f-data); font-size: 12px; }
+.find { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.find input { font: inherit; font-size: 14px; color: var(--fg); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 7px 9px; width: min(320px, 100%); box-sizing: border-box; }
+.suggest { display: flex; flex-wrap: wrap; gap: 6px; }
+.suggest button, .chip button { font: 13px var(--f-body); color: var(--fg); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 8px; cursor: pointer; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px 18px; }
+.card { display: grid; gap: 8px; }
+.card .head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.card .name { font-weight: 600; }
+.card .meta { font-family: var(--f-data); font-size: 12px; color: var(--muted); }
+.card .share { font-family: var(--f-data); font-size: 13px; }
+.card .share b { color: var(--win); font-weight: 500; }
+.fp { display: grid; grid-template-columns: 30px repeat(11, 1fr); grid-template-rows: repeat(11, 1fr) 20px; gap: 1px; font-family: var(--f-data); font-size: 10px; aspect-ratio: 1.05 / 1; max-width: 100%; }
+.fp .cell { position: relative; display: grid; place-items: center; font-size: 9.5px; font-variant-numeric: tabular-nums; border-radius: 1px; }
+.fp .cell.win::after { content: ""; position: absolute; inset: -1px; box-shadow: var(--edges); pointer-events: none; }
+.cards.nowin .fp .cell.win::after { display: none; }
+.cards.nonum .fp .cell { font-size: 0 !important; }
+.fpwrap { display: grid; grid-template-columns: 16px minmax(0, 1fr); column-gap: 2px; }
+.vlab { writing-mode: vertical-rl; transform: rotate(180deg); display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--muted); padding-top: 20px; white-space: nowrap; }
+.fptogs { display: flex; gap: 16px; flex-wrap: wrap; }
+svg.yc { display: block; width: 100%; height: auto; margin-top: 6px; }
+.ycg { stroke: var(--rule); stroke-width: .5; }
+.yct { font: 9px var(--f-data); fill: var(--muted); }
+.ycs { fill: rgba(var(--ink), .55); } .ycm { fill: rgba(var(--ink), .32); } .ycth { fill: rgba(var(--ink), .14); }
+.ycl { fill: none; stroke: var(--win); stroke-width: 1.6; }
+.ycact { fill: var(--winline); opacity: .22; }
+.ycq { fill: rgba(var(--ink), .10); }
+.sstats { font-family: var(--f-data); font-size: 12px; color: var(--muted); display: grid; gap: 2px; }
+.yclab { font-size: 11px; color: var(--muted); }
+.sstats b { color: var(--fg); font-weight: 500; }
+.stripbox { overflow-x: auto; }
+canvas#strip { display: block; max-width: 100%; height: auto; image-rendering: pixelated; }
+.fp .ax { color: var(--muted); display: grid; place-items: center; font-size: 9.5px; }
+.fp.fp6 { grid-template-columns: 30px repeat(6, 1fr); grid-template-rows: repeat(6, 1fr) 20px; aspect-ratio: 1.08 / 1; }
+.fp.fp6 .cell { font-size: 11px; }
+.axlab { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); padding-left: 30px; }
+.fpwrap .axlab { grid-column: 2; margin-top: 2px; }
+.empty { color: var(--muted); font-size: 14px; }
+.ranks { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+ol.rank { margin: 0; padding-left: 26px; font-size: 14px; display: grid; gap: 2px; }
+ol.rank li { cursor: pointer; }
+ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--muted); float: right; font-variant-numeric: tabular-nums; }
+.note { font-size: 13px; color: var(--muted); margin: 0; max-width: 90ch; }
+#status { font-size: 13px; color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Halo Sky Fingerprints</h1>
+    <p class="lede">How often each combination of cloud layers occurs in daylight, from hourly ECMWF data. Set a window with the sliders: the map colours every site by the share of daylight hours that fall inside it. <b>High cloud</b> mode looks for cirrus with a clear view; <b>Mid layer</b> mode looks for an isolated middle layer, either ECMWF's mid-cloud band or cloud in a chosen temperature range.</p>
+  </header>
+
+  <div class="panel controls">
+    <div>
+      <h2>Mode</h2>
+      <div class="months" id="modes" role="group" aria-label="Mode">
+        <button type="button" data-mode="halo" aria-pressed="true">High cloud</button>
+        <button type="button" data-mode="layer" aria-pressed="false">Mid layer</button>
+        <button type="button" data-mode="season" aria-pressed="false" disabled>Seasons</button>
+      </div>
+    </div>
+    <label class="slider" id="srcwrap" for="src" hidden>Layer source
+      <select id="src"></select>
+    </label>
+    <div class="controls" id="tempwrap" hidden>
+      <label class="slider" for="wwarm"><span>Warm edge</span><select id="wwarm"></select></label>
+      <label class="slider" for="wcold"><span>Cold edge</span><select id="wcold"></select></label>
+    </div>
+    <div id="monthwrap">
+      <h2>Month</h2>
+      <div class="months" id="months" role="group" aria-label="Month"></div>
+    </div>
+    <div class="controls" id="haloSliders">
+      <label class="slider" for="hmin"><span>High cloud at least <b id="hminv"></b></span>
+        <input id="hmin" type="range" min="0" max="100" step="10" value="50">
+      </label>
+      <label class="slider" for="lmax"><span>Low cloud at most <b id="lmaxv"></b></span>
+        <input id="lmax" type="range" min="0" max="100" step="10" value="40">
+      </label>
+    </div>
+    <div class="controls" id="layerSliders" hidden>
+      <label class="slider" for="ymin"><span><span id="ylab">Mid cloud</span> at least <b id="yminv"></b></span>
+        <input id="ymin" type="range" min="0" max="100" step="20" value="40">
+      </label>
+      <label class="slider" for="bmax"><span><span id="blab">Low cloud</span> at most <b id="bmaxv"></b></span>
+        <input id="bmax" type="range" min="0" max="100" step="20" value="20">
+      </label>
+      <label class="slider" for="amax"><span><span id="alab">High cloud</span> at most <b id="amaxv"></b></span>
+        <input id="amax" type="range" min="0" max="100" step="20" value="20">
+      </label>
+      <label class="tog" for="hiel"><input id="hiel" type="checkbox"> include sites above 1500 m</label>
+    </div>
+    <div class="controls" id="seasonCtl" hidden>
+      <label class="slider" for="smeas"><span>Measure</span>
+        <select id="smeas"><option value="pres">High cloud present</option><option value="win">Halo window (low cloud ≤ 40%)</option></select>
+      </label>
+      <label class="slider" for="sthr"><span>High cloud at least <b id="sthrv"></b></span>
+        <input id="sthr" type="range" min="10" max="100" step="10" value="20">
+      </label>
+      <label class="slider" for="sview"><span>Map shows</span>
+        <select id="sview">
+          <option value="timing">Timing of the season</option>
+          <option value="swing">Seasonality index (0–1)</option>
+          <option value="active">Active season</option>
+          <option value="quiet">Quiet season</option>
+          <option value="days">Days above a threshold</option>
+        </select>
+      </label>
+      <label class="slider" for="slen"><span>Season length <b id="slenv"></b></span>
+        <input id="slen" type="range" min="6" max="36" step="1" value="18">
+      </label>
+      <label class="slider" for="sday" id="sdaywrap" hidden><span>Threshold: share at least <b id="sdayv"></b></span>
+        <input id="sday" type="range" min="10" max="90" step="5" value="50">
+      </label>
+    </div>
+    <span id="status">Loading data…</span>
+  </div>
+
+  <div class="panel">
+    <h2 id="maptitle">Share of daylight hours inside the window</h2>
+    <div class="mapbox">
+      <svg id="map" role="img" aria-label="World map of halo-window shares"></svg>
+      <div class="tip" id="tip" hidden></div>
+      <div class="zoombtns">
+        <button type="button" id="zin" aria-label="Zoom in" title="Zoom in">+</button>
+        <button type="button" id="zout" aria-label="Zoom out" title="Zoom out">−</button>
+        <button type="button" id="zreset" class="reset" aria-label="Show the whole world" title="Whole world">⟲</button>
+      </div>
+    </div>
+    <div class="legend"><span class="ends" id="lg0">0%</span><canvas id="lg" width="220" height="10"></canvas><span class="ends" id="lg1"></span><span id="lgnote">Click a dot to add its fingerprint below.</span><span>Zoom with Ctrl/⌘ + scroll, a double-click, pinch or the buttons; drag to move.</span></div>
+  </div>
+
+  <div class="panel">
+    <h2>Fingerprints</h2>
+    <div class="find">
+      <input id="q" type="search" placeholder="Add a site, e.g. Siquijor" autocomplete="off">
+      <div class="suggest" id="suggest"></div>
+    </div>
+    <div class="fptogs" style="margin-top:10px">
+      <label class="tog"><input type="checkbox" id="showwin" checked> Outline the window</label>
+      <label class="tog"><input type="checkbox" id="shownum" checked> Show numbers</label>
+    </div>
+    <div class="axlab" style="margin-top:10px"><span id="fphelp"></span></div>
+    <div class="cards" id="cards" style="margin-top:10px"></div>
+  </div>
+
+  <div class="panel" id="strippanel" hidden>
+    <h2>Latitude and season</h2>
+    <div class="find" style="margin-bottom:8px">
+      <label class="slider" for="sreg" style="max-width:260px"><span>Longitudes</span>
+        <select id="sreg"><option value="all">Whole world</option><option value="am">Americas (170°W–30°W)</option><option value="eu">Europe and Africa (30°W–60°E)</option><option value="as">Asia and Oceania (60°E–180°)</option></select>
+      </label>
+    </div>
+    <div class="stripbox"><canvas id="strip"></canvas></div>
+    <div class="axlab" style="padding-left:0;margin-top:4px"><span id="striptip">Hover the strip for values.</span></div>
+    <div class="legend"><span class="ends">0%</span><canvas id="stripLg" width="220" height="10"></canvas><span class="ends">100%</span><span>share of daylight hours with the chosen measure, 30-day average; sites averaged in 2° latitude bands</span></div>
+  </div>
+
+  <div class="ranks">
+    <div class="panel"><h2 id="toph">Most hours in the window</h2><ol class="rank" id="top"></ol></div>
+    <div class="panel"><h2 id="both">Fewest hours in the window</h2><ol class="rank" id="bot"></ol></div>
+  </div>
+
+  <p class="note" id="foot"></p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+const DATA_URL = "data/fingerprints.js";          // sets window.FP_DATA (base64 gzip JSON)
+const LINDEX_URL = "data/layer_index.js";          // sets window.FP_LINDEX: settings + site order
+const winURL = k => { const [a, b] = k.split("..").map(Number); return [`data/w_${-a}_${-b}.js`, `FP_W_${-a}_${-b}`]; };
+let LORDER = [], WLOADED = new Map(), srcKind = "mid", wWarm = -10, wCold = -20;
+const LAND = __LAND__;
+const MONTHS = ["Year","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+let SITES = [], SETTINGS = {}, LSET = null, LWIN = [];
+let mode = "halo", src = "mid", month = 0;
+let hmin = 50, lmax = 40, ymin = 40, bmax = 20, amax = 20, incHigh = false;
+let picked = ["Siquijor", "Riyadh", "Nukus"];
+
+function loadScript(url) {
+  return new Promise((ok, bad) => {
+    const s = document.createElement("script");
+    s.src = url; s.onload = ok; s.onerror = () => bad(new Error("could not load " + url));
+    document.head.appendChild(s);
+  });
+}
+async function fetchJSON(url, key) {
+  await loadScript(url);
+  const bin = Uint8Array.from(atob(window[key]), ch => ch.charCodeAt(0));
+  window[key] = null;
+  const ds = new Blob([bin]).stream().pipeThrough(new DecompressionStream("gzip"));
+  return JSON.parse(await new Response(ds).text());
+}
+const addYear = arr => { const y = new Array(arr[0].length).fill(0); arr.forEach(m => m.forEach((v, i) => y[i] += v)); return [y, ...arr]; };
+
+async function load() {
+  const d = await fetchJSON(DATA_URL, "FP_DATA");
+  SETTINGS = d.settings;
+  SITES = d.sites.map(s => ({ n: s.n, la: s.la, lo: s.lo, el: s.el, m: addYear(s.c), m3: s.c3 ? addYear(s.c3) : null, L: {} }));
+  let L = null;
+  try { L = await fetchJSON(LINDEX_URL, "FP_LINDEX"); } catch (e) { console.warn("no layer data", e); }
+  if (L) {
+    LSET = L.settings; LWIN = L.settings.windows;
+    const byName = new Map(SITES.map(s => [s.n, s]));
+    LORDER = L.sites.map(r => byName.get(r.n) || null);
+  }
+}
+function ensureWin(k) {                       // load one temperature window on first use
+  if (!WLOADED.has(k)) {
+    const [url, key] = winURL(k);
+    WLOADED.set(k, fetchJSON(url, key).then(d => {
+      d.c.forEach((flat, i) => {
+        const s = LORDER[i]; if (!s) return;
+        const m = []; for (let j = 0; j < 12; j++) m.push(flat.slice(j * 216, (j + 1) * 216));
+        s.L[k] = addYear(m);
+      });
+    }));
+  }
+  return WLOADED.get(k);
+}
+
+// ---- shares
+function shareHalo(s, mo) {
+  const c = s.m[mo]; let tot = 0, win = 0;
+  for (let hb = 0; hb < 11; hb++) for (let lb = 0; lb < 11; lb++) {
+    const v = c[hb * 11 + lb]; tot += v;
+    if (hb * 10 >= hmin && lb * 10 <= lmax) win += v;
+  }
+  return tot ? win / tot : NaN;
+}
+function arr3(s, mo) { return src === "mid" ? (s.m3 ? s.m3[mo] : null) : (s.L[src] ? s.L[src][mo] : null); }
+// 216-vector index (a*6+y)*6+b ; a = above/high, y = layer/mid, b = below/low ; bins 0..5 = 0..100 %
+function shareLayer(s, mo) {
+  const c = arr3(s, mo); if (!c) return NaN;
+  let tot = 0, win = 0;
+  for (let a = 0; a < 6; a++) for (let y = 0; y < 6; y++) for (let b = 0; b < 6; b++) {
+    const v = c[(a * 6 + y) * 6 + b]; tot += v;
+    if (a * 20 <= amax && y * 20 >= ymin && b * 20 <= bmax) win += v;
+  }
+  return tot ? win / tot : NaN;
+}
+const excluded = s => mode === "layer" && src === "mid" && !incHigh && s.el != null && s.el > 1500;
+const share = (s, mo) => mode === "halo" ? shareHalo(s, mo) : shareLayer(s, mo);
+const pct = v => isNaN(v) ? "–" : (v * 100 >= 10 ? (v * 100).toFixed(0) : (v * 100).toFixed(1)) + "%";
+const fmtLat = v => `${Math.abs(v).toFixed(2)}°${v >= 0 ? "N" : "S"}`;
+const fmtLon = v => `${Math.abs(v).toFixed(2)}°${v >= 0 ? "E" : "W"}`;
+const winLabel = w => { const [a, b] = w.split(".."); return `${a.replace("-", "−")} to ${b.replace("-", "−")} °C`; };
+
+// ---- controls
+const mEl = document.getElementById("months");
+MONTHS.forEach((lab, i) => {
+  const b = document.createElement("button"); b.type = "button";
+  b.textContent = lab; b.setAttribute("aria-pressed", i === 0);
+  b.addEventListener("click", () => { month = i; [...mEl.children].forEach((x, j) => x.setAttribute("aria-pressed", j === i)); update(); });
+  mEl.appendChild(b);
+});
+document.querySelectorAll("#modes button").forEach(b => b.addEventListener("click", () => {
+  mode = b.dataset.mode;
+  document.querySelectorAll("#modes button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  document.getElementById("haloSliders").hidden = mode !== "halo";
+  document.getElementById("layerSliders").hidden = mode !== "layer";
+  document.getElementById("srcwrap").hidden = mode !== "layer";
+  document.getElementById("tempwrap").hidden = mode !== "layer" || srcKind !== "temp";
+  document.getElementById("seasonCtl").hidden = mode !== "season";
+  document.getElementById("monthwrap").hidden = mode === "season";
+  document.getElementById("strippanel").hidden = mode !== "season";
+  document.querySelector(".fptogs").hidden = mode === "season";
+  if (mode !== "season") { document.getElementById("toph").textContent = "Most hours in the window"; document.getElementById("both").textContent = "Fewest hours in the window"; document.getElementById("lgnote").textContent = "Click a dot to add its fingerprint below."; }
+  update();
+}));
+const srcEl = document.getElementById("src");
+const warmEl = document.getElementById("wwarm"), coldEl = document.getElementById("wcold");
+const edgeLab = v => `${v < 0 ? "−" + (-v) : v} °C`;
+function fillCold() {
+  const colds = LWIN.map(w => w.split("..").map(Number)).filter(([a]) => a === wWarm).map(([, b]) => b);
+  if (!colds.includes(wCold)) wCold = colds.includes(wWarm - 10) ? wWarm - 10 : colds[0];
+  coldEl.innerHTML = colds.map(b => `<option value="${b}"${b === wCold ? " selected" : ""}>${edgeLab(b)}</option>`).join("");
+}
+async function setSrc() {
+  document.getElementById("tempwrap").hidden = mode !== "layer" || srcKind !== "temp";
+  if (srcKind === "mid") { src = "mid"; labels(); update(); return; }
+  const k = `${wWarm}..${wCold}`, st = document.getElementById("status");
+  st.textContent = `Loading ${winLabel(k)}…`;
+  try { await ensureWin(k); } catch (e) { st.textContent = "Could not load " + winLabel(k); return; }
+  if (k !== `${wWarm}..${wCold}` || srcKind !== "temp") return;   // the choice changed meanwhile
+  src = k; st.textContent = `${SITES.length} sites`; labels(); update();
+}
+srcEl.addEventListener("change", () => { srcKind = srcEl.value; setSrc(); });
+warmEl.addEventListener("change", () => { wWarm = +warmEl.value; fillCold(); setSrc(); });
+coldEl.addEventListener("change", () => { wCold = +coldEl.value; setSrc(); });
+const bind = (id, set) => { const el = document.getElementById(id); el.addEventListener("input", () => { set(+el.value); labels(); update(); }); };
+bind("hmin", v => hmin = v); bind("lmax", v => lmax = v);
+bind("ymin", v => ymin = v); bind("bmax", v => bmax = v); bind("amax", v => amax = v);
+document.getElementById("hiel").addEventListener("change", e => { incHigh = e.target.checked; update(); });
+document.getElementById("showwin").addEventListener("change", e => document.getElementById("cards").classList.toggle("nowin", !e.target.checked));
+document.getElementById("shownum").addEventListener("change", e => document.getElementById("cards").classList.toggle("nonum", !e.target.checked));
+function labels() {
+  [["hminv", hmin], ["lmaxv", lmax], ["yminv", ymin], ["bmaxv", bmax], ["amaxv", amax]].forEach(([id, v]) => document.getElementById(id).textContent = v + "%");
+  const t = src !== "mid";
+  document.getElementById("ylab").textContent = t ? `Cloud at ${winLabel(src)}` : "Mid cloud";
+  document.getElementById("blab").textContent = t ? "Warmer cloud (below)" : "Low cloud";
+  document.getElementById("alab").textContent = t ? "Colder cloud (above)" : "High cloud";
+  document.getElementById("hiel").parentElement.hidden = t;
+}
+
+// ---- map
+const W = 960, H = 480;
+const svg = d3.select("#map").attr("viewBox", `0 0 ${W} ${H}`);
+const proj = d3.geoEqualEarth().fitExtent([[6, 6], [W - 6, H - 6]], { type: "Sphere" });
+const path = d3.geoPath(proj);
+const gZoom = svg.append("g");
+gZoom.append("path").datum({ type: "Sphere" }).attr("class", "sphere").attr("d", path);
+gZoom.append("path").datum(d3.geoGraticule().step([30, 30])()).attr("class", "grat").attr("d", path);
+gZoom.append("path").datum(topojson.feature(LAND, LAND.objects.land)).attr("class", "land").attr("d", path);
+const gDots = gZoom.append("g");
+let zk = 1;
+const dotR = () => 3.3 / Math.pow(zk, 0.7);          // dots grow only slowly when zoomed in
+const zoom = d3.zoom().scaleExtent([1, 16]).translateExtent([[0, 0], [W, H]])
+  .filter(ev => (ev.type === "wheel" ? (ev.ctrlKey || ev.metaKey) : true) && !ev.button)
+  .on("zoom", ev => {
+    zk = ev.transform.k;
+    gZoom.attr("transform", ev.transform);
+    if (dots) dots.attr("r", dotR());
+    tip.hidden = true;
+  });
+svg.call(zoom);
+document.getElementById("zin").addEventListener("click", () => svg.transition().duration(250).call(zoom.scaleBy, 2));
+document.getElementById("zout").addEventListener("click", () => svg.transition().duration(250).call(zoom.scaleBy, 0.5));
+document.getElementById("zreset").addEventListener("click", () => svg.transition().duration(300).call(zoom.transform, d3.zoomIdentity));
+const tip = document.getElementById("tip"), box = document.querySelector(".mapbox");
+let dots;
+function showTip(ev, s) {
+  if (mode === "season") {
+    const c = series(s), v = seasonValue(s);
+    tip.innerHTML = `<div>${s.n}</div><div class="c">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""}</div>` +
+      `<div class="c">${c ? (sView === "timing" ? `peak ${pDate(c.peak)} · concentration ${c.R.toFixed(2)}` : fmtSV(v)) : "no data"}</div>`;
+    tip.hidden = false;
+    const r = box.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top;
+    tip.style.left = Math.min(Math.max(4, x + 12), r.width - tip.offsetWidth - 4) + "px";
+    tip.style.top = Math.max(4, y - 60) + "px";
+    return;
+  }
+  const v = share(s, month);
+  tip.innerHTML = `<div>${s.n}</div><div class="c">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""}</div>` +
+    `<div class="c">${MONTHS[month]}: ${isNaN(v) ? "no data" : pct(v) + " in window"}${excluded(s) ? " (above 1500 m, hidden)" : ""}</div>`;
+  tip.hidden = false;
+  const r = box.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top;
+  tip.style.left = Math.min(Math.max(4, x + 12), r.width - tip.offsetWidth - 4) + "px";
+  tip.style.top = Math.max(4, y - 60) + "px";
+}
+function drawLegend(max) {
+  const cv = document.getElementById("lg"), ctx = cv.getContext("2d");
+  for (let i = 0; i < cv.width; i++) { ctx.fillStyle = d3.interpolateYlGnBu(0.08 + 0.92 * i / cv.width); ctx.fillRect(i, 0, 1, cv.height); }
+  document.getElementById("lg1").textContent = pct(max);
+}
+
+// ---- fingerprint cards
+// window outline: only the outer border of the window region
+const W_LINE = "1.5px", edgeShadow = e => [e.t && `inset 0 ${W_LINE} 0 var(--winline)`, e.r && `inset -${W_LINE} 0 0 var(--winline)`,
+  e.b && `inset 0 -${W_LINE} 0 var(--winline)`, e.l && `inset ${W_LINE} 0 0 var(--winline)`].filter(Boolean).join(", ");
+function edgesOf(inW, row, col, n) {        // inW(row, col) in display coordinates
+  if (!inW(row, col)) return null;
+  const out = (r, c) => r < 0 || c < 0 || r >= n || c >= n || !inW(r, c);
+  return { t: out(row - 1, col), b: out(row + 1, col), l: out(row, col - 1), r: out(row, col + 1) };
+}
+function cell(f, a, lab, inWin) {
+  const el = document.createElement("div"); el.className = "cell";
+  el.style.background = `rgba(var(--ink), ${(0.04 + 0.96 * a).toFixed(3)})`;
+  el.style.color = a > 0.55 ? "var(--on-ink)" : "var(--muted)";
+  if (f * 100 >= 0.5) el.textContent = f * 100 >= 1 ? Math.round(f * 100) : (f * 100).toFixed(1);
+  if (inWin) { const s = edgeShadow(inWin); if (s) { el.classList.add("win"); el.style.setProperty("--edges", s); } }
+  el.title = lab;
+  return el;
+}
+function axisRow(g, n, step) {
+  const corner = document.createElement("div"); corner.className = "ax"; g.appendChild(corner);
+  for (let col = 0; col < n; col++) { const ax = document.createElement("div"); ax.className = "ax"; ax.textContent = 100 - col * step; g.appendChild(ax); }
+}
+function gridHalo(s) {
+  const c = s.m[month], tot = c.reduce((a, b) => a + b, 0);
+  const frac = c.map(v => tot ? v / tot : 0), mx = Math.max(...frac);
+  const g = document.createElement("div"); g.className = "fp";
+  for (let row = 0; row < 11; row++) {
+    const hb = 10 - row;
+    const ax = document.createElement("div"); ax.className = "ax"; ax.textContent = hb * 10; g.appendChild(ax);
+    for (let col = 0; col < 11; col++) {
+      const lb = 10 - col, f = frac[hb * 11 + lb];
+      g.appendChild(cell(f, mx ? Math.sqrt(f / mx) : 0, `low ${lb * 10}% · high ${hb * 10}%: ${(f * 100).toFixed(2)}%`,
+        edgesOf((r, c) => (10 - r) * 10 >= hmin && (10 - c) * 10 <= lmax, row, col, 11)));
+    }
+  }
+  axisRow(g, 11, 10);
+  return { g, tot, extra: `clear (0:0): ${pct(frac[0])}` };
+}
+function gridLayer(s) {
+  // layer (up) vs below (across), only hours with above <= amax
+  const c = arr3(s, month); if (!c) return null;
+  const tot = c.reduce((a, b) => a + b, 0);
+  const m = new Array(36).fill(0);
+  for (let a = 0; a < 6; a++) if (a * 20 <= amax) for (let y = 0; y < 6; y++) for (let b = 0; b < 6; b++) m[y * 6 + b] += c[(a * 6 + y) * 6 + b];
+  const frac = m.map(v => tot ? v / tot : 0), mx = Math.max(...frac);
+  const g = document.createElement("div"); g.className = "fp fp6";
+  for (let row = 0; row < 6; row++) {
+    const y = 5 - row;
+    const ax = document.createElement("div"); ax.className = "ax"; ax.textContent = y * 20; g.appendChild(ax);
+    for (let col = 0; col < 6; col++) {
+      const b = 5 - col, f = frac[y * 6 + b];
+      g.appendChild(cell(f, mx ? Math.sqrt(f / mx) : 0, `layer ${y * 20}% · below ${b * 20}%: ${(f * 100).toFixed(2)}%`,
+        edgesOf((r, c) => (5 - r) * 20 >= ymin && (5 - c) * 20 <= bmax, row, col, 6)));
+    }
+  }
+  axisRow(g, 6, 20);
+  const shown = frac.reduce((a, b) => a + b, 0);
+  return { g, tot, extra: `hours with ${src === "mid" ? "high" : "colder"} cloud ≤ ${amax}%: ${pct(shown)}` };
+}
+function fpCard(s) {
+  const card = document.createElement("div"); card.className = "card";
+  const r = mode === "halo" ? gridHalo(s) : gridLayer(s);
+  const v = share(s, month);
+  card.innerHTML = `<div class="head"><span class="name">${s.n}</span><span class="chip"><button type="button" aria-label="Remove ${s.n}">Remove</button></span></div>
+    <div class="meta">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""} · ${MONTHS[month]}${r ? " · " + r.tot.toLocaleString("en") + " daylight h" : ""}</div>
+    <div class="share">${r ? `In window: <b>${pct(v)}</b> · ${r.extra}` : "No data for this source yet."}${excluded(s) ? " · above 1500 m: ECMWF mid band reaches cirrus heights here" : ""}</div>`;
+  card.querySelector("button").addEventListener("click", () => { picked = picked.filter(n => n !== s.n); update(); });
+  if (r) {
+    const xName = mode === "halo" ? "low cloud %" : src === "mid" ? "low cloud %" : "warmer cloud %";
+    const yName = mode === "halo" ? "high cloud %" : src === "mid" ? "mid cloud %" : `cloud at ${winLabel(src).replace(" °C", "")} °C %`;
+    const wrap = document.createElement("div"); wrap.className = "fpwrap";
+    const vl = document.createElement("div"); vl.className = "vlab";
+    vl.innerHTML = `<span>← less</span><span>${yName}</span><span>more →</span>`;
+    const lab = document.createElement("div"); lab.className = "axlab";
+    lab.innerHTML = `<span>← more</span><span>${xName}</span><span>less →</span>`;
+    wrap.append(vl, r.g, lab);
+    card.appendChild(wrap);
+  }
+  const yc = yearCurve(s, { month: month || 0 });
+  if (yc) { const d = document.createElement("div"); d.innerHTML = yc + `<div class="yclab">Year: high cloud ≥ 20% as thin, medium and sheet cover; line: ${measLabel()}${month ? `; shaded: ${MONTHS[month]}` : ""}</div>`; card.appendChild(d); }
+  return card;
+}
+function addSite(name) { if (!picked.includes(name)) { picked.push(name); update(); } }
+
+const norm = t => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const qEl = document.getElementById("q"), sg = document.getElementById("suggest");
+qEl.addEventListener("input", () => {
+  const v = norm(qEl.value.trim()); sg.innerHTML = "";
+  if (!v) return;
+  SITES.filter(s => norm(s.n).includes(v)).slice(0, 8).forEach(s => {
+    const b = document.createElement("button"); b.type = "button"; b.textContent = s.n;
+    b.addEventListener("click", () => { addSite(s.n); qEl.value = ""; sg.innerHTML = ""; });
+    sg.appendChild(b);
+  });
+});
+function rankList(el, arr) {
+  el.innerHTML = "";
+  arr.forEach(([s, v]) => {
+    const li = document.createElement("li");
+    li.innerHTML = `${s.n}<span>${pct(v)}</span>`;
+    li.addEventListener("click", () => addSite(s.n));
+    el.appendChild(li);
+  });
+}
+
+function update() {
+  if (!SITES.length) return;
+  if (mode === "season") { if (seasonReady) seasonUpdate(); return; }
+  labels();
+  const vals = SITES.map(s => excluded(s) ? NaN : share(s, month));
+  const good = vals.filter(v => !isNaN(v)).sort(d3.ascending);
+  const max = Math.max(0.005, good.length ? d3.quantile(good, 0.98) : 0.01);
+  const color = v => d3.interpolateYlGnBu(0.08 + 0.92 * Math.min(1, v / max));
+  drawLegend(max);
+  dots.attr("fill", (s, i) => isNaN(vals[i]) ? "none" : color(vals[i]))
+      .classed("off", (s, i) => isNaN(vals[i]))
+      .classed("on", s => picked.includes(s.n));
+  dots.filter(s => picked.includes(s.n)).raise();
+  const title = mode === "halo" ? `high cloud ≥ ${hmin}%, low cloud ≤ ${lmax}%`
+    : src === "mid" ? `mid cloud ≥ ${ymin}%, low ≤ ${bmax}%, high ≤ ${amax}% (ECMWF 9 km, ${SETTINGS.years[0]}–${SETTINGS.years[1]})`
+    : `cloud at ${winLabel(src)} ≥ ${ymin}%, warmer cloud ≤ ${bmax}%, colder cloud ≤ ${amax}% (ECMWF 25 km, from ${LSET.start.slice(0, 4)})`;
+  document.getElementById("maptitle").textContent = `Share of daylight hours inside the window: ${title}`;
+  document.getElementById("fphelp").textContent = mode === "halo"
+    ? "Each cell: % of daylight hours with that low (across) and high (up) cloud cover, 10 % steps. Outlined: the window."
+    : `Each cell: % of daylight hours with that ${src === "mid" ? "mid" : "layer"} (up) and ${src === "mid" ? "low" : "warmer"} (across) cloud cover, 20 % steps, counting only hours with ${src === "mid" ? "high" : "colder"} cloud at most ${amax}%. Outlined: the window.`;
+  const cards = document.getElementById("cards"); cards.innerHTML = "";
+  const chosen = picked.map(n => SITES.find(s => s.n === n)).filter(Boolean);
+  if (!chosen.length) cards.innerHTML = `<p class="empty">Add a site with the search box, or click a dot on the map.</p>`;
+  chosen.forEach(s => cards.appendChild(fpCard(s)));
+  const ranked = SITES.map((s, i) => [s, vals[i]]).filter(x => !isNaN(x[1])).sort((a, b) => b[1] - a[1]);
+  rankList(document.getElementById("top"), ranked.slice(0, 20));
+  rankList(document.getElementById("bot"), ranked.slice(-20).reverse());
+}
+
+// ===================== Seasons mode =====================
+const SEASON_URL = "data/season.js";               // sets window.FP_SEASON
+let SSET = null, seasonReady = false;
+let sMeas = "pres", sThr = 20, sView = "timing", sLen = 18, sDays = 50, sRegion = "all";
+const NP = 73, LOW_MAX_DEFAULT = 40;
+const pDate = p => { const d = new Date(Date.UTC(2023, 0, 1 + Math.round(p * 5))); return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }); };
+const dDate = day => { const d = new Date(Date.UTC(2023, 0, 1 + ((Math.round(day) % 365) + 365) % 365)); return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }); };
+const pSpan = (start, len) => `${dDate(start * 5)} – ${dDate((start + len) * 5 - 1)}`;
+
+async function loadSeason() {
+  try {
+    const d = await fetchJSON(SEASON_URL, "FP_SEASON");
+    SSET = d.settings;
+    const byName = new Map(SITES.map(s => [s.n, s]));
+    d.sites.forEach(r => { const s = byName.get(r.n); if (s) s.S = { h: r.h }; });
+    seasonReady = true;
+    const b = document.querySelector('#modes [data-mode="season"]'); if (b) b.disabled = false;
+    update();
+  } catch (e) { console.warn("no season data", e); }
+}
+
+// per-site series for the current measure, cached
+function series(s) {
+  if (!s.S) return null;
+  const key = `${sMeas}|${sThr}`;
+  if (s.S.key === key) return s.S.c;
+  const tb = sThr / 10, tot = new Float64Array(NP), m = new Float64Array(NP);
+  for (let p = 0; p < NP; p++) {
+    const r = s.S.h[p];                       // [low<=40: 11 high bins] + [low>40: 11]
+    let t = 0, k = 0;
+    for (let i = 0; i < 22; i++) t += r[i];
+    for (let b = tb; b <= 10; b++) { k += r[b]; if (sMeas === "pres") k += r[11 + b]; }
+    tot[p] = t; m[p] = k;
+  }
+  const mx = Math.max(...tot), valid = Array.from(tot, t => t > 0 && t >= 0.25 * mx);
+  const share = Array.from(tot, (t, p) => valid[p] ? m[p] / t : NaN);
+  const win = n => {                          // circular running window share, valid pentads only
+    const out = new Array(NP).fill(NaN);
+    for (let a = 0; a < NP; a++) {
+      let T = 0, M = 0, nv = 0;
+      for (let j = 0; j < n; j++) { const p = (a + j) % NP; if (valid[p]) { T += tot[p]; M += m[p]; nv++; } }
+      if (nv >= 0.8 * n && T > 0) out[a] = M / T;
+    }
+    return out;
+  };
+  const w6 = win(6), smooth = Array.from({ length: NP }, (_, p) => w6[(p - 3 + NP) % NP]);   // centred 30 days
+  let X = 0, Y = 0, W = 0;
+  share.forEach((v, p) => { if (!isNaN(v)) { const th = 2 * Math.PI * (p + 0.5) / NP; X += v * Math.cos(th); Y += v * Math.sin(th); W += v; } });
+  const R = W ? Math.hypot(X, Y) / W : NaN, ang = ((Math.atan2(Y, X) / (2 * Math.PI)) + 1) % 1;
+  s.S.key = key; s.S.c = { tot, m, valid, share, smooth, win, R, peak: ang * NP, wins: {} };
+  return s.S.c;
+}
+function seasonOf(s) {
+  const c = series(s); if (!c) return null;
+  if (!c.wins[sLen]) {
+    const w = c.win(sLen); let ai = -1, qi = -1;
+    w.forEach((v, i) => { if (!isNaN(v)) { if (ai < 0 || v > w[ai]) ai = i; if (qi < 0 || v < w[qi]) qi = i; } });
+    c.wins[sLen] = ai < 0 ? null : { act: w[ai], actStart: ai, quiet: w[qi], quietStart: qi };
+  }
+  return c.wins[sLen];
+}
+function daysAbove(s) {
+  const c = series(s); if (!c) return NaN;
+  let n = 0, any = false;
+  c.smooth.forEach(v => { if (!isNaN(v)) { any = true; if (v >= sDays / 100) n++; } });
+  return any ? n * 5 : NaN;
+}
+function seasonValue(s) {
+  const c = series(s); if (!c) return NaN;
+  if (sView === "timing") return c.R;
+  if (sView === "days") return daysAbove(s);
+  const w = seasonOf(s); if (!w) return NaN;
+  return sView === "swing" ? w.act - w.quiet : sView === "active" ? w.act : w.quiet;
+}
+const fmtSV = v => isNaN(v) ? "–" : sView === "days" ? `${Math.round(v)} d` : (sView === "timing" || sView === "swing") ? v.toFixed(2) : pct(v);
+const measLabel = () => sMeas === "pres" ? `high cloud ≥ ${sThr}%` : `high cloud ≥ ${sThr}%, low ≤ ${(SSET && SSET.low_max) || LOW_MAX_DEFAULT}%`;
+function timingColor(c, rmax) {
+  const hue = d3.interpolateRainbow(c.peak / NP), t = Math.min(1, c.R / rmax);
+  return d3.interpolateRgb(getComputedStyle(document.documentElement).getPropertyValue("--land").trim() || "#ccc", hue)(0.12 + 0.88 * t);
+}
+
+function seasonUpdate() {
+  const vals = SITES.map(s => seasonValue(s));
+  const good = vals.filter(v => !isNaN(v)).sort(d3.ascending);
+  const cv = document.getElementById("lg"), ctx = cv.getContext("2d");
+  let colorOf;
+  if (sView === "timing") {
+    const rmax = Math.max(0.05, good.length ? d3.quantile(good, 0.95) : 0.3);
+    colorOf = (s, v) => timingColor(series(s), rmax);
+    for (let i = 0; i < cv.width; i++) { ctx.fillStyle = d3.interpolateRainbow(i / cv.width); ctx.fillRect(i, 0, 1, cv.height); }
+    document.getElementById("lg0").textContent = "Jan"; document.getElementById("lg1").textContent = "Dec";
+    document.getElementById("lgnote").textContent = "Colour: when the high-cloud season peaks. Pale: hardly any season. Click a dot to add it below.";
+  } else {
+    const max = sView === "days" ? 365 : Math.max(0.02, good.length ? d3.quantile(good, 0.98) : 1);
+    colorOf = (s, v) => d3.interpolateYlGnBu(0.08 + 0.92 * Math.min(1, v / max));
+    for (let i = 0; i < cv.width; i++) { ctx.fillStyle = d3.interpolateYlGnBu(0.08 + 0.92 * i / cv.width); ctx.fillRect(i, 0, 1, cv.height); }
+    document.getElementById("lg0").textContent = sView === "days" ? "0 d" : sView === "swing" ? "0" : "0%";
+    document.getElementById("lg1").textContent = sView === "days" ? "365 d" : fmtSV(max);
+    document.getElementById("lgnote").textContent = "Click a dot to add its year curve below.";
+  }
+  dots.attr("fill", (s, i) => isNaN(vals[i]) ? "none" : colorOf(s, vals[i]))
+      .classed("off", (s, i) => isNaN(vals[i])).classed("on", s => picked.includes(s.n));
+  dots.filter(s => picked.includes(s.n)).raise();
+  const L = sLen * 5;
+  const titles = {
+    timing: `When the high-cloud season peaks (${measLabel()})`,
+    swing: `Seasonality index: best ${L} days minus worst ${L} days (${measLabel()})`,
+    active: `Share of daylight hours in each site's best ${L} days (${measLabel()})`,
+    quiet: `Share of daylight hours in each site's worst ${L} days (${measLabel()})`,
+    days: `Days a year with at least ${sDays}% of daylight hours with ${measLabel()} (30-day average)`,
+  };
+  document.getElementById("maptitle").textContent = titles[sView] + ` · ECMWF 9 km, ${SSET.years[0]}–${SSET.years[1]}`;
+  document.getElementById("fphelp").textContent = `Year curve: share of daylight hours (30-day average). Grey bands: high cloud ≥ 20% split into thin (20–40%), medium (50–70%) and sheet (80–100%) cover of the model's 9 km box. Line: ${measLabel()}. Shaded: best ${L} days; hatched: worst ${L} days.`;
+  const cards = document.getElementById("cards"); cards.innerHTML = "";
+  const chosen = picked.map(n => SITES.find(s => s.n === n)).filter(Boolean);
+  if (!chosen.length) cards.innerHTML = `<p class="empty">Add a site with the search box, or click a dot on the map.</p>`;
+  chosen.forEach(s => cards.appendChild(seasonCard(s)));
+  const ranked = SITES.map((s, i) => [s, vals[i]]).filter(x => !isNaN(x[1])).sort((a, b) => b[1] - a[1]);
+  const rl = (el, arr) => { el.innerHTML = ""; arr.forEach(([s, v]) => { const li = document.createElement("li"); li.innerHTML = `${s.n}<span>${fmtSV(v)}</span>`; li.addEventListener("click", () => addSite(s.n)); el.appendChild(li); }); };
+  const rname = { timing: "most seasonal", swing: "largest seasonal swing", active: "highest best-season share", quiet: "highest worst-season share", days: "most days above the threshold" };
+  const lname = { timing: "least seasonal", swing: "smallest seasonal swing", active: "lowest best-season share", quiet: "lowest worst-season share", days: "fewest days above the threshold" };
+  document.getElementById("toph").textContent = rname[sView][0].toUpperCase() + rname[sView].slice(1);
+  document.getElementById("both").textContent = lname[sView][0].toUpperCase() + lname[sView].slice(1);
+  rl(document.getElementById("top"), ranked.slice(0, 20));
+  rl(document.getElementById("bot"), ranked.slice(-20).reverse());
+  drawStrip();
+}
+
+// ---- year curve (SVG), used in every mode
+function yearCurve(s, opts = {}) {
+  if (!s.S) return null;
+  const Wd = 300, Ht = opts.big ? 120 : 70, padL = 26, padB = 14, padT = 4;
+  const x = p => padL + (Wd - padL - 2) * p / NP, y = v => padT + (Ht - padT - padB) * (1 - v);
+  const h = s.S.h, tot = h.map(r => r.reduce((a, b) => a + b, 0)), mx = Math.max(...tot);
+  const ok = tot.map(t => t > 0 && t >= 0.25 * mx);
+  const sm = f => {                                  // centred 30-day average of f(p) counts
+    return Array.from({ length: NP }, (_, p) => {
+      let T = 0, M = 0, nv = 0;
+      for (let j = -3; j < 3; j++) { const q = (p + j + NP) % NP; if (ok[q]) { T += tot[q]; M += f(q); nv++; } }
+      return nv >= 4 && T ? M / T : NaN;
+    });
+  };
+  const band = (lo, hi) => q => { let k = 0; for (let b = lo; b <= hi; b++) k += h[q][b] + h[q][11 + b]; return k; };
+  const thin = sm(band(2, 4)), med = sm(band(5, 7)), sheet = sm(band(8, 10));
+  const c = series(s);
+  let svg = `<svg class="yc" viewBox="0 0 ${Wd} ${Ht}" role="img" aria-label="Year curve for ${s.n}">`;
+  for (let k = 0; k <= 4; k++) svg += `<line x1="${padL}" x2="${Wd - 2}" y1="${y(k / 4)}" y2="${y(k / 4)}" class="ycg"/>`;
+  svg += `<text x="${padL - 3}" y="${y(1) + 3}" class="yct" text-anchor="end">100</text><text x="${padL - 3}" y="${y(0.5) + 3}" class="yct" text-anchor="end">50</text><text x="${padL - 3}" y="${y(0) + 3}" class="yct" text-anchor="end">0</text>`;
+  if (opts.season) {
+    const w = seasonOf(s);
+    if (w) {
+      const rect = (st, cls) => { const a = st, b = st + sLen; const seg = (p0, p1) => `<rect x="${x(p0)}" y="${padT}" width="${x(p1) - x(p0)}" height="${Ht - padT - padB}" class="${cls}"/>`;
+        return b <= NP ? seg(a, b) : seg(a, NP) + seg(0, b - NP); };
+      svg += rect(w.actStart, "ycact") + rect(w.quietStart, "ycq");
+    }
+  }
+  if (opts.month) {                                  // month mode: mark the chosen month
+    const a = (opts.month - 1) * NP / 12, b = opts.month * NP / 12;
+    svg += `<rect x="${x(a)}" y="${padT}" width="${x(b) - x(a)}" height="${Ht - padT - padB}" class="ycact"/>`;
+  }
+  // stacked bands: sheet at the bottom, then medium, then thin
+  const area = (lo, hi, cls) => {
+    let top = "", bot = "", started = false, d = "";
+    const flush = () => { if (top) { d += `M${top}L${bot.split(" ").reverse().join("L")}Z`; } top = ""; bot = ""; };
+    for (let p = 0; p < NP; p++) {
+      if (isNaN(lo[p]) || isNaN(hi[p])) { flush(); continue; }
+      const xm = x(p + 0.5);
+      top += (top ? "L" : "") + `${xm},${y(hi[p])}`; bot += (bot ? " " : "") + `${xm},${y(lo[p])}`;
+    }
+    flush();
+    return `<path d="${d}" class="${cls}"/>`;
+  };
+  const zero = new Array(NP).fill(0), s1 = sheet, s2 = sheet.map((v, p) => v + med[p]), s3 = s2.map((v, p) => v + thin[p]);
+  svg += area(zero.map((v, p) => isNaN(s1[p]) ? NaN : 0), s1, "ycs") + area(s1, s2, "ycm") + area(s2, s3, "ycth");
+  if (c) {
+    let d = ""; c.smooth.forEach((v, p) => { if (isNaN(v)) return; d += (d && !isNaN(c.smooth[p - 1]) ? "L" : "M") + `${x(p + 0.5)},${y(v)}`; });
+    svg += `<path d="${d}" class="ycl"/>`;
+  }
+  ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"].forEach((t, i) => {
+    svg += `<text x="${x((i + 0.5) * NP / 12)}" y="${Ht - 3}" class="yct" text-anchor="middle">${t}</text>`;
+  });
+  return svg + "</svg>";
+}
+
+function seasonCard(s) {
+  const card = document.createElement("div"); card.className = "card";
+  const c = series(s), w = seasonOf(s), L = sLen * 5;
+  let stats = "No seasonal data for this site.";
+  if (c && w) {
+    // coverage split in the best season, of hours with high cloud >= 20 %
+    const split = st => { let th = 0, me = 0, sh = 0; for (let j = 0; j < sLen; j++) { const r = s.S.h[(st + j) % NP]; for (let b = 2; b <= 10; b++) { const k = r[b] + r[11 + b]; if (b <= 4) th += k; else if (b <= 7) me += k; else sh += k; } } const t = th + me + sh; return t ? [th / t, me / t, sh / t] : null; };
+    const sa = split(w.actStart), sq = split(w.quietStart);
+    stats = `<div>Best ${L} days: <b>${pct(w.act)}</b> · ${pSpan(w.actStart, sLen)}</div>
+      <div>Worst ${L} days: <b>${pct(w.quiet)}</b> · ${pSpan(w.quietStart, sLen)}</div>
+      <div>Seasonality index <b>${(w.act - w.quiet).toFixed(2)}</b> · peak ${pDate(c.peak)} · concentration ${c.R.toFixed(2)}</div>
+      <div>Days with ≥ ${sDays}%: <b>${Math.round(daysAbove(s))}</b></div>
+      ${sa ? `<div>High-cloud cover, best season: thin ${pct(sa[0])} · medium ${pct(sa[1])} · sheet ${pct(sa[2])}</div>` : ""}
+      ${sq ? `<div>High-cloud cover, worst season: thin ${pct(sq[0])} · medium ${pct(sq[1])} · sheet ${pct(sq[2])}</div>` : ""}`;
+  }
+  card.innerHTML = `<div class="head"><span class="name">${s.n}</span><span class="chip"><button type="button" aria-label="Remove ${s.n}">Remove</button></span></div>
+    <div class="meta">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""} · ${measLabel()}</div>
+    ${yearCurve(s, { big: true, season: true }) || ""}
+    <div class="sstats">${stats}</div>`;
+  card.querySelector("button").addEventListener("click", () => { picked = picked.filter(n => n !== s.n); update(); });
+  return card;
+}
+
+// ---- latitude-season strip
+const REGIONS = { all: [-180, 180], am: [-170, -30], eu: [-30, 60], as: [60, 180] };
+function drawStrip() {
+  const cv = document.getElementById("strip"); if (!cv || !seasonReady) return;
+  const [lo0, lo1] = REGIONS[sRegion], band = 2, top = 80, bot = -56, rows = (top - bot) / band;
+  const cellW = 10, cellH = 6, padL = 34, padT = 18;
+  cv.width = padL + NP * cellW + 2; cv.height = padT + rows * cellH + 2;
+  const ctx = cv.getContext("2d"); ctx.clearRect(0, 0, cv.width, cv.height);
+  const T = Array.from({ length: rows }, () => new Float64Array(NP)), M = Array.from({ length: rows }, () => new Float64Array(NP)), N = new Array(rows).fill(0);
+  SITES.forEach(s => {
+    if (!s.S || s.lo < lo0 || s.lo >= lo1 || s.la >= top || s.la < bot) return;
+    const c = series(s); if (!c) return;
+    const r = Math.floor((top - s.la) / band); N[r]++;
+    for (let p = 0; p < NP; p++) if (c.valid[p]) { T[r][p] += c.tot[p]; M[r][p] += c.m[p]; }
+  });
+  const fg = getComputedStyle(document.documentElement).getPropertyValue("--muted").trim() || "#666";
+  ctx.font = "10px IBM Plex Mono, monospace"; ctx.fillStyle = fg; ctx.textAlign = "center";
+  ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"].forEach((t, i) => ctx.fillText(t, padL + (i + 0.5) * NP / 12 * cellW, 10));
+  for (let r = 0; r < rows; r++) {
+    for (let p = 0; p < NP; p++) {
+      let t = 0, m = 0;
+      for (let j = -3; j < 3; j++) { const q = (p + j + NP) % NP; t += T[r][q]; m += M[r][q]; }
+      if (!N[r] || !t) continue;
+      ctx.fillStyle = d3.interpolateYlGnBu(0.08 + 0.92 * Math.min(1, m / t));
+      ctx.fillRect(padL + p * cellW, padT + r * cellH, cellW, cellH);
+    }
+    const la = top - r * band;
+    if (la % 20 === 0) { ctx.textAlign = "right"; ctx.fillStyle = fg; ctx.fillText(la === 0 ? "0°" : `${Math.abs(la)}°${la > 0 ? "N" : "S"}`, padL - 4, padT + r * cellH + 4); }
+  }
+  cv.dataset.meta = JSON.stringify({ padL, padT, cellW, cellH, top, band });
+  const lg = document.getElementById("stripLg"), lx = lg.getContext("2d");
+  for (let i = 0; i < lg.width; i++) { lx.fillStyle = d3.interpolateYlGnBu(0.08 + 0.92 * i / lg.width); lx.fillRect(i, 0, 1, lg.height); }
+  cv._grid = { T, M, N };
+}
+function stripTip(ev) {
+  const cv = ev.currentTarget, m = JSON.parse(cv.dataset.meta || "{}"), g = cv._grid, tipS = document.getElementById("striptip");
+  if (!g) return;
+  const r0 = cv.getBoundingClientRect(), sx = cv.width / r0.width, px = (ev.clientX - r0.left) * sx, py = (ev.clientY - r0.top) * sx;
+  const p = Math.floor((px - m.padL) / m.cellW), r = Math.floor((py - m.padT) / m.cellH);
+  if (p < 0 || p >= NP || r < 0 || r >= g.N.length || !g.N[r]) { tipS.textContent = "Hover the strip for values."; return; }
+  let t = 0, k = 0; for (let j = -3; j < 3; j++) { const q = (p + j + NP) % NP; t += g.T[r][q]; k += g.M[r][q]; }
+  const la = m.top - r * m.band;
+  tipS.textContent = `${la - m.band}°–${la}° · around ${pDate(p + 0.5)} · ${t ? pct(k / t) : "–"} of daylight hours with ${measLabel()} · ${g.N[r]} sites`;
+}
+
+document.getElementById("smeas").addEventListener("change", e => { sMeas = e.target.value; update(); });
+document.getElementById("sview").addEventListener("change", e => { sView = e.target.value; document.getElementById("sdaywrap").hidden = sView !== "days"; update(); });
+document.getElementById("sreg").addEventListener("change", e => { sRegion = e.target.value; drawStrip(); });
+document.getElementById("strip").addEventListener("pointermove", stripTip);
+const sLab = () => { document.getElementById("sthrv").textContent = sThr + "%"; document.getElementById("slenv").textContent = sLen * 5 + " days"; document.getElementById("sdayv").textContent = sDays + "%"; };
+[["sthr", v => sThr = v], ["slen", v => sLen = v], ["sday", v => sDays = v]].forEach(([id, set]) => {
+  const el = document.getElementById(id); el.addEventListener("input", () => { set(+el.value); sLab(); update(); });
+});
+sLab();
+
+function start() {
+load().catch(e => { document.getElementById('status').textContent = 'Could not load the data: ' + e.message; throw e; }).then(() => {
+  const opts = [];
+  if (SITES.some(s => s.m3)) opts.push(["mid", `ECMWF mid-cloud band · 9 km · ${SETTINGS.years[0]}–${SETTINGS.years[1]}`]);
+  if (LWIN.length) opts.push(["temp", `Temperature range · 25 km · ${LSET.start.slice(0, 4)}–`]);
+  opts.forEach(([v, l]) => { const o = document.createElement("option"); o.value = v; o.textContent = l; srcEl.appendChild(o); });
+  if (!opts.length) document.querySelector('#modes [data-mode="layer"]').disabled = true;
+  srcKind = opts.length ? opts[0][0] : "mid"; src = "mid";
+  if (LWIN.length) {
+    const warms = [...new Set(LWIN.map(w => +w.split("..")[0]))].sort((a, b) => b - a);
+    if (!warms.includes(wWarm)) wWarm = warms[0];
+    warmEl.innerHTML = warms.map(a => `<option value="${a}"${a === wWarm ? " selected" : ""}>${edgeLab(a)}</option>`).join("");
+    fillCold();
+  }
+  dots = gDots.selectAll("circle").data(SITES).join("circle").attr("class", "site")
+    .attr("cx", s => proj([s.lo, s.la])[0]).attr("cy", s => proj([s.lo, s.la])[1]).attr("r", dotR())
+    .on("pointerenter pointermove", (ev, s) => showTip(ev, s))
+    .on("pointerleave", () => { tip.hidden = true; })
+    .on("click", (ev, s) => addSite(s.n));
+  document.getElementById("status").textContent = `${SITES.length} sites`;
+  document.getElementById("foot").textContent =
+    `Data: ECMWF IFS via Open-Meteo (CC BY 4.0). High cloud and mid-band modes: 9 km low/mid/high cloud cover, hourly, ${SETTINGS.years[0]}–${SETTINGS.years[1]}. ` +
+    `ECMWF splits low/mid/high by pressure relative to the surface (0.8 and 0.45 of surface pressure), so at high-altitude sites its "mid" band reaches cirrus heights; those sites are hidden in mid-band mode unless included. ` +
+    (LSET ? `Temperature-range mode: 25 km pressure-level temperature and cloud cover (cloud derived from humidity), interpolated between 13 levels, from ${LSET.start}` +
+      (LSET.aloft_only ? "; a range that reaches the ground (surface air no warmer than its warm edge) counts as no layer. " : ". ") : "") +
+    `Daylight: sun at least ${SETTINGS.sun_min_deg}° above the horizon.`;
+  update();
+  loadSeason();
+}).catch(e => { document.getElementById("status").textContent = "Could not load the data: " + e.message; });
+}
+// fetch the data only after the page itself has loaded, so it shows at once
+if (document.readyState === "complete") setTimeout(start, 0); else window.addEventListener("load", () => setTimeout(start, 0));
+</script>

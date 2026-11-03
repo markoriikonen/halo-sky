@@ -1,0 +1,546 @@
+name,lat,lon,elev_m,country,population,kind
+"Adrar, Algeria",27.8743,-0.2939,,Algeria,43903,state/region capital
+"Annaba, Algeria",36.9,7.7667,,Algeria,206570,state/region capital
+"Aïn Defla, Algeria",36.264,1.9679,,Algeria,52276,state/region capital
+"Biskra, Algeria",34.8504,5.728,,Algeria,307987,state/region capital
+"Béchar, Algeria",31.6167,-2.2167,,Algeria,143382,state/region capital
+"Constantine, Algeria",36.365,6.6147,,Algeria,450097,state/region capital
+"Djelfa, Algeria",34.6728,3.263,,Algeria,154265,state/region capital
+"El Bayadh, Algeria",33.6832,1.0193,,Algeria,64632,state/region capital
+"El Oued, Algeria",33.3561,6.8632,,Algeria,134699,state/region capital
+"Ghardaïa, Algeria",32.4909,3.6735,,Algeria,93423,state/region capital
+"Illizi, Algeria",26.4833,8.4667,,Algeria,6629,state/region capital
+"Laghouat, Algeria",33.8,2.8651,,Algeria,113872,state/region capital
+"Naama, Algeria",33.2667,-0.3167,,Algeria,8390,state/region capital
+"Oran, Algeria",35.6991,-0.6359,,Algeria,645984,state/region capital
+"Ouargla, Algeria",31.9493,5.325,,Algeria,129402,state/region capital
+"Saïda, Algeria",34.8303,0.1517,,Algeria,127497,state/region capital
+"Sétif, Algeria",36.1911,5.4137,,Algeria,288461,state/region capital
+"Tamanrasset, Algeria",22.785,5.5228,,Algeria,73128,state/region capital
+"Tiaret, Algeria",35.371,1.317,,Algeria,178915,state/region capital
+"Tindouf, Algeria",27.6711,-8.1474,,Algeria,45966,state/region capital
+"Tlemcen, Algeria",34.8783,-1.315,,Algeria,132341,state/region capital
+"Tébessa, Algeria",35.4042,8.1242,,Algeria,634332,state/region capital
+"Cuito, Angola",-12.3833,16.9333,,Angola,113624,state/region capital
+"Huambo, Angola",-12.7761,15.7392,,Angola,226145,state/region capital
+"Lubango, Angola",-14.9172,13.4925,,Angola,102541,state/region capital
+"Malanje, Angola",-9.5402,16.341,,Angola,87046,state/region capital
+"Menongue, Angola",-14.6585,17.691,,Angola,32203,state/region capital
+"Namibe, Angola",-15.1961,12.1522,,Angola,80149,state/region capital
+"N’dalatando, Angola",-9.2978,14.9116,,Angola,383100,state/region capital
+"Ondjiva, Angola",-17.0667,15.7333,,Angola,10169,state/region capital
+"Saurimo, Angola",-9.6608,20.3915,,Angola,40498,state/region capital
+"Sumbe, Angola",-11.206,13.8437,,Angola,33277,state/region capital
+"Uíge, Angola",-7.6087,15.0613,,Angola,60008,state/region capital
+"Córdoba, Argentina",-31.4135,-64.181,,Argentina,1428214,state/region capital
+"Formosa, Argentina",-26.1849,-58.1731,,Argentina,221383,state/region capital
+"La Rioja, Argentina",-29.411,-66.8507,,Argentina,162620,state/region capital
+"Mendoza, Argentina",-32.8908,-68.8272,,Argentina,876884,state/region capital
+"Neuquén, Argentina",-38.9516,-68.0591,,Argentina,242092,state/region capital
+"Posadas, Argentina",-27.3671,-55.8961,,Argentina,323739,state/region capital
+"Resistencia, Argentina",-27.4606,-58.9839,,Argentina,387158,state/region capital
+"Río Gallegos, Argentina",-51.6226,-69.2181,,Argentina,85700,state/region capital
+"Salta, Argentina",-24.7859,-65.4117,,Argentina,512686,state/region capital
+"San Fernando del Valle de Catamarca, Argentina",-28.4696,-65.7852,,Argentina,188812,state/region capital
+"San Juan, Argentina",-31.5375,-68.5364,,Argentina,447048,state/region capital
+"San Luis, Argentina",-33.295,-66.3356,,Argentina,183982,state/region capital
+"San Miguel de Tucumán, Argentina",-26.8241,-65.2226,,Argentina,781023,state/region capital
+"Santa Fe, Argentina",-31.6488,-60.7087,,Argentina,489505,state/region capital
+"Santa Rosa, Argentina",-36.6167,-64.2833,,Argentina,111424,state/region capital
+"Santiago del Estero, Argentina",-27.7951,-64.2615,,Argentina,354692,state/region capital
+"Viedma, Argentina",-40.8135,-62.9967,,Argentina,48940,state/region capital
+"Melbourne, Australia",-37.814,144.9633,,Australia,4246375,state/region capital
+"Cobija, Bolivia",-11.0267,-68.7692,,Bolivia,26585,state/region capital
+"Cochabamba, Bolivia",-17.3895,-66.1568,,Bolivia,900414,state/region capital
+"Oruro, Bolivia",-17.9833,-67.15,,Bolivia,208684,state/region capital
+"Sucre, Bolivia",-19.0333,-65.2627,,Bolivia,224838,national capital
+"Tarija, Bolivia",-21.5355,-64.7296,,Bolivia,159269,state/region capital
+"Trinidad, Bolivia",-14.8333,-64.9,,Bolivia,84259,state/region capital
+"Aracaju, Brazil",-10.9111,-37.0717,,Brazil,490175,state/region capital
+"Belém, Brazil",-1.4558,-48.5044,,Brazil,1407737,state/region capital
+"Boa Vista, Brazil",2.8197,-60.6733,,Brazil,235150,state/region capital
+"Brasília, Brazil",-15.7797,-47.9297,,Brazil,2207718,national capital
+"Campo Grande, Brazil",-20.4428,-54.6464,,Brazil,729151,state/region capital
+"Cuiabá, Brazil",-15.5961,-56.0967,,Brazil,521934,state/region capital
+"Florianópolis, Brazil",-27.5967,-48.5492,,Brazil,412724,state/region capital
+"Fortaleza, Brazil",-3.7172,-38.5431,,Brazil,2400000,state/region capital
+"Goiânia, Brazil",-16.6786,-49.2539,,Brazil,1171195,state/region capital
+"João Pessoa, Brazil",-7.115,-34.8631,,Brazil,650883,state/region capital
+"Macapá, Brazil",0.0389,-51.0664,,Brazil,338936,state/region capital
+"Maceió, Brazil",-9.6658,-35.7353,,Brazil,954991,state/region capital
+"Manaus, Brazil",-3.1019,-60.025,,Brazil,1598210,state/region capital
+"Natal, Brazil",-5.795,-35.2094,,Brazil,763043,state/region capital
+"Palmas, Brazil",-10.1675,-48.3277,,Brazil,196272,state/region capital
+"Porto Velho, Brazil",-8.7619,-63.9039,,Brazil,306180,state/region capital
+"Recife, Brazil",-8.0539,-34.8811,,Brazil,1478098,state/region capital
+"Rio Branco, Brazil",-9.9747,-67.81,,Brazil,257642,state/region capital
+"Rio de Janeiro, Brazil",-22.9064,-43.1822,,Brazil,6023699,state/region capital
+"Salvador, Brazil",-12.9711,-38.5108,,Brazil,2711840,state/region capital
+"São Luís, Brazil",-2.5297,-44.3028,,Brazil,917237,state/region capital
+"Teresina, Brazil",-5.0892,-42.8019,,Brazil,744512,state/region capital
+"Vitória, Brazil",-20.3194,-40.3378,,Brazil,312656,state/region capital
+"Charlottetown, Canada",46.2346,-63.1256,,Canada,42402,state/region capital
+"Edmonton, Canada",53.5501,-113.4687,,Canada,712391,state/region capital
+"Fredericton, Canada",45.9454,-66.6656,,Canada,52337,state/region capital
+"Halifax, Canada",44.6464,-63.5729,,Canada,359111,state/region capital
+"Iqaluit, Canada",63.747,-68.5173,,Canada,6124,state/region capital
+"Ottawa, Canada",45.4112,-75.6981,,Canada,812129,national capital
+"Québec, Canada",46.8123,-71.2145,,Canada,528595,state/region capital
+"Regina, Canada",50.4501,-104.6178,,Canada,176183,state/region capital
+"Whitehorse, Canada",60.7161,-135.0538,,Canada,23272,state/region capital
+"Winnipeg, Canada",49.8844,-97.147,,Canada,632063,state/region capital
+"Yellowknife, Canada",62.4541,-114.3725,,Canada,15865,state/region capital
+"Am Djarass, Chad",16.0659,22.8431,,Chad,0,state/region capital
+"Am Timan, Chad",11.0297,20.2827,,Chad,28885,state/region capital
+"Ati, Chad",13.2154,18.3353,,Chad,24074,state/region capital
+"Bardaï, Chad",21.3549,17.0012,,Chad,0,state/region capital
+"Bongor, Chad",10.2806,15.3722,,Chad,27770,state/region capital
+"Fada, Chad",17.1853,21.5811,,Chad,23786,state/region capital
+"Faya-Largeau, Chad",17.9257,19.1043,,Chad,13400,state/region capital
+"Goz Beïda, Chad",12.2248,21.4103,,Chad,1000,state/region capital
+"Mao, Chad",14.1212,15.3103,,Chad,18031,state/region capital
+"Massakory, Chad",12.996,15.7293,,Chad,15406,state/region capital
+"Massenya, Chad",11.4039,16.1705,,Chad,3680,state/region capital
+"Mongo, Chad",12.1844,18.693,,Chad,27763,state/region capital
+"Moundou, Chad",8.5667,16.0833,,Chad,135167,state/region capital
+"Moussoro, Chad",13.6414,16.4894,,Chad,15190,state/region capital
+"Pala, Chad",9.3642,14.9046,,Chad,35466,state/region capital
+"Sarh, Chad",9.1429,18.3923,,Chad,102528,state/region capital
+"Concepción, Chile",-36.827,-73.0498,,Chile,215413,state/region capital
+"Coyhaique, Chile",-45.5752,-72.0662,,Chile,45787,state/region capital
+"La Serena, Chile",-29.9045,-71.2489,,Chile,154521,state/region capital
+"Punta Arenas, Chile",-53.1548,-70.9113,,Chile,117430,state/region capital
+"Talca, Chile",-35.4264,-71.6554,,Chile,197479,state/region capital
+"Temuco, Chile",-38.7396,-72.5984,,Chile,238129,state/region capital
+"Valdivia, Chile",-39.8142,-73.2459,,Chile,133419,state/region capital
+"Valparaíso, Chile",-33.036,-71.6296,,Chile,282448,state/region capital
+"Changchun, China",43.88,125.3228,,China,4193073,state/region capital
+"Chongqing, China",29.5628,106.5528,,China,7457600,state/region capital
+"Fuzhou, China",26.0614,119.3061,,China,1179720,state/region capital
+"Guangzhou, China",23.1167,113.25,,China,11071424,state/region capital
+"Guiyang, China",26.5833,106.7167,,China,1171633,state/region capital
+"Hangzhou, China",30.2936,120.1614,,China,6241971,state/region capital
+"Harbin, China",45.75,126.65,,China,5878939,state/region capital
+"Hefei, China",31.8639,117.2808,,China,3310268,state/region capital
+"Jinan, China",36.6683,116.9972,,China,4335989,state/region capital
+"Kunming, China",25.0389,102.7183,,China,3855346,state/region capital
+"Lanzhou, China",36.057,103.8399,,China,2628426,state/region capital
+"Nanchang, China",28.684,115.8531,,China,2357839,state/region capital
+"Nanjing, China",32.0617,118.7778,,China,7165292,state/region capital
+"Nanning, China",22.8167,108.3167,,China,803788,state/region capital
+"Shenyang, China",41.7922,123.4328,,China,6255921,state/region capital
+"Shijiazhuang, China",38.0414,114.4786,,China,2834942,state/region capital
+"Taiyuan, China",37.8694,112.5603,,China,3426519,state/region capital
+"Tianjin, China",39.1422,117.1767,,China,11090314,state/region capital
+"Wuhan, China",30.5833,114.2667,,China,9785388,state/region capital
+"Xining, China",36.6255,101.7574,,China,767531,state/region capital
+"Yinchuan, China",38.4681,106.2731,,China,475101,state/region capital
+"Zhengzhou, China",34.7578,113.6486,,China,4253913,state/region capital
+"Arauca, Colombia",7.0847,-70.7591,,Colombia,69264,state/region capital
+"Barranquilla, Colombia",10.9685,-74.7813,,Colombia,1380425,state/region capital
+"Bucaramanga, Colombia",7.1254,-73.1198,,Colombia,571820,state/region capital
+"Cartagena, Colombia",10.3997,-75.5144,,Colombia,952024,state/region capital
+"Florencia, Colombia",1.6144,-75.6062,,Colombia,130337,state/region capital
+"Inírida, Colombia",3.8653,-67.9239,,Colombia,7298,state/region capital
+"Leticia, Colombia",-4.2153,-69.9406,,Colombia,29666,state/region capital
+"Mitú, Colombia",1.2578,-70.2347,,Colombia,5917,state/region capital
+"Montería, Colombia",8.748,-75.8814,,Colombia,272420,state/region capital
+"Neiva, Colombia",2.9273,-75.2819,,Colombia,352855,state/region capital
+"Pasto, Colombia",1.2136,-77.2811,,Colombia,382236,state/region capital
+"Pereira, Colombia",4.8133,-75.6961,,Colombia,440118,state/region capital
+"Popayán, Colombia",2.4382,-76.6132,,Colombia,258653,state/region capital
+"Puerto Carreño, Colombia",6.189,-67.4859,,Colombia,10216,state/region capital
+"Quibdó, Colombia",5.6919,-76.6583,,Colombia,75104,state/region capital
+"Riohacha, Colombia",11.5444,-72.9072,,Colombia,92431,state/region capital
+"San Andrés, Colombia",12.5832,-81.7064,,Colombia,58257,state/region capital
+"San José del Guaviare, Colombia",2.5729,-72.6459,,Colombia,22136,state/region capital
+"Tunja, Colombia",5.5353,-73.3678,,Colombia,117479,state/region capital
+"Yopal, Colombia",5.3377,-72.3959,,Colombia,61029,state/region capital
+"Boende, DR Congo",-0.2816,20.8805,,DR Congo,32091,state/region capital
+"Bukavu, DR Congo",-2.4908,28.8428,,DR Congo,225389,state/region capital
+"Bunia, DR Congo",1.5594,30.2522,,DR Congo,96764,state/region capital
+"Buta, DR Congo",2.7858,24.73,,DR Congo,50130,state/region capital
+"Gbadolite, DR Congo",4.279,21.0028,,DR Congo,50493,state/region capital
+"Inongo, DR Congo",-1.9275,18.2881,,DR Congo,40113,state/region capital
+"Isiro, DR Congo",2.7739,27.616,,DR Congo,127076,state/region capital
+"Kamina, DR Congo",-8.7351,24.998,,DR Congo,73557,state/region capital
+"Kananga, DR Congo",-5.8962,22.4166,,DR Congo,463546,state/region capital
+"Kindu, DR Congo",-2.9437,25.9224,,DR Congo,135698,state/region capital
+"Kisangani, DR Congo",0.5153,25.191,,DR Congo,539158,state/region capital
+"Lubumbashi, DR Congo",-11.6609,27.4794,,DR Congo,1373770,state/region capital
+"Luebo, DR Congo",-5.3522,21.4219,,DR Congo,35183,state/region capital
+"Lusambo, DR Congo",-4.975,23.4439,,DR Congo,41416,state/region capital
+"Matadi, DR Congo",-5.8386,13.4631,,DR Congo,180109,state/region capital
+"Mbuji-Mayi, DR Congo",-6.136,23.5898,,DR Congo,874761,state/region capital
+"Al Khārijah, Egypt",25.4514,30.5464,,Egypt,67700,state/region capital
+"Al Minyā, Egypt",28.0919,30.7581,,Egypt,227150,state/region capital
+"Aswan, Egypt",24.0908,32.8994,,Egypt,241261,state/region capital
+"Asyūţ, Egypt",27.181,31.1837,,Egypt,420585,state/region capital
+"Banī Suwayf, Egypt",29.0744,31.0979,,Egypt,189624,state/region capital
+"El-Tor, Egypt",28.2417,33.6222,,Egypt,14972,state/region capital
+"Luxor, Egypt",25.6989,32.6421,,Egypt,422407,state/region capital
+"Mersa Matruh, Egypt",31.3529,27.2372,,Egypt,62042,state/region capital
+"Port Said, Egypt",31.2653,32.3019,,Egypt,538378,state/region capital
+"Suez, Egypt",29.9737,32.5263,,Egypt,488125,state/region capital
+"Bahir Dar, Ethiopia",11.5936,37.3908,,Ethiopia,168899,state/region capital
+"Dire Dawa, Ethiopia",9.5931,41.8661,,Ethiopia,252279,state/region capital
+"Gambēla, Ethiopia",8.25,34.5833,,Ethiopia,42366,state/region capital
+"Hawassa, Ethiopia",7.0621,38.4763,,Ethiopia,133097,state/region capital
+"Jijiga, Ethiopia",9.35,42.8,,Ethiopia,56821,state/region capital
+"Mek'ele, Ethiopia",13.4967,39.4753,,Ethiopia,215546,state/region capital
+"Semera, Ethiopia",11.7934,41.0058,,Ethiopia,833,state/region capital
+"Āsosa, Ethiopia",10.0667,34.5333,,Ethiopia,30512,state/region capital
+"Aizawl, India",23.7289,92.7179,,India,265331,state/region capital
+"Bhopal, India",23.2547,77.4029,,India,1599914,state/region capital
+"Chandigarh, India",30.7363,76.7884,,India,960787,state/region capital
+"Daman, India",20.4143,72.8324,,India,39737,state/region capital
+"Dehra Dūn, India",30.3244,78.0339,,India,522081,state/region capital
+"Gandhinagar, India",23.2167,72.6833,,India,195985,state/region capital
+"Gangtok, India",27.3257,88.6122,,India,30700,state/region capital
+"Imphal, India",24.8081,93.9442,,India,223523,state/region capital
+"Itānagar, India",27.0869,93.6099,,India,44971,state/region capital
+"Jaipur, India",26.9196,75.7878,,India,2711758,state/region capital
+"Kargil, India",34.5577,76.1262,,India,13838,state/region capital
+"Kavaratti, India",10.5669,72.642,,India,10688,state/region capital
+"Lucknow, India",26.8393,80.9231,,India,2472011,state/region capital
+"Panaji, India",15.4957,73.8262,,India,65586,state/region capital
+"Patna, India",25.5941,85.1356,,India,1599920,state/region capital
+"Port Blair, India",11.6661,92.7464,,India,112050,state/region capital
+"Puducherry, India",11.9338,79.8298,,India,227411,state/region capital
+"Raipur, India",21.2333,81.6333,,India,679995,state/region capital
+"Ranchi, India",23.3432,85.3094,,India,846454,state/region capital
+"Shillong, India",25.5689,91.8831,,India,132842,state/region capital
+"Srinagar, India",34.0857,74.8055,,India,975857,state/region capital
+"Thiruvananthapuram, India",8.4855,76.9492,,India,784153,state/region capital
+"Ambon, Indonesia",-3.6958,128.1833,,Indonesia,355596,state/region capital
+"Banda Aceh, Indonesia",5.5417,95.3333,,Indonesia,250757,state/region capital
+"Bandar Lampung, Indonesia",-5.4292,105.2611,,Indonesia,800348,state/region capital
+"Bandung, Indonesia",-6.9222,107.6069,,Indonesia,1699719,state/region capital
+"Banjarmasin, Indonesia",-3.3199,114.5907,,Indonesia,572837,state/region capital
+"Bengkulu, Indonesia",-3.8004,102.2655,,Indonesia,309712,state/region capital
+"Denpasar, Indonesia",-8.65,115.2167,,Indonesia,834881,state/region capital
+"Gorontalo, Indonesia",0.5375,123.0625,,Indonesia,144195,state/region capital
+"Jambi City, Indonesia",-1.6,103.6167,,Indonesia,420323,state/region capital
+"Jayapura, Indonesia",-2.5337,140.7181,,Indonesia,134895,state/region capital
+"Kendari, Indonesia",-3.9778,122.5151,,Indonesia,195006,state/region capital
+"Kupang, Indonesia",-10.1708,123.6069,,Indonesia,282396,state/region capital
+"Makassar, Indonesia",-5.1486,119.4319,,Indonesia,1321717,state/region capital
+"Mamuju, Indonesia",-2.6806,118.8861,,Indonesia,15000,state/region capital
+"Manado, Indonesia",1.4822,124.8489,,Indonesia,451893,state/region capital
+"Manokwari, Indonesia",-0.8629,134.064,,Indonesia,53190,state/region capital
+"Medan, Indonesia",3.5833,98.6667,,Indonesia,1750971,state/region capital
+"Padang, Indonesia",-0.9492,100.3543,,Indonesia,840352,state/region capital
+"Palangkaraya, Indonesia",-2.2083,113.9167,,Indonesia,148139,state/region capital
+"Palembang, Indonesia",-2.9167,104.7458,,Indonesia,1441500,state/region capital
+"Palu, Indonesia",-0.9083,119.8708,,Indonesia,282431,state/region capital
+"Pangkalpinang, Indonesia",-2.1291,106.1138,,Indonesia,125933,state/region capital
+"Pekanbaru, Indonesia",0.5167,101.4417,,Indonesia,703956,state/region capital
+"Samarinda, Indonesia",-0.4917,117.1458,,Indonesia,355160,state/region capital
+"Semarang, Indonesia",-6.9931,110.4208,,Indonesia,1288084,state/region capital
+"Sofifi, Indonesia",0.7373,127.5588,,Indonesia,36197,state/region capital
+"Surabaya, Indonesia",-7.2492,112.7508,,Indonesia,2374658,state/region capital
+"Tanjung Selor, Indonesia",2.8375,117.3653,,Indonesia,0,state/region capital
+"Ahvaz, Iran",31.319,48.6842,,Iran,841145,state/region capital
+"Ardabīl, Iran",38.2498,48.2933,,Iran,410753,state/region capital
+"Arāk, Iran",34.0949,49.6981,,Iran,503647,state/region capital
+"Bandar Abbas, Iran",27.1865,56.2808,,Iran,352173,state/region capital
+"Bojnūrd, Iran",37.4747,57.329,,Iran,192041,state/region capital
+"Bushehr, Iran",28.9689,50.8366,,Iran,165377,state/region capital
+"Bīrjand, Iran",32.8663,59.2211,,Iran,196982,state/region capital
+"Gorgān, Iran",36.8427,54.4439,,Iran,244937,state/region capital
+"Hamadān, Iran",34.7992,48.5146,,Iran,528256,state/region capital
+"Isfahan, Iran",32.6525,51.6746,,Iran,1547164,state/region capital
+"Kerman, Iran",30.2832,57.0788,,Iran,577514,state/region capital
+"Kermanshah, Iran",34.3142,47.065,,Iran,621100,state/region capital
+"Khorramabad, Iran",33.4878,48.3558,,Iran,329825,state/region capital
+"Mashhad, Iran",36.3156,59.568,,Iran,2307177,state/region capital
+"Orūmīyeh, Iran",37.5527,45.0761,,Iran,577307,state/region capital
+"Qazvin, Iran",36.2688,50.0041,,Iran,333635,state/region capital
+"Qom, Iran",34.6401,50.8764,,Iran,900000,state/region capital
+"Rasht, Iran",37.2761,49.5886,,Iran,594590,state/region capital
+"Sanandaj, Iran",35.315,46.9988,,Iran,349176,state/region capital
+"Sari, Iran",36.5633,53.0601,,Iran,255396,state/region capital
+"Semnan, Iran",35.5769,53.392,,Iran,124826,state/region capital
+"Shiraz, Iran",29.6103,52.5311,,Iran,1249942,state/region capital
+"Tabriz, Iran",38.08,46.2919,,Iran,1424641,state/region capital
+"Yasuj, Iran",30.6682,51.588,,Iran,96786,state/region capital
+"Yazd, Iran",31.8972,54.3675,,Iran,477905,state/region capital
+"Zahedan, Iran",29.4963,60.8629,,Iran,551980,state/region capital
+"Zanjān, Iran",36.6764,48.4963,,Iran,357471,state/region capital
+"Aktau, Kazakhstan",43.65,51.1667,,Kazakhstan,147443,state/region capital
+"Aktobe, Kazakhstan",50.2797,57.2072,,Kazakhstan,262457,state/region capital
+"Atyrau, Kazakhstan",47.1167,51.8833,,Kazakhstan,180000,state/region capital
+"Baikonur, Kazakhstan",45.6167,63.3167,,Kazakhstan,70000,state/region capital
+"Karagandy, Kazakhstan",49.8019,73.1021,,Kazakhstan,451800,state/region capital
+"Kokshetau, Kazakhstan",53.2833,69.4,,Kazakhstan,124444,state/region capital
+"Kostanay, Kazakhstan",53.2144,63.6246,,Kazakhstan,210000,state/region capital
+"Kyzylorda, Kazakhstan",44.8528,65.5092,,Kazakhstan,300000,state/region capital
+"Nur-Sultan, Kazakhstan",51.1801,71.446,,Kazakhstan,345604,national capital
+"Oral, Kazakhstan",51.2333,51.3667,,Kazakhstan,200000,state/region capital
+"Pavlodar, Kazakhstan",52.2833,76.9667,,Kazakhstan,329002,state/region capital
+"Petropavl, Kazakhstan",54.8667,69.15,,Kazakhstan,200920,state/region capital
+"Shymkent, Kazakhstan",42.3,69.6,,Kazakhstan,414032,state/region capital
+"Taldykorgan, Kazakhstan",45.0156,78.3739,,Kazakhstan,116558,state/region capital
+"Taraz, Kazakhstan",42.9,71.3667,,Kazakhstan,358153,state/region capital
+"Turkestan, Kazakhstan",43.2973,68.2518,,Kazakhstan,97360,state/region capital
+"Ust-Kamenogorsk, Kazakhstan",49.9714,82.6059,,Kazakhstan,319067,state/region capital
+"Ajdabiya, Libya",30.7554,20.2263,,Libya,134358,state/region capital
+"Benghazi, Libya",32.1149,20.0686,,Libya,650629,state/region capital
+"Darnah, Libya",32.767,22.6367,,Libya,78782,state/region capital
+"Ghat, Libya",24.9633,10.18,,Libya,24347,state/region capital
+"Hūn, Libya",29.1268,15.9477,,Libya,18878,state/region capital
+"Mişrātah, Libya",32.3753,15.0925,,Libya,386120,state/region capital
+"Murzuq, Libya",25.9155,13.9184,,Libya,43732,state/region capital
+"Nālūt, Libya",31.8685,10.9812,,Libya,26256,state/region capital
+"Sirte, Libya",31.2089,16.5887,,Libya,128123,state/region capital
+"Tobruk, Libya",32.0896,23.9538,,Libya,121052,state/region capital
+"Ubari, Libya",26.5903,12.7751,,Libya,42975,state/region capital
+"Zuwārah, Libya",32.9312,12.082,,Libya,45000,state/region capital
+"Gao, Mali",16.2717,-0.0447,,Mali,87000,state/region capital
+"Kayes, Mali",14.4469,-11.4445,,Mali,78406,state/region capital
+"Kidal, Mali",18.4411,1.4078,,Mali,11643,state/region capital
+"Mopti, Mali",14.4843,-4.183,,Mali,108456,state/region capital
+"Ménaka, Mali",15.9182,2.4022,,Mali,9110,state/region capital
+"Sikasso, Mali",11.3176,-5.6665,,Mali,144786,state/region capital
+"Ségou, Mali",13.4317,-6.2157,,Mali,92552,state/region capital
+"Taoudenni, Mali",22.6744,-3.9789,,Mali,3019,state/region capital
+"Timbuktu, Mali",16.7735,-3.0074,,Mali,32460,state/region capital
+"Aioun, Mauritania",16.6614,-9.6149,,Mauritania,12635,state/region capital
+"Akjoujt, Mauritania",19.7466,-14.3853,,Mauritania,11500,state/region capital
+"Aleg, Mauritania",17.0531,-13.9131,,Mauritania,15211,state/region capital
+"Atar, Mauritania",20.5177,-13.0486,,Mauritania,24021,state/region capital
+"Kaédi, Mauritania",16.1503,-13.5037,,Mauritania,55374,state/region capital
+"Kiffa, Mauritania",16.6207,-11.4021,,Mauritania,40281,state/region capital
+"Nouadhibou, Mauritania",20.9419,-17.0384,,Mauritania,72337,state/region capital
+"Néma, Mauritania",16.617,-7.2565,,Mauritania,60000,state/region capital
+"Rosso, Mauritania",16.5138,-15.805,,Mauritania,48922,state/region capital
+"Sélibaby, Mauritania",15.1585,-12.1843,,Mauritania,18424,state/region capital
+"Tidjikja, Mauritania",18.5564,-11.4271,,Mauritania,6000,state/region capital
+"Zouerate, Mauritania",22.7354,-12.4713,,Mauritania,38000,state/region capital
+"Aguascalientes, Mexico",21.8823,-102.2826,,Mexico,722250,state/region capital
+"Campeche, Mexico",19.8439,-90.5255,,Mexico,220389,state/region capital
+"Chetumal, Mexico",18.5141,-88.3038,,Mexico,151243,state/region capital
+"Chihuahua, Mexico",28.6353,-106.0889,,Mexico,809232,state/region capital
+"Chilpancingo, Mexico",17.5506,-99.5058,,Mexico,187251,state/region capital
+"Ciudad Victoria, Mexico",23.7417,-99.146,,Mexico,305155,state/region capital
+"Colima, Mexico",19.25,-103.7271,,Mexico,137383,state/region capital
+"Culiacán, Mexico",24.7903,-107.3878,,Mexico,675773,state/region capital
+"Guadalajara, Mexico",20.6668,-103.3918,,Mexico,1495182,state/region capital
+"Guanajuato, Mexico",21.0186,-101.2591,,Mexico,72237,state/region capital
+"Hermosillo, Mexico",29.1026,-110.9773,,Mexico,715061,state/region capital
+"La Paz, Mexico",24.1444,-110.3005,,Mexico,215178,state/region capital
+"Mexicali, Mexico",32.6278,-115.4545,,Mexico,689775,state/region capital
+"Monterrey, Mexico",25.6751,-100.3185,,Mexico,1135512,state/region capital
+"Morelia, Mexico",19.7008,-101.1844,,Mexico,597511,state/region capital
+"Oaxaca, Mexico",17.0654,-96.7237,,Mexico,255029,state/region capital
+"Puebla, Mexico",19.0379,-98.2035,,Mexico,1434062,state/region capital
+"San Luis Potosí, Mexico",22.1498,-100.9792,,Mexico,722772,state/region capital
+"Santiago de Querétaro, Mexico",20.5881,-100.3881,,Mexico,626495,state/region capital
+"Tepic, Mexico",21.5095,-104.8957,,Mexico,332863,state/region capital
+"Tuxtla, Mexico",16.7597,-93.1131,,Mexico,537102,state/region capital
+"Villahermosa, Mexico",17.9869,-92.9303,,Mexico,353577,state/region capital
+"Xalapa de Enríquez, Mexico",19.5312,-96.9159,,Mexico,424755,state/region capital
+"Zacatecas, Mexico",22.7684,-102.5814,,Mexico,129011,state/region capital
+"Altai, Mongolia",46.3722,96.2583,,Mongolia,15800,state/region capital
+"Arvayheer, Mongolia",46.2639,102.775,,Mongolia,25622,state/region capital
+"Baruun-Urt, Mongolia",46.6806,113.2792,,Mongolia,15805,state/region capital
+"Bayanhongor, Mongolia",46.1944,100.7181,,Mongolia,26252,state/region capital
+"Choibalsan, Mongolia",48.0726,114.5326,,Mongolia,23,state/region capital
+"Choyr, Mongolia",46.3611,108.3611,,Mongolia,9895,state/region capital
+"Dalandzadgad, Mongolia",43.5708,104.425,,Mongolia,15093,state/region capital
+"Darhan, Mongolia",49.4867,105.9228,,Mongolia,74300,state/region capital
+"Erdenet, Mongolia",49.0333,104.0833,,Mongolia,79647,state/region capital
+"Khovd, Mongolia",48.0056,91.6419,,Mongolia,30500,state/region capital
+"Mandalgovi, Mongolia",45.7625,106.2708,,Mongolia,15430,state/region capital
+"Murun-kuren, Mongolia",49.6342,100.1625,,Mongolia,27690,state/region capital
+"Saynshand, Mongolia",44.8824,110.1163,,Mongolia,19891,state/region capital
+"Tsetserleg, Mongolia",47.475,101.4542,,Mongolia,5876,state/region capital
+"Uliastay, Mongolia",47.7417,96.8444,,Mongolia,16240,state/region capital
+"Undurkhaan, Mongolia",47.3194,110.6556,,Mongolia,14723,state/region capital
+"Ölgii, Mongolia",48.9683,89.9625,,Mongolia,28400,state/region capital
+"Agadez, Niger",16.9733,7.9911,,Niger,124324,state/region capital
+"Diffa, Niger",13.3154,12.6113,,Niger,27948,state/region capital
+"Dosso, Niger",13.049,3.1937,,Niger,49750,state/region capital
+"Maradi, Niger",13.5,7.1017,,Niger,163487,state/region capital
+"Tahoua, Niger",14.8888,5.2692,,Niger,80425,state/region capital
+"Tillabéri, Niger",14.2071,1.4542,,Niger,19262,state/region capital
+"Zinder, Niger",13.8072,8.9881,,Niger,191424,state/region capital
+"Ayacucho, Peru",-13.1588,-74.2232,,Peru,140033,state/region capital
+"Cajamarca, Peru",-7.1638,-78.5003,,Peru,135000,state/region capital
+"Chachapoyas, Peru",-6.2317,-77.869,,Peru,20279,state/region capital
+"Huacho, Peru",-11.1067,-77.605,,Peru,54545,state/region capital
+"Huancayo, Peru",-12.0651,-75.2049,,Peru,376657,state/region capital
+"Huánuco, Peru",-9.9306,-76.2422,,Peru,147959,state/region capital
+"Iquitos, Peru",-3.7491,-73.2538,,Peru,437620,state/region capital
+"Moyobamba, Peru",-6.0342,-76.9717,,Peru,44276,state/region capital
+"Puno, Peru",-15.8422,-70.0199,,Peru,116552,state/region capital
+"Trujillo, Peru",-8.116,-79.03,,Peru,747450,state/region capital
+"Tumbes, Peru",-3.5669,-80.4515,,Peru,109223,state/region capital
+"Bacolod City, Philippines",10.6667,122.95,,Philippines,454898,provincial capital
+"Baguio, Philippines",16.4164,120.5931,,Philippines,272714,state/region capital
+"Basco, Philippines",20.4487,121.9702,,Philippines,7297,provincial capital
+"Butuan, Philippines",8.9492,125.5436,,Philippines,309709,state/region capital
+"Cagayan de Oro, Philippines",8.4822,124.6472,,Philippines,445103,provincial capital
+"Cebu City, Philippines",10.3167,123.8907,,Philippines,798634,state/region capital
+"Cotabato, Philippines",7.2236,124.2464,,Philippines,179433,state/region capital
+"Daet, Philippines",14.1122,122.9553,,Philippines,78142,provincial capital
+"Davao, Philippines",7.0731,125.6128,,Philippines,1212504,state/region capital
+"Koronadal, Philippines",6.5031,124.8469,,Philippines,125502,state/region capital
+"Legaspi, Philippines",13.1412,123.7407,,Philippines,179481,provincial capital
+"Lucena, Philippines",13.9314,121.6172,,Philippines,228758,provincial capital
+"Pagadian, Philippines",7.8257,123.437,,Philippines,186852,state/region capital
+"Roxas City, Philippines",11.5853,122.7511,,Philippines,102688,provincial capital
+"San Jose, Philippines",10.745,121.9415,,Philippines,0,provincial capital
+"San Jose, Philippines",10.18,125.5683,,Philippines,0,provincial capital
+"Tacloban, Philippines",11.2433,125.0047,,Philippines,242089,provincial capital
+"Talipao, Philippines",5.9764,121.1161,,Philippines,0,provincial capital
+"Tarlac City, Philippines",15.4802,120.5979,,Philippines,183930,provincial capital
+"Tuguegarao, Philippines",17.6158,121.7228,,Philippines,115105,state/region capital
+"Zamboanga, Philippines",6.9103,122.0739,,Philippines,457623,provincial capital
+"Abakan, Russia",53.7156,91.4292,,Russia,167289,state/region capital
+"Anadyr, Russia",64.7342,177.5103,,Russia,10332,state/region capital
+"Arkhangel’sk, Russia",64.5401,40.5433,,Russia,356051,state/region capital
+"Astrakhan, Russia",46.3497,48.0408,,Russia,502533,state/region capital
+"Barnaul, Russia",53.3606,83.7636,,Russia,599579,state/region capital
+"Belgorod, Russia",50.6107,36.5802,,Russia,345289,state/region capital
+"Birobidzhan, Russia",48.7928,132.9239,,Russia,76146,state/region capital
+"Blagoveshchensk, Russia",50.2796,127.5405,,Russia,221296,state/region capital
+"Bryansk, Russia",53.2521,34.3717,,Russia,427236,state/region capital
+"Cheboksary, Russia",56.1322,47.2519,,Russia,446781,state/region capital
+"Chelyabinsk, Russia",55.154,61.4291,,Russia,1062919,state/region capital
+"Chita, Russia",52.0317,113.5009,,Russia,308500,state/region capital
+"Elista, Russia",46.3078,44.2558,,Russia,106971,state/region capital
+"Gorno-Altaysk, Russia",51.9606,85.9189,,Russia,54917,state/region capital
+"Irkutsk, Russia",52.2978,104.2964,,Russia,586695,state/region capital
+"Izhevsk, Russia",56.8498,53.2045,,Russia,631038,state/region capital
+"Kaliningrad, Russia",54.7065,20.511,,Russia,434954,state/region capital
+"Kazan, Russia",55.7887,49.1221,,Russia,1104738,state/region capital
+"Kemerovo, Russia",55.3333,86.0833,,Russia,477090,state/region capital
+"Khabarovsk, Russia",48.4827,135.0838,,Russia,579000,state/region capital
+"Khanty-Mansiysk, Russia",61.0042,69.0019,,Russia,67800,state/region capital
+"Kirov, Russia",58.5966,49.6601,,Russia,457383,state/region capital
+"Krasnodar, Russia",45.0448,38.976,,Russia,649851,state/region capital
+"Krasnoyarsk, Russia",56.0184,92.8672,,Russia,927200,state/region capital
+"Kurgan, Russia",55.45,65.3333,,Russia,343129,state/region capital
+"Kursk, Russia",51.7373,36.1874,,Russia,409431,state/region capital
+"Kyzyl, Russia",51.7108,94.4534,,Russia,108240,state/region capital
+"Lipetsk, Russia",52.6031,39.5708,,Russia,515655,state/region capital
+"Magadan, Russia",59.5638,150.8035,,Russia,95282,state/region capital
+"Makhachkala, Russia",42.9764,47.5024,,Russia,497959,state/region capital
+"Maykop, Russia",44.6078,40.1058,,Russia,144055,state/region capital
+"Murmansk, Russia",68.9792,33.0925,,Russia,319263,state/region capital
+"Nar'yan-Mar, Russia",67.6387,53.0037,,Russia,18041,state/region capital
+"Nizhniy Novgorod, Russia",56.3287,44.002,,Russia,1284164,state/region capital
+"Novosibirsk, Russia",55.0415,82.9346,,Russia,1419007,state/region capital
+"Omsk, Russia",54.9924,73.3686,,Russia,1129281,state/region capital
+"Orenburg, Russia",51.7727,55.0988,,Russia,550204,state/region capital
+"Orël, Russia",52.9651,36.0785,,Russia,324200,state/region capital
+"Penza, Russia",53.2007,45.0046,,Russia,512602,state/region capital
+"Perm, Russia",58.0105,56.2502,,Russia,982419,state/region capital
+"Petropavlovsk-Kamchatsky, Russia",53.0444,158.6508,,Russia,187282,state/region capital
+"Petrozavodsk, Russia",61.7849,34.3469,,Russia,265025,state/region capital
+"Pskov, Russia",57.8136,28.3496,,Russia,201990,state/region capital
+"Rostov-na-Donu, Russia",47.2313,39.7233,,Russia,1074482,state/region capital
+"Ryazan’, Russia",54.6269,39.6916,,Russia,520173,state/region capital
+"Saint Petersburg, Russia",59.9386,30.3141,,Russia,5028000,state/region capital
+"Salekhard, Russia",66.53,66.6019,,Russia,38025,state/region capital
+"Samara, Russia",53.2001,50.15,,Russia,1134730,state/region capital
+"Saransk, Russia",54.1838,45.1749,,Russia,303394,state/region capital
+"Saratov, Russia",51.5406,46.0086,,Russia,863725,state/region capital
+"Smolensk, Russia",54.7818,32.0401,,Russia,320991,state/region capital
+"Stavropol’, Russia",45.0428,41.9734,,Russia,363064,state/region capital
+"Syktyvkar, Russia",61.664,50.815,,Russia,230139,state/region capital
+"Tambov, Russia",52.7317,41.4433,,Russia,290933,state/region capital
+"Tomsk, Russia",56.4977,84.9744,,Russia,485519,state/region capital
+"Tula, Russia",54.1961,37.6182,,Russia,468825,state/region capital
+"Tver, Russia",56.8584,35.9006,,Russia,400212,state/region capital
+"Tyumen, Russia",57.1522,65.5272,,Russia,519119,state/region capital
+"Ufa, Russia",54.7431,55.9678,,Russia,1033338,state/region capital
+"Ulan-Ude, Russia",51.8272,107.6063,,Russia,360278,state/region capital
+"Ulyanovsk, Russia",54.3282,48.3866,,Russia,640680,state/region capital
+"Velikiy Novgorod, Russia",58.5213,31.271,,Russia,215062,state/region capital
+"Vladikavkaz, Russia",43.0367,44.6678,,Russia,317370,state/region capital
+"Vladimir, Russia",56.1365,40.3966,,Russia,310024,state/region capital
+"Vladivostok, Russia",43.1056,131.8735,,Russia,587022,state/region capital
+"Volgograd, Russia",48.7194,44.5018,,Russia,1011417,state/region capital
+"Vologda, Russia",59.2239,39.884,,Russia,314900,state/region capital
+"Voronezh, Russia",51.672,39.1843,,Russia,848752,state/region capital
+"Yakutsk, Russia",62.0339,129.7331,,Russia,235600,state/region capital
+"Yaroslavl, Russia",57.6299,39.8737,,Russia,606730,state/region capital
+"Yekaterinburg, Russia",56.8519,60.6122,,Russia,1349772,state/region capital
+"Yuzhno-Sakhalinsk, Russia",46.9541,142.736,,Russia,176484,state/region capital
+"Abha, Saudi Arabia",18.2164,42.5053,,Saudi Arabia,210886,state/region capital
+"Al Bahah, Saudi Arabia",20.0129,41.4677,,Saudi Arabia,88419,state/region capital
+"Arar, Saudi Arabia",30.9753,41.0381,,Saudi Arabia,148540,state/region capital
+"Buraydah, Saudi Arabia",26.326,43.975,,Saudi Arabia,391336,state/region capital
+"Ha'il, Saudi Arabia",27.5219,41.6907,,Saudi Arabia,267005,state/region capital
+"Jizan, Saudi Arabia",16.8892,42.5511,,Saudi Arabia,105198,state/region capital
+"Mecca, Saudi Arabia",21.4266,39.8256,,Saudi Arabia,1323624,state/region capital
+"Medina, Saudi Arabia",24.4686,39.6142,,Saudi Arabia,1300000,state/region capital
+"Najrān, Saudi Arabia",17.4933,44.1277,,Saudi Arabia,258573,state/region capital
+"Sakakah, Saudi Arabia",29.9697,40.2064,,Saudi Arabia,128332,state/region capital
+"Tabuk, Saudi Arabia",28.3998,36.5715,,Saudi Arabia,455450,state/region capital
+"Bhisho, South Africa",-32.8472,27.4422,,South Africa,137287,state/region capital
+"Bloemfontein, South Africa",-29.1211,26.214,,South Africa,463064,state/region capital
+"Johannesburg, South Africa",-26.2023,28.0436,,South Africa,2026469,state/region capital
+"Kimberley, South Africa",-28.7323,24.7623,,South Africa,142089,state/region capital
+"Mahikeng, South Africa",-25.8652,25.6442,,South Africa,14000,state/region capital
+"Nelspruit, South Africa",-25.4745,30.9703,,South Africa,110159,state/region capital
+"Polokwane, South Africa",-23.9045,29.4688,,South Africa,123749,state/region capital
+"Ad-Damazin, Sudan",11.7891,34.3592,,Sudan,186051,state/region capital
+"Al Qadarif, Sudan",14.0349,35.3834,,Sudan,363945,state/region capital
+"Dongola, Sudan",19.1816,30.4769,,Sudan,13473,state/region capital
+"Ed Damer, Sudan",17.599,33.9721,,Sudan,103941,state/region capital
+"El Daein, Sudan",11.4619,26.1258,,Sudan,264734,state/region capital
+"El Fasher, Sudan",13.6279,25.3494,,Sudan,252609,state/region capital
+"El Fula, Sudan",11.7119,28.3462,,Sudan,0,state/region capital
+"El Obeid, Sudan",13.1842,30.2167,,Sudan,393311,state/region capital
+"Geneina, Sudan",13.4526,22.4473,,Sudan,162981,state/region capital
+"Kadugli, Sudan",11.0111,29.7183,,Sudan,87666,state/region capital
+"Kassala, Sudan",15.451,36.4,,Sudan,401477,state/region capital
+"Nyala, Sudan",12.0489,24.8807,,Sudan,565734,state/region capital
+"Port Sudan, Sudan",19.6175,37.2164,,Sudan,489725,state/region capital
+"Rabak, Sudan",13.1809,32.74,,Sudan,135281,state/region capital
+"Singa, Sudan",13.1483,33.9312,,Sudan,250000,state/region capital
+"Wad Medani, Sudan",14.4012,33.5199,,Sudan,332714,state/region capital
+"Zalingei, Sudan",12.9092,23.4706,,Sudan,28687,state/region capital
+"Albany, USA",42.6526,-73.7562,,USA,98469,state/region capital
+"Atlanta, USA",33.749,-84.388,,USA,463878,state/region capital
+"Augusta, USA",44.3106,-69.7795,,USA,18471,state/region capital
+"Austin, USA",30.2672,-97.7431,,USA,931830,state/region capital
+"Baton Rouge, USA",30.4433,-91.1875,,USA,228590,state/region capital
+"Bismarck, USA",46.8083,-100.7837,,USA,71167,state/region capital
+"Boise, USA",43.6135,-116.2035,,USA,145987,state/region capital
+"Boston, USA",42.3584,-71.0598,,USA,667137,state/region capital
+"Charleston, USA",38.3498,-81.6326,,USA,49736,state/region capital
+"Cheyenne, USA",41.14,-104.8203,,USA,63335,state/region capital
+"Columbia, USA",34.0007,-81.0348,,USA,133803,state/region capital
+"Columbus, USA",39.9612,-82.9988,,USA,850106,state/region capital
+"Concord, USA",43.2081,-71.5376,,USA,42620,state/region capital
+"Des Moines, USA",41.6005,-93.6091,,USA,210330,state/region capital
+"Dover, USA",39.1582,-75.5244,,USA,37522,state/region capital
+"Frankfort, USA",38.2009,-84.8733,,USA,27830,state/region capital
+"Harrisburg, USA",40.2737,-76.8844,,USA,49081,state/region capital
+"Hartford, USA",41.7637,-72.6851,,USA,124006,state/region capital
+"Helena, USA",46.5927,-112.0361,,USA,30581,state/region capital
+"Jackson, USA",32.2988,-90.1848,,USA,170674,state/region capital
+"Jefferson City, USA",38.5767,-92.1735,,USA,43169,state/region capital
+"Juneau, USA",58.3019,-134.4197,,USA,32756,state/region capital
+"Lansing, USA",42.7325,-84.5555,,USA,115056,state/region capital
+"Lincoln, USA",40.8,-96.667,,USA,277348,state/region capital
+"Little Rock, USA",34.7465,-92.2896,,USA,197992,state/region capital
+"Madison, USA",43.0731,-89.4012,,USA,248951,state/region capital
+"Montgomery, USA",32.3668,-86.3,,USA,200602,state/region capital
+"Montpelier, USA",44.2601,-72.5754,,USA,7592,state/region capital
+"Nashville, USA",36.1659,-86.7844,,USA,530852,state/region capital
+"Oklahoma City, USA",35.4676,-97.5164,,USA,631346,state/region capital
+"Olympia, USA",47.0379,-122.9007,,USA,50302,state/region capital
+"Pierre, USA",44.3683,-100.351,,USA,14002,state/region capital
+"Raleigh, USA",35.7721,-78.6386,,USA,451066,state/region capital
+"Richmond, USA",37.5538,-77.4603,,USA,220289,state/region capital
+"Sacramento, USA",38.5816,-121.4944,,USA,490712,state/region capital
+"Saint Paul, USA",44.9444,-93.0933,,USA,285068,state/region capital
+"Santa Fe, USA",35.687,-105.9378,,USA,84099,state/region capital
+"Springfield, USA",39.8017,-89.6437,,USA,116565,state/region capital
+"Tallahassee, USA",30.4383,-84.2807,,USA,189907,state/region capital
+"Topeka, USA",39.0483,-95.678,,USA,127265,state/region capital

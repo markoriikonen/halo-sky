@@ -1,0 +1,186 @@
+name,lat,lon,elev_m,country,population,nearest_current_site,nearest_km
+"Kabul, Afghanistan",34.5281,69.1723,,Afghanistan,3043532,Tashkent,749
+"Tirana, Albania",41.3275,19.8189,,Albania,374801,Sofia,327
+"Pago Pago, American Samoa",-14.2781,-170.7025,,American Samoa,11500,Niue,537
+"Andorra la Vella, Andorra",42.5078,1.5211,,Andorra,20430,Madrid,493
+"Luanda, Angola",-8.8368,13.2343,,Angola,2776168,Benguela,417
+"The Valley, Anguilla",18.217,-63.0578,,Anguilla,2035,Punta Cana,565
+"Saint John’s, Antigua and Barbuda",17.121,-61.8433,,Antigua and Barbuda,24226,Punta Cana,713
+"Yerevan, Armenia",40.1811,44.5136,,Armenia,1093485,Tbilisi,170
+"Oranjestad, Aruba",12.524,-70.027,,Aruba,29998,Punto Fijo,95
+"Baku, Azerbaijan",40.3777,49.892,,Azerbaijan,1116513,Tbilisi,449
+"Nassau, Bahamas",25.0582,-77.3431,,Bahamas,227940,Miami,297
+"Manama, Bahrain",26.2279,50.5857,,Bahrain,147074,Riyadh,424
+"Dhaka, Bangladesh",23.7104,90.4074,,Bangladesh,10356500,Kolkata,245
+"Bridgetown, Barbados",13.1073,-59.6202,,Barbados,98511,Porlamar,520
+"Minsk, Belarus",53.9,27.5667,,Belarus,1742124,Kyiv,433
+"Brussels, Belgium",50.8505,4.3488,,Belgium,1019022,Amsterdam,173
+"Belize City, Belize",17.4995,-88.1976,,Belize,61461,Mérida,414
+"Cotonou, Benin",6.3654,2.4183,,Benin,780000,Accra,303
+"Thimphu, Bhutan",27.4661,89.6419,,Bhutan,98676,Lhasa,282
+"Santa Cruz de la Sierra, Bolivia",-17.7863,-63.1812,,Bolivia,1364389,Uyuni,485
+"Kralendijk, Bonaire, Sint Eustatius and Saba",12.15,-68.2667,,"Bonaire, Sint Eustatius and Saba",3081,Punto Fijo,216
+"Sarajevo, Bosnia and Herzegovina",43.8486,18.3564,,Bosnia and Herzegovina,696731,Sofia,422
+"Gaborone, Botswana",-24.6545,25.9086,,Botswana,208411,Livingstone,758
+"São Paulo, Brazil",-23.5475,-46.6361,,Brazil,10021295,Curitiba,339
+"Bandar Seri Begawan, Brunei Darussalam",4.8903,114.9401,,Brunei Darussalam,64409,Putussibau,504
+"Ouagadougou, Burkina Faso",12.3657,-1.5339,,Burkina Faso,1086505,Accra,771
+"Bujumbura, Burundi",-3.3819,29.3614,,Burundi,331700,Kasongo,321
+"Phnom Penh, Cambodia",11.5625,104.916,,Cambodia,1573544,Ho Chi Minh City,204
+"Douala, Cameroon",4.0483,9.7043,,Cameroon,1338082,Malabo,107
+"Toronto, Canada",43.7001,-79.4163,,Canada,2600000,Washington D.C.,569
+"Praia, Cape Verde",14.9315,-23.5125,,Cape Verde,113364,Mindelo,268
+"George Town, Cayman Islands",19.2866,-81.3744,,Cayman Islands,29370,Miami,731
+"Bangui, Central African Republic",4.3612,18.555,,Central African Republic,542393,Mbandaka,481
+"Flying Fish Cove, Christmas Island",-10.4217,105.6791,,Christmas Island,500,Bantam Village,977
+"Moroni, Comoros",-11.7022,43.2551,,Comoros,42872,Dar es Salaam,697
+"Avarua, Cook Islands",-21.2075,-159.7755,,Cook Islands,13373,Cook Islands,228
+"San José, Costa Rica",9.9333,-84.0833,,Costa Rica,335007,Managua,340
+"Abidjan, Cote d'Ivoire",5.3544,-4.0017,,Cote d'Ivoire,3677115,Accra,421
+"Zagreb, Croatia",45.8144,15.978,,Croatia,698966,Vienna,268
+"Havana, Cuba",23.133,-82.383,,Cuba,2163824,Miami,368
+"Willemstad, Curaçao",12.1084,-68.9335,,Curaçao,125000,Punto Fijo,145
+"Nicosia, Cyprus",35.1753,33.3642,,Cyprus,200452,Jerusalem,416
+"Prague, Czech Republic",50.088,14.4208,,Czech Republic,1165581,Vienna,252
+"Kinshasa, Democratic Republic of the Congo",-4.3276,15.3136,,Democratic Republic of the Congo,7785965,Pointe-Noire,386
+"Copenhagen, Denmark",55.6759,12.5655,,Denmark,1153615,Amsterdam,621
+"Djibouti, Djibouti",11.589,43.145,,Djibouti,623891,Riyadh,1505
+"Roseau, Dominica",15.3017,-61.3881,,Dominica,16571,Porlamar,553
+"Santo Domingo, Dominican Republic",18.4719,-69.8923,,Dominican Republic,2201941,Punta Cana,158
+"Guayaquil, Ecuador",-2.1962,-79.8862,,Ecuador,1952029,Quito,266
+"Cairo, Egypt",30.0626,31.2497,,Egypt,7734614,Alexandria,179
+"San Salvador, El Salvador",13.6893,-89.1872,,El Salvador,525990,Managua,362
+"Bata, Equatorial Guinea",1.8639,9.7658,,Equatorial Guinea,173046,Malabo,238
+"Asmara, Eritrea",15.3381,38.9318,,Eritrea,563930,Riyadh,1320
+"Tallinn, Estonia",59.437,24.7535,,Estonia,394024,Hanko,110
+"Manzini, Eswatini",-26.4988,31.38,,Eswatini,110537,Durban,375
+"Addis Ababa, Ethiopia",9.025,38.7469,,Ethiopia,2757729,Molo,1084
+"Stanley, Falkland Islands (Malvinas)",-51.6938,-57.857,,Falkland Islands (Malvinas),2213,Puerto Williams,740
+"Tórshavn, Faroe Islands",62.0097,-6.7716,,Faroe Islands,13200,Farnworth,975
+"Helsinki, Finland",60.1695,24.9354,,Finland,558457,Hanko,117
+"Cayenne, French Guiana",4.9333,-52.3333,,French Guiana,61550,Santa Elena de Uairén,973
+"Port-aux-Français, French Southern Territories",-49.3492,70.2194,,French Southern Territories,45,Port Mathurin,3354
+"Libreville, Gabon",0.3924,9.4536,,Gabon,578156,Port-Gentil,145
+"Berlin, Germany",52.5244,13.4105,,Germany,3426354,Warsaw,517
+"Gibraltar, Gibraltar",36.1447,-5.3526,,Gibraltar,26544,Casablanca,351
+"Athens, Greece",37.9838,23.7278,,Greece,664046,Sofia,526
+"Nuuk, Greenland",64.1835,-51.7216,,Greenland,14798,St. John's,1849
+"Saint George's, Grenada",12.0529,-61.7523,,Grenada,7500,Porlamar,261
+"Les Abymes, Guadeloupe",16.273,-61.5051,,Guadeloupe,63058,Porlamar,644
+"Dededo Village, Guam",13.5178,144.8391,,Guam,44943,Garapan Village,211
+"Guatemala City, Guatemala",14.6407,-90.5133,,Guatemala,994938,Managua,539
+"Saint Peter Port, Guernsey",49.4598,-2.5353,,Guernsey,16488,Paris,362
+"Bissau, Guinea-Bissau",11.8636,-15.5977,,Guinea-Bissau,388028,Conakry,333
+"Georgetown, Guyana",6.8045,-58.1553,,Guyana,235017,Santa Elena de Uairén,409
+"Port-au-Prince, Haiti",18.5435,-72.3388,,Haiti,1234742,Punta Cana,415
+"Tegucigalpa, Honduras",14.0818,-87.2068,,Honduras,850848,Managua,240
+"Budapest, Hungary",47.4984,19.0404,,Hungary,1741041,Vienna,214
+"Reykjavík, Iceland",64.1355,-21.8954,,Iceland,118918,Farnworth,1613
+"Jakarta, Indonesia",-6.2146,106.8451,,Indonesia,8540121,Pontianak,741
+"Baghdad, Iraq",33.3406,44.4009,,Iraq,7216000,Jerusalem,878
+"Dublin, Ireland",53.3331,-6.2489,,Ireland,1024027,Farnworth,256
+"Tehran, Islamic Republic of Iran",35.6944,51.4215,,Islamic Republic of Iran,7153309,Tbilisi,878
+"Douglas, Isle of Man",54.15,-4.4833,,Isle of Man,26218,Farnworth,152
+"Kingston, Jamaica",17.997,-76.7936,,Jamaica,937700,Punta Cana,888
+"Saint Helier, Jersey",49.188,-2.1049,,Jersey,28000,Paris,327
+"Amman, Jordan",31.9552,35.945,,Jordan,1275857,Jerusalem,72
+"Tarawa, Kiribati",1.3278,172.977,,Kiribati,40311,Anibare,701
+"Pristina, Kosovo",42.6727,21.1669,,Kosovo,550000,Sofia,176
+"Kuwait City, Kuwait",29.3759,47.9774,,Kuwait,60064,Riyadh,506
+"Bishkek, Kyrgyzstan",42.87,74.59,,Kyrgyzstan,900000,Almaty,193
+"Vientiane, Laos",17.9667,102.6,,Laos,196731,Chiang Mai,393
+"Riga, Latvia",56.946,24.1059,,Latvia,742572,Hanko,328
+"Beirut, Lebanon",33.8933,35.5016,,Lebanon,1916100,Jerusalem,238
+"Maseru, Lesotho",-29.3167,27.4833,,Lesotho,118355,Durban,348
+"Monrovia, Liberia",6.3005,-10.7969,,Liberia,939524,Greenville,242
+"Schaan, Liechtenstein",47.165,9.5087,,Liechtenstein,5748,Vienna,526
+"Vilnius, Lithuania",54.6892,25.2798,,Lithuania,542366,Warsaw,393
+"Luxembourg, Luxembourg",49.6117,6.13,,Luxembourg,76684,Paris,287
+"Macau, Macao",22.2006,113.5461,,Macao,520400,Hong Kong,65
+"Antananarivo, Madagascar",-18.9137,47.5361,,Madagascar,1391433,Quelimane,1129
+"Lilongwe, Malawi",-13.9669,33.7873,,Malawi,646750,Harare,520
+"Kuala Lumpur, Malaysia",3.139,101.6869,,Malaysia,1453975,Ko Samui,457
+"Bamako, Mali",12.65,-8,,Mali,1297281,Conakry,710
+"Birkirkara, Malta",35.8972,14.4611,,Malta,21676,Tripoli,354
+"Majuro, Marshall Islands",7.0897,171.3803,,Marshall Islands,25400,Anibare,979
+"Fort-de-France, Martinique",14.6037,-61.0742,,Martinique,89995,Porlamar,506
+"Nouakchott, Mauritania",18.0858,-15.9785,,Mauritania,661400,Dakar,409
+"Port Louis, Mauritius",-20.1619,57.4989,,Mauritius,155226,Port Mathurin,621
+"Mamoudzou, Mayotte",-12.7823,45.2288,,Mayotte,54831,Dar es Salaam,930
+"Weno, Micronesia",7.4465,151.8414,,Micronesia,13856,Garapan Village,1091
+"Chisinau, Moldova",47.0056,28.8575,,Moldova,635994,Kyiv,402
+"Monaco, Monaco",43.7333,7.4167,,Monaco,32965,Rome,463
+"Podgorica, Montenegro",42.4411,19.2636,,Montenegro,136473,Sofia,333
+"Brades, Montserrat",16.7918,-62.2106,,Montserrat,1000,Porlamar,673
+"Maputo, Mozambique",-25.9655,32.5832,,Mozambique,1191613,Durban,459
+"Yangon, Myanmar",16.8053,96.1561,,Myanmar,4477638,Chiang Mai,372
+"Kathmandu, Nepal",27.7017,85.3206,,Nepal,1442271,Lhasa,604
+"Niamey, Niger",13.5137,2.1098,,Niger,774235,Accra,920
+"Lagos, Nigeria",6.4541,3.3947,,Nigeria,9000000,Accra,410
+"Kingston, Norfolk Island",-29.0546,167.9663,,Norfolk Island,880,Noumea,770
+"Pyongyang, North Korea",39.0339,125.7543,,North Korea,3222000,Seoul,195
+"Oslo, Norway",59.9127,10.7461,,Norway,580000,Hanko,680
+"Koror, Palau",7.3398,134.4733,,Palau,14000,Siquijor,1223
+"Panamá, Panama",8.9936,-79.5197,,Panama,408168,Medellín,532
+"Port Moresby, Papua New Guinea",-9.4772,147.1509,,Papua New Guinea,283733,Townsville,1090
+"Quezon City, Philippines",14.6488,121.0509,,Philippines,2761720,Laoag,398
+"Lisbon, Portugal",38.7167,-9.1333,,Portugal,517802,Madrid,503
+"San Juan, Puerto Rico",18.4663,-66.1057,,Puerto Rico,418140,Punta Cana,242
+"Doha, Qatar",25.2855,51.531,,Qatar,344939,Riyadh,489
+"Serekunda, Republic of The Gambia",13.4383,-16.6781,,Republic of The Gambia,340000,Dakar,162
+"Brazzaville, Republic of the Congo",-4.2661,15.2832,,Republic of the Congo,1284609,Pointe-Noire,384
+"Saint-Denis, Reunion",-20.8823,55.4504,,Reunion,137195,Port Mathurin,842
+"Bucharest, Romania",44.4323,26.1063,,Romania,1877155,Sofia,296
+"Moscow, Russia",55.7522,37.6156,,Russia,10381222,Kyiv,756
+"Kigali, Rwanda",-1.95,30.0588,,Rwanda,745261,Kampala,377
+"Gustavia, Saint Barthélemy",17.8962,-62.8498,,Saint Barthélemy,5988,Punta Cana,591
+"Basseterre, Saint Kitts and Nevis",17.2955,-62.725,,Saint Kitts and Nevis,12920,Punta Cana,617
+"Castries, Saint Lucia",13.9957,-61.0061,,Saint Lucia,20000,Porlamar,459
+"Marigot, Saint Martin (French part)",18.0682,-63.083,,Saint Martin (French part),5700,Punta Cana,564
+"Saint-Pierre, Saint Pierre and Miquelon",46.7791,-56.1773,,Saint Pierre and Miquelon,6200,St. John's,276
+"Kingstown, Saint Vincent and the Grenadines",13.1553,-61.2274,,Saint Vincent and the Grenadines,24518,Porlamar,377
+"Apia, Samoa",-13.8333,-171.7667,,Samoa,40407,Niue,614
+"Serravalle, San Marino",43.969,12.4817,,San Marino,9258,Rome,231
+"São Tomé, Sao Tome and Principe",0.3365,6.7273,,Sao Tome and Principe,53300,Port-Gentil,257
+"Belgrade, Serbia",44.804,20.4651,,Serbia,1273651,Sofia,328
+"Victoria, Seychelles",-4.62,55.455,,Seychelles,22881,Dar es Salaam,1807
+"Freetown, Sierra Leone",8.4871,-13.2356,,Sierra Leone,802639,Conakry,127
+"Cul de Sac, Sint Maarten (Dutch part)",18.0485,-63.0651,,Sint Maarten (Dutch part),8467,Punta Cana,566
+"Bratislava, Slovakia",48.1482,17.1067,,Slovakia,423737,Vienna,55
+"Ljubljana, Slovenia",46.0511,14.5051,,Slovenia,272220,Vienna,278
+"Honiara, Solomon Islands",-9.4333,159.95,,Solomon Islands,56298,Anibare,1257
+"Mogadishu, Somalia",2.0371,45.3438,,Somalia,2587183,Nairobi,1017
+"Grytviken, South Georgia and the South Sandwich Islands",-54.2811,-36.5092,,South Georgia and the South Sandwich Islands,2,Puerto Williams,1988
+"Juba, South Sudan",4.8517,31.5825,,South Sudan,450000,Kampala,516
+"Colombo, Sri Lanka",6.9355,79.8487,,Sri Lanka,648034,Madurai,382
+"Gaza, State of Palestine",31.5016,34.4667,,State of Palestine,410000,Jerusalem,77
+"Khartoum, Sudan",15.5518,32.5324,,Sudan,1974647,Abéché,1273
+"Paramaribo, Suriname",5.8664,-55.1668,,Suriname,223757,Santa Elena de Uairén,673
+"Longyearbyen, Svalbard and Jan Mayen",78.2233,15.6469,,Svalbard and Jan Mayen,2060,Kilpisjärvi,1032
+"Stockholm, Sweden",59.3294,18.0687,,Sweden,1515017,Hanko,280
+"Zürich, Switzerland",47.3667,8.55,,Switzerland,341730,Paris,489
+"Aleppo, Syria",36.2012,37.1612,,Syria,1602264,Jerusalem,524
+"Dushanbe, Tajikistan",38.5358,68.779,,Tajikistan,679400,Tashkent,305
+"Bangkok, Thailand",13.754,100.5014,,Thailand,5104476,Ko Samui,473
+"Skopje, The Republic of North Macedonia",41.9965,21.4314,,The Republic of North Macedonia,474889,Sofia,174
+"Dili, Timor-Leste",-8.5586,125.5736,,Timor-Leste,150000,Darwin,721
+"Lomé, Togo",6.1287,1.2215,,Togo,749700,Accra,169
+"Atafu Village, Tokelau",-8.5421,-172.5159,,Tokelau,524,Niue,1202
+"Nuku‘alofa, Tonga",-21.1394,-175.2018,,Tonga,22400,Niue,605
+"Chaguanas, Trinidad and Tobago",10.5167,-61.4167,,Trinidad and Tobago,67433,Porlamar,273
+"Tunis, Tunisia",36.819,10.1658,,Tunisia,693210,Tripoli,517
+"Ashgabat, Turkmenistan",37.95,58.3833,,Turkmenistan,727700,Nukus,512
+"Cockburn Town, Turks and Caicos Islands",21.4612,-71.1419,,Turks and Caicos Islands,3720,Punta Cana,430
+"Funafuti, Tuvalu",-8.5243,179.1942,,Tuvalu,4492,Suva,1072
+"Istanbul, Türkiye",41.0138,28.9497,,Türkiye,14804116,Ankara,352
+"New York City, USA",40.7143,-74.006,,USA,8175133,Washington D.C.,328
+"Dubai, United Arab Emirates",25.0772,55.3093,,United Arab Emirates,2956587,Muscat,356
+"London, United Kingdom",51.5085,-0.1257,,United Kingdom,7556900,Farnworth,274
+"Montevideo, Uruguay",-34.9033,-56.1882,,Uruguay,1270737,Buenos Aires,203
+"Port-Vila, Vanuatu",-17.7365,168.3137,,Vanuatu,35901,Noumea,540
+"Road Town, Virgin Islands, British",18.4269,-64.6208,,"Virgin Islands, British",8449,Punta Cana,399
+"Saint Croix, Virgin Islands, U.S.",17.7275,-64.747,,"Virgin Islands, U.S.",50601,Punta Cana,397
+"Mata-Utu, Wallis and Futuna",-13.2816,-176.1745,,Wallis and Futuna,1200,Suva,791
+"Laayoune, Western Sahara",27.1418,-13.188,,Western Sahara,196331,Tan-Tan,251
+"Sanaa, Yemen",15.3547,44.2067,,Yemen,1937451,Riyadh,1071
+"Mariehamn, Åland Islands",60.0973,19.9348,,Åland Islands,10682,Hanko,170
