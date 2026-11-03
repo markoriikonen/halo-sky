@@ -138,7 +138,7 @@ if (P.get("season")) {
 
 // ---------- site list (the Fingerprints sites, from this repository)
 const SITES = new Map();
-Promise.all(["locations_current", "locations_new", "locations_admin_100km", "locations_extra"].map(f =>
+Promise.all(["locations_current", "locations_new", "locations_admin_100km", "locations_extra", "locations_handpicked"].map(f =>
   fetch(`../locations/${f}.csv`).then(r => r.ok ? r.text() : "").catch(() => ""))).then(texts => {
   texts.forEach(txt => {
     const rows = txt.trim().split(/\r?\n/); if (rows.length < 2) return;

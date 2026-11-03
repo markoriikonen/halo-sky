@@ -37,7 +37,7 @@ LEVELS = [1000, 925, 850, 700, 600, 500, 400, 300, 250, 200, 150, 100, 50]
 START = dt.date(2024, 1, 1)
 SUN_KEEP_DEG = 0.0                 # hours with the sun at least this high are kept
 LISTS = ["locations_current.csv", "locations_new.csv",
-         "locations_admin_100km.csv", "locations_extra.csv"]
+         "locations_admin_100km.csv", "locations_extra.csv", "locations_handpicked.csv"]
 PAUSE_S = 0.3
 
 

@@ -48,7 +48,7 @@ START = dt.date(2024, 1, 1)
 SUN_MIN_DEG = 0.0
 WINDOWS = [(-5, -15), (-10, -20), (-15, -25)]      # (warm edge, cold edge), deg C
 LISTS = ["locations_current.csv", "locations_new.csv",
-         "locations_admin_100km.csv", "locations_extra.csv"]
+         "locations_admin_100km.csv", "locations_extra.csv", "locations_handpicked.csv"]
 N_FINE = 80                                        # interpolation points per profile
 PAUSE_S = 0.3
 
