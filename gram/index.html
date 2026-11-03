@@ -143,9 +143,9 @@ function period() {
 }
 const iso = d => d.toISOString().slice(0, 10);
 let tick = null;
-async function getJSON(url, what) {
+async function getJSON(url, what, limitMs = 180000) {
   const ctl = new AbortController(), t0 = Date.now();
-  const timer = setTimeout(() => ctl.abort(), 180000);
+  const timer = setTimeout(() => ctl.abort(), limitMs);
   clearInterval(tick);
   tick = setInterval(() => status(`Fetching ${what} from Open-Meteo… ${Math.round((Date.now() - t0) / 1000)} s`), 1000);
   try {
@@ -155,7 +155,8 @@ async function getJSON(url, what) {
     if (j.error) throw new Error(j.reason || "error");
     return j;
   } catch (e) {
-    throw new Error(e.name === "AbortError" ? "Open-Meteo did not answer within 3 minutes; try again later." : e.message);
+    throw new Error(e.name === "AbortError" ? `Open-Meteo did not answer within ${Math.round(limitMs / 60000 * 10) / 10} min` :
+      /concurrent/i.test(e.message) ? "Open-Meteo is busy with earlier requests from this connection; wait a minute and try again" : e.message);
   } finally { clearTimeout(timer); clearInterval(tick); }
 }
 function status(t, err) { const s = $("status"); s.textContent = t; s.classList.toggle("err", !!err); }
@@ -171,13 +172,15 @@ async function draw() {
   const base = `${API}?latitude=${lat}&longitude=${lon}&start_date=${iso(start)}&end_date=${iso(end)}&timezone=auto`;
   try {
     const lmh = await getJSON(`${base}&hourly=cloud_cover_low,cloud_cover_mid,cloud_cover_high&models=ecmwf_ifs`, "low/mid/high cloud");
-    let lev = null;
+    let lev = null, levErr = null;
     if (gtype === "height") {
       const vars = ["surface_pressure", ...["temperature", "cloud_cover", "geopotential_height"].flatMap(v => LEVELS.map(L => `${v}_${L}hPa`))];
-      lev = await getJSON(`${base}&hourly=${vars.join(",")}&models=ecmwf_ifs025`, "pressure levels");
+      try { lev = await getJSON(`${base}&hourly=${vars.join(",")}&models=ecmwf_ifs025`, "pressure levels", 90000); }
+      catch (e) { levErr = e.message; }
     }
     render(lmh, lev, { name: $("name").value.trim(), lat, lon, start, end });
-    status(`Drawn: ${lmh.hourly.time.length} hours. Hover the gram for values.`);
+    if (levErr) status(`The pressure levels did not come through (${levErr}), so only the low/mid/high gram is shown. Try the height gram again later.`, true);
+    else status(`Drawn: ${lmh.hourly.time.length} hours. Hover the gram for values.`);
     const q = new URLSearchParams({ name: $("name").value.trim(), lat, lon, type: gtype, year: $("year").value, month: $("month").value, months: $("months").value });
     history.replaceState(null, "", "?" + q.toString());
   } catch (e) { status("Could not draw the gram: " + e.message, true); }
