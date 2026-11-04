@@ -1,7 +1,7 @@
 """
 build.py  -  assemble the Halo Sky Fingerprints viewer
 
-Run:   python build.py <fingerprints.json.gz> <layer_windows folder> <season.json.gz> <output folder>
+Run:   python build.py <fingerprints.json.gz> <layer_windows folder> <season.json.gz> <output folder> [koppen folder]
 
 Writes <output folder>/index.html and data/*.js (the gzipped JSON files, base64-encoded
 inside small scripts, because the Claude artifact host serves only certain file types).
@@ -33,3 +33,15 @@ print("built", out)
 land10 = here / "land10.json"
 if land10.exists():
     Path(out, "data", "land10.js").write_text("window.FP_LAND10=" + land10.read_text() + ";\n")
+
+# Köppen-Geiger layer: legend, tile index and site classes in one small script; images copied as files
+kgdir = Path(sys.argv[5]) if len(sys.argv) > 5 else None
+if kgdir and kgdir.exists():
+    import json, shutil
+    leg = json.loads((kgdir / "legend.json").read_text(encoding="utf-8"))
+    tiles = {k: json.loads((kgdir / f"{k}.json").read_text()) for k in ("kg1", "kg2")}
+    sites = json.loads((kgdir / "koppen_sites.json").read_text(encoding="utf-8"))
+    Path(out, "data", "koppen.js").write_text("window.FP_KOPPEN=" + json.dumps({"legend": leg, "tiles": tiles, "sites": sites}, ensure_ascii=False) + ";\n", encoding="utf-8")
+    dst = Path(out, "data", "kg"); shutil.rmtree(dst, ignore_errors=True); dst.mkdir(parents=True)
+    shutil.copy(kgdir / "kg0.png", dst / "kg0.png")
+    for k in ("kg1", "kg2"): shutil.copytree(kgdir / k, dst / k)

@@ -60,6 +60,16 @@ svg#map { display: block; width: 100%; height: auto; }
 .site { stroke: rgba(0,0,0,.35); stroke-width: .5; cursor: pointer; }
 .site.on { stroke: var(--sel); stroke-width: 2.2; }
 .sphere, .grat, .land, .site { vector-effect: non-scaling-stroke; }
+.kgbar { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; margin: 0 0 8px; }
+.kgbar select { font: inherit; font-size: 13px; color: var(--fg); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 3px 6px; }
+.kgbar input[type=range] { width: 110px; accent-color: var(--win); vertical-align: middle; }
+.koppen image { image-rendering: pixelated; }
+.site.kghide { display: none; }
+.kglegend { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 3px 12px; margin-top: 10px; font-size: 12px; color: var(--muted); }
+.kglegend span { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.kglegend i { width: 14px; height: 10px; border-radius: 2px; flex: none; }
+.kglegend b { font: 500 12px var(--f-data); color: var(--fg); min-width: 2.6em; }
+.kglegend .kgnote { grid-column: 1 / -1; margin-top: 4px; }
 .coastline { fill: none; stroke: var(--coast); stroke-width: .5; vector-effect: non-scaling-stroke; pointer-events: none; }
 svg#map { cursor: grab; } svg#map:active { cursor: grabbing; }
 .zoombtns { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; gap: 4px; }
@@ -78,7 +88,7 @@ svg#map { cursor: grab; } svg#map:active { cursor: grabbing; }
 .suggest { display: flex; flex-wrap: wrap; gap: 6px; }
 .suggest button, .chip button { font: 13px var(--f-body); color: var(--fg); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 8px; cursor: pointer; }
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px 18px; }
-.card { display: grid; gap: 8px; }
+.card { display: grid; gap: 8px; align-content: start; }
 .card .head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
 .card .name { font-weight: 600; }
 .card .meta { font-family: var(--f-data); font-size: 12px; color: var(--muted); }
@@ -201,6 +211,13 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 
   <div class="panel">
     <h2 id="maptitle">Share of daylight hours inside the window</h2>
+    <div class="kgbar">
+      <label class="tog" for="kgon"><input id="kgon" type="checkbox"> Köppen climate layer</label>
+      <label class="tog" for="kgop" id="kgopwrap" hidden>opacity <input id="kgop" type="range" min="20" max="100" step="5" value="70"></label>
+      <label class="tog" for="kgfilter">Sites in climate
+        <select id="kgfilter"><option value="all">all</option></select>
+      </label>
+    </div>
     <div class="mapbox">
       <svg id="map" role="img" aria-label="World map of halo-window shares"></svg>
       <div class="tip" id="tip" hidden></div>
@@ -211,6 +228,7 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
       </div>
     </div>
     <div class="legend"><span class="ends" id="lg0">0%</span><canvas id="lg" width="220" height="10"></canvas><span class="ends" id="lg1"></span><span id="lgnote">Click a dot to add its fingerprint below.</span><span>Zoom with Ctrl/⌘ + scroll, a double-click, pinch or the buttons; drag to move.</span></div>
+    <div class="kglegend" id="kglegend" hidden></div>
   </div>
 
   <div class="panel">
@@ -422,6 +440,63 @@ function updateCoast() {
   coastTop.attr("hidden", koppenOn ? null : true);
 }
 let koppenOn = false;
+// ---- Köppen-Geiger layer (Beck et al. 2023, 1991-2020): one world image, finer tiles when zoomed in
+let KG = null, KGT = null, kgFilter = "all";
+const kgLevels = [{ min: 0, key: "kg0" }, { min: 3, key: "kg1" }, { min: 7, key: "kg2" }];
+const kgImgs = new Map();
+function kgLabel(k) { return KG && KG[k] ? `${KG[k][0]} (${KG[k][1]})` : "–"; }
+function kgPass(s) {
+  if (kgFilter === "all") return true;
+  const k = s.kg; if (!k || !KG || !KG[k]) return false;
+  return kgFilter.length === 1 ? KG[k][0][0] === kgFilter : KG[k][0] === kgFilter;
+}
+function kgUpdateTiles() {
+  if (!koppenOn || !KGT) { gLayer.attr("hidden", true); return; }
+  gLayer.attr("hidden", null).attr("opacity", +document.getElementById("kgop").value / 100);
+  const tr = d3.zoomTransform(svg.node()), vx0 = -tr.x / tr.k, vy0 = -tr.y / tr.k, vx1 = vx0 + W / tr.k, vy1 = vy0 + H / tr.k;
+  const lev = kgLevels.filter(l => zk >= l.min).pop().key;
+  const want = new Set(["kg0"]);
+  if (lev !== "kg0") KGT[lev].tiles.forEach(([tx, ty]) => {
+    const sp = KGT[lev].span, x0 = tx * sp, y0 = ty * sp;
+    if (x0 < vx1 && x0 + sp > vx0 && y0 < vy1 && y0 + sp > vy0) want.add(`${lev}/${tx}_${ty}`);
+  });
+  want.forEach(id => {
+    if (kgImgs.has(id)) return;
+    let x = 0, y = 0, w = W, h = H, href = "data/kg/kg0.png";
+    if (id !== "kg0") { const [l, xy] = id.split("/"), [tx, ty] = xy.split("_").map(Number), sp = KGT[l].span; x = tx * sp; y = ty * sp; w = h = sp; href = `data/kg/${l}/${tx}_${ty}.png`; }
+    kgImgs.set(id, gLayer.append("image").attr("href", href).attr("x", x).attr("y", y).attr("width", w).attr("height", h).attr("preserveAspectRatio", "none"));
+  });
+  kgImgs.forEach((el, id) => el.attr("display", want.has(id) ? null : "none"));
+}
+function kgLegend() {
+  const el = document.getElementById("kglegend");
+  if (!KG) return;
+  el.innerHTML = Object.entries(KG).map(([k, [code, name, rgb]]) => `<span data-code="${code}" title="${name}"><i style="background:rgb(${rgb.join(",")})"></i><b>${code}</b>${name.replace(/^[^,]+, /, "")}</span>`).join("") +
+    `<span class="kgnote">Köppen–Geiger climate classes 1991–2020, 1 km, from Beck et al. (2023), Scientific Data 10, 724 (CC BY 4.0). Click a class to show only its sites.</span>`;
+  el.querySelectorAll("span[data-code]").forEach(sp => sp.addEventListener("click", () => {
+    const sel = document.getElementById("kgfilter"); sel.value = sel.value === sp.dataset.code ? "all" : sp.dataset.code; sel.dispatchEvent(new Event("change"));
+  }));
+}
+async function kgLoad() {
+  try {
+    await loadScript("data/koppen.js");
+    const d = window.FP_KOPPEN; window.FP_KOPPEN = null;
+    KG = d.legend; KGT = d.tiles;
+    SITES.forEach(s => { s.kg = d.sites[s.n] || 0; });
+    const sel = document.getElementById("kgfilter"), groups = { A: "A · tropical", B: "B · arid", C: "C · temperate", D: "D · cold", E: "E · polar" };
+    sel.innerHTML = `<option value="all">all</option>` + Object.entries(groups).map(([g, l]) => `<option value="${g}">${l}</option>` +
+      Object.values(KG).filter(v => v[0][0] === g).map(v => `<option value="${v[0]}">&nbsp;&nbsp;${v[0]} · ${v[1].replace(/^[^,]+, /, "")}</option>`).join("")).join("");
+    kgLegend();
+  } catch (e) { console.warn("no Köppen data", e); document.querySelector(".kgbar").hidden = true; }
+}
+document.getElementById("kgon").addEventListener("change", e => {
+  koppenOn = e.target.checked;
+  document.getElementById("kgopwrap").hidden = !koppenOn;
+  document.getElementById("kglegend").hidden = !koppenOn;
+  updateCoast(); kgUpdateTiles();
+});
+document.getElementById("kgop").addEventListener("input", () => kgUpdateTiles());
+document.getElementById("kgfilter").addEventListener("change", e => { kgFilter = e.target.value; update(); });
 let zk = 1;
 const dotR = () => 3.3 / Math.pow(zk, 0.7);          // dots grow only slowly when zoomed in
 const zoom = d3.zoom().scaleExtent([1, 16]).translateExtent([[0, 0], [W, H]])
@@ -429,7 +504,7 @@ const zoom = d3.zoom().scaleExtent([1, 16]).translateExtent([[0, 0], [W, H]])
   .on("zoom", ev => {
     zk = ev.transform.k;
     gZoom.attr("transform", ev.transform);
-    updateCoast();
+    updateCoast(); kgUpdateTiles();
     if (dots) dots.attr("r", dotR());
     tip.hidden = true;
   });
@@ -442,7 +517,7 @@ let dots;
 function showTip(ev, s) {
   if (mode === "season") {
     const c = series(s), v = seasonValue(s);
-    tip.innerHTML = `<div>${s.n}</div><div class="c">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""}</div>` +
+    tip.innerHTML = `<div>${s.n}</div><div class="c">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""}${KG ? " · " + (KG[s.kg] ? KG[s.kg][0] : "–") : ""}</div>` +
       `<div class="c">${c ? (sView === "timing" ? `peak ${pDate(c.peak)} · concentration ${c.R.toFixed(2)}` : fmtSV(v)) : "no data"}</div>`;
     tip.hidden = false;
     const r = box.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top;
@@ -451,7 +526,7 @@ function showTip(ev, s) {
     return;
   }
   const v = share(s, month);
-  tip.innerHTML = `<div>${s.n}</div><div class="c">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""}</div>` +
+  tip.innerHTML = `<div>${s.n}</div><div class="c">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""}${KG ? " · " + (KG[s.kg] ? KG[s.kg][0] : "–") : ""}</div>` +
     `<div class="c">${MONTHS[month]}: ${isNaN(v) ? "no data" : pct(v) + " in window"}${excluded(s) ? " (above 1500 m, hidden)" : ""}</div>`;
   tip.hidden = false;
   const r = box.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top;
@@ -528,7 +603,7 @@ function fpCard(s) {
   const r = mode === "halo" ? gridHalo(s) : gridLayer(s);
   const v = share(s, month);
   card.innerHTML = `<div class="head"><span class="name">${s.n}</span><span class="chip"><button type="button" aria-label="Remove ${s.n}">Remove</button></span></div>
-    <div class="meta">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""} · ${MONTHS[month]}${r ? " · " + r.tot.toLocaleString("en") + " daylight h" : ""}</div>
+    <div class="meta">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""}${KG ? " · Köppen " + kgLabel(s.kg) : ""} · ${MONTHS[month]}${r ? " · " + r.tot.toLocaleString("en") + " daylight h" : ""}</div>
     <div class="share">${r ? `In window: <b>${pct(v)}</b> · ${r.extra}` : "No data for this source yet."}${excluded(s) ? " · above 1500 m: ECMWF mid band reaches cirrus heights here" : ""}</div>`;
   card.querySelector("button").addEventListener("click", () => { picked = picked.filter(n => n !== s.n); update(); });
   if (r) {
@@ -574,13 +649,13 @@ function update() {
   if (!SITES.length) return;
   if (mode === "season") { if (seasonReady) seasonUpdate(); return; }
   labels();
-  const vals = SITES.map(s => excluded(s) ? NaN : share(s, month));
+  const vals = SITES.map(s => excluded(s) || !kgPass(s) ? NaN : share(s, month));
   const good = vals.filter(v => !isNaN(v)).sort(d3.ascending);
   const max = Math.max(0.005, good.length ? d3.quantile(good, 0.98) : 0.01);
   const color = v => d3.interpolateYlGnBu(0.08 + 0.92 * Math.min(1, v / max));
   drawLegend(max);
   dots.attr("fill", (s, i) => isNaN(vals[i]) ? "none" : color(vals[i]))
-      .classed("off", (s, i) => isNaN(vals[i]))
+      .classed("off", (s, i) => isNaN(vals[i])).classed("kghide", s => !kgPass(s))
       .classed("on", s => picked.includes(s.n));
   dots.filter(s => picked.includes(s.n)).raise();
   const title = mode === "halo" ? `high cloud ≥ ${hmin}%, low cloud ≤ ${lmax}%`
@@ -774,7 +849,7 @@ function timingColor(c, rmax) {
 }
 
 function seasonUpdate() {
-  const vals = SITES.map(s => seasonValue(s));
+  const vals = SITES.map(s => kgPass(s) ? seasonValue(s) : NaN);
   const good = vals.filter(v => !isNaN(v)).sort(d3.ascending);
   const cv = document.getElementById("lg"), ctx = cv.getContext("2d");
   let colorOf;
@@ -799,7 +874,7 @@ function seasonUpdate() {
     document.getElementById("lgnote").textContent = "Click a dot to add its year curve below.";
   }
   dots.attr("fill", (s, i) => isNaN(vals[i]) ? "none" : colorOf(s, vals[i]))
-      .classed("off", (s, i) => isNaN(vals[i])).classed("on", s => picked.includes(s.n));
+      .classed("off", (s, i) => isNaN(vals[i])).classed("kghide", s => !kgPass(s)).classed("on", s => picked.includes(s.n));
   dots.filter(s => picked.includes(s.n)).raise();
   const L = sLen * 5, auto = sBy === "auto";
   const titles = {
@@ -921,7 +996,7 @@ function seasonCard(s) {
       ${sq ? `<div>High-cloud cover, worst season: thin ${pct(sq[0])} · medium ${pct(sq[1])} · sheet ${pct(sq[2])}</div>` : ""}`;
   }
   card.innerHTML = `<div class="head"><span class="name">${s.n}</span><span class="chip"><button type="button" aria-label="Remove ${s.n}">Remove</button></span></div>
-    <div class="meta">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""} · ${measLabel()}</div>
+    <div class="meta">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""}${KG ? " · Köppen " + kgLabel(s.kg) : ""} · ${measLabel()}</div>
     ${yearCurve(s, { big: true, season: true }) || ""}
     <div class="sstats">${stats}</div>
     ${gramLinks(s)}`;
@@ -939,7 +1014,7 @@ function drawStrip() {
   const ctx = cv.getContext("2d"); ctx.clearRect(0, 0, cv.width, cv.height);
   const T = Array.from({ length: rows }, () => new Float64Array(NP)), M = Array.from({ length: rows }, () => new Float64Array(NP)), N = new Array(rows).fill(0);
   SITES.forEach(s => {
-    if (!s.S || s.lo < lo0 || s.lo >= lo1 || s.la >= top || s.la < bot) return;
+    if (!s.S || !kgPass(s) || s.lo < lo0 || s.lo >= lo1 || s.la >= top || s.la < bot) return;
     const c = series(s); if (!c) return;
     const r = Math.floor((top - s.la) / band); N[r]++;
     for (let p = 0; p < NP; p++) if (c.valid[p]) { T[r][p] += c.tot[p]; M[r][p] += c.m[p]; }
@@ -1012,6 +1087,7 @@ load().catch(e => { document.getElementById('status').textContent = 'Could not l
       (LSET.aloft_only ? "; a range that reaches the ground (surface air no warmer than its warm edge) counts as no layer. " : ". ") : "") +
     `Daylight: sun at least ${SETTINGS.sun_min_deg}° above the horizon.`;
   update();
+  kgLoad().then(() => update());
   loadSeason();
 }).catch(e => { document.getElementById("status").textContent = "Could not load the data: " + e.message; });
 }
