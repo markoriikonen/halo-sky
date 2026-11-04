@@ -99,6 +99,7 @@ svg.yc { display: block; width: 100%; height: auto; margin-top: 6px; }
 .ycl { fill: none; stroke: var(--win); stroke-width: 1.6; }
 .ycact { fill: var(--winline); opacity: .22; }
 .ycq { fill: rgba(var(--ink), .10); }
+.ycthr { stroke: var(--win); stroke-width: .8; stroke-dasharray: 3 3; opacity: .7; }
 .sstats { font-family: var(--f-data); font-size: 12px; color: var(--muted); display: grid; gap: 2px; }
 .yclab { font-size: 11px; color: var(--muted); }
 .gramlinks { font-size: 13px; color: var(--muted); }
@@ -178,12 +179,16 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
         <select id="sview">
           <option value="timing">Timing of the season</option>
           <option value="swing">Seasonality index (0–1)</option>
+          <option value="type">Number of seasons</option>
           <option value="active">Active season</option>
           <option value="quiet">Quiet season</option>
           <option value="days">Days above a threshold</option>
         </select>
       </label>
-      <label class="slider" for="slen"><span>Season length <b id="slenv"></b></span>
+      <label class="slider" for="sby"><span>Seasons</span>
+        <select id="sby"><option value="auto">Found from each site's curve</option><option value="fixed">Best and worst stretch of fixed length</option></select>
+      </label>
+      <label class="slider" for="slen" id="slenwrap" hidden><span>Season length <b id="slenv"></b></span>
         <input id="slen" type="range" min="6" max="36" step="1" value="18">
       </label>
       <label class="slider" for="sday" id="sdaywrap" hidden><span>Threshold: share at least <b id="sdayv"></b></span>
@@ -586,11 +591,18 @@ function seasonMonths(startPentad, lenPentads) {    // whole months covering a s
 }
 function gramLinks(s) {
   if (mode === "season") {
-    const w = seasonOf(s); if (!w) return "";
+    let list;
+    if (sBy === "auto") {
+      const a = autoSeasons(s); if (!a || a.none) return "";
+      list = [["best", a.longestAct.start, a.longestAct.len, a.n > 1 ? "longest active season" : "active season"], ["worst", a.longestQuiet.start, a.longestQuiet.len, a.n > 1 ? "longest quiet season" : "quiet season"]];
+    } else {
+      const w = seasonOf(s); if (!w) return "";
+      list = [["best", w.actStart, sLen, "active season"], ["worst", w.quietStart, sLen, "quiet season"]];
+    }
     const out = [];
-    [["best", w.actStart, "active season"], ["worst", w.quietStart, "quiet season"]].forEach(([k, st, lab]) => {
-      const { month, months } = seasonMonths(st, sLen), y = lastCompleteYear(month, months);
-      out.push(gramLink(s, y, month, months, `${lab} ${y}${month + months - 1 > 12 ? "–" + String(y + 1).slice(2) : ""}`, { season: k, sdates: pSpan(st, sLen) }));
+    list.forEach(([k, st, len, lab]) => {
+      const { month, months } = seasonMonths(st, len), y = lastCompleteYear(month, months);
+      out.push(gramLink(s, y, month, months, `${lab} ${y}${month + months - 1 > 12 ? "–" + String(y + 1).slice(2) : ""}`, { season: k, sdates: pSpan(st, len) }));
     });
     return `<div class="gramlinks">Gram: ${out.join(" · ")}</div>`;
   }
@@ -600,7 +612,8 @@ function gramLinks(s) {
 // ===================== Seasons mode =====================
 const SEASON_URL = "data/season.js";               // sets window.FP_SEASON
 let SSET = null, seasonReady = false;
-let sMeas = "pres", sThr = 20, sView = "timing", sLen = 18, sDays = 50, sRegion = "all";
+let sMeas = "pres", sThr = 20, sView = "timing", sLen = 18, sDays = 50, sRegion = "all", sBy = "auto";
+const MIN_SWING = 0.12, MIN_RUN = 6;                // automatic seasons: least swing of the 30-day curve, shortest season (pentads)
 const NP = 73, LOW_MAX_DEFAULT = 40;
 const pDate = p => { const d = new Date(Date.UTC(2023, 0, 1 + Math.round(p * 5))); return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }); };
 const dDate = day => { const d = new Date(Date.UTC(2023, 0, 1 + ((Math.round(day) % 365) + 365) % 365)); return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }); };
@@ -646,7 +659,10 @@ function series(s) {
   let X = 0, Y = 0, W = 0;
   share.forEach((v, p) => { if (!isNaN(v)) { const th = 2 * Math.PI * (p + 0.5) / NP; X += v * Math.cos(th); Y += v * Math.sin(th); W += v; } });
   const R = W ? Math.hypot(X, Y) / W : NaN, ang = ((Math.atan2(Y, X) / (2 * Math.PI)) + 1) % 1;
-  s.S.key = key; s.S.c = { tot, m, valid, share, smooth, win, R, peak: ang * NP, wins: {} };
+  // annual and half-yearly harmonics of the share curve
+  const harm = n => { let re = 0, im = 0, k = 0; share.forEach((v, p) => { if (!isNaN(v)) { const th = 2 * Math.PI * n * (p + 0.5) / NP; re += v * Math.cos(th); im += v * Math.sin(th); k++; } }); return k ? 2 * Math.hypot(re, im) / k : NaN; };
+  const A1 = harm(1), A2 = harm(2);
+  s.S.key = key; s.S.c = { tot, m, valid, share, smooth, win, R, peak: ang * NP, wins: {}, A1, A2, auto: null };
   return s.S.c;
 }
 function seasonOf(s) {
@@ -658,6 +674,50 @@ function seasonOf(s) {
   }
   return c.wins[sLen];
 }
+// Automatic seasons: split the site's 30-day curve at its natural break (Otsu: the value that best
+// separates high from low), take the runs above and below it, and merge runs shorter than MIN_RUN
+// pentads into their neighbours. Curves that swing less than MIN_SWING have no clear season.
+function autoSeasons(s) {
+  const c = series(s); if (!c) return null;
+  if (c.auto) return c.auto;
+  const v = c.smooth, ok = v.map(x => !isNaN(x)), vals = v.filter(x => !isNaN(x));
+  if (vals.length < 20) return (c.auto = { none: true, amp: NaN });
+  const lo = Math.min(...vals), hi = Math.max(...vals), amp = hi - lo;
+  let best = null;
+  for (let k = 1; k < 100; k++) {
+    const thr = lo + amp * k / 100, a = vals.filter(x => x < thr), b = vals.filter(x => x >= thr);
+    if (a.length < 3 || b.length < 3) continue;
+    const va = d3.variance(a) || 0, vb = d3.variance(b) || 0, score = a.length * va + b.length * vb;
+    if (!best || score < best.score) best = { score, thr };
+  }
+  if (amp < MIN_SWING || !best) return (c.auto = { none: true, amp });
+  // label each pentad; gaps (polar night) take the label of the pentad before
+  const lab = new Array(NP);
+  let first = v.findIndex(x => !isNaN(x));
+  for (let j = 0; j < NP; j++) { const p = (first + j) % NP; lab[p] = ok[p] ? v[p] >= best.thr : lab[(p - 1 + NP) % NP]; }
+  const runsOf = () => {
+    const r = [], st = lab.findIndex((x, p) => x !== lab[(p - 1 + NP) % NP]);
+    if (st < 0) return [{ hi: lab[0], start: 0, len: NP }];
+    let a = st;
+    for (let j = 1; j <= NP; j++) { const p = (st + j) % NP; if (j === NP || lab[p] !== lab[a]) { r.push({ hi: lab[a], start: a, len: (p - a + NP) % NP || NP }); a = p; } }
+    return r;
+  };
+  let runs = runsOf();
+  while (runs.length > 2) {
+    const sh = runs.reduce((m, r) => r.len < m.len ? r : m, runs[0]);
+    if (sh.len >= MIN_RUN) break;
+    for (let j = 0; j < sh.len; j++) lab[(sh.start + j) % NP] = !sh.hi;
+    runs = runsOf();
+  }
+  if (runs.length < 2) return (c.auto = { none: true, amp });
+  const shareOf = (start, len) => { let T = 0, M = 0; for (let j = 0; j < len; j++) { const p = (start + j) % NP; if (c.valid[p]) { T += c.tot[p]; M += c.m[p]; } } return T ? M / T : NaN; };
+  runs.forEach(r => r.share = shareOf(r.start, r.len));
+  let Ta = 0, Ma = 0, Tq = 0, Mq = 0;
+  for (let p = 0; p < NP; p++) if (c.valid[p]) { if (lab[p]) { Ta += c.tot[p]; Ma += c.m[p]; } else { Tq += c.tot[p]; Mq += c.m[p]; } }
+  const act = runs.filter(r => r.hi), qui = runs.filter(r => !r.hi);
+  return (c.auto = { none: false, amp, thr: best.thr, runs, n: act.length, actShare: Ma / Ta, quietShare: Mq / Tq,
+    longestAct: act.reduce((m, r) => r.len > m.len ? r : m, act[0]), longestQuiet: qui.reduce((m, r) => r.len > m.len ? r : m, qui[0]) });
+}
 function daysAbove(s) {
   const c = series(s); if (!c) return NaN;
   let n = 0, any = false;
@@ -668,10 +728,18 @@ function seasonValue(s) {
   const c = series(s); if (!c) return NaN;
   if (sView === "timing") return c.R;
   if (sView === "days") return daysAbove(s);
+  if (sView === "type") { const a = autoSeasons(s); return a ? (a.none ? 0 : Math.min(3, a.n)) : NaN; }
+  if (sBy === "auto") {
+    const a = autoSeasons(s); if (!a) return NaN;
+    if (sView === "swing") return a.amp;
+    return a.none ? NaN : sView === "active" ? a.actShare : a.quietShare;
+  }
   const w = seasonOf(s); if (!w) return NaN;
   return sView === "swing" ? w.act - w.quiet : sView === "active" ? w.act : w.quiet;
 }
-const fmtSV = v => isNaN(v) ? "–" : sView === "days" ? `${Math.round(v)} d` : (sView === "timing" || sView === "swing") ? v.toFixed(2) : pct(v);
+const TYPE_LAB = ["no clear season", "one season", "two seasons", "three or more"];
+const TYPE_COL = ["#c9cfd4", "#2b8cbe", "#e6550d", "#756bb1"];
+const fmtSV = v => isNaN(v) ? "–" : sView === "days" ? `${Math.round(v)} d` : sView === "type" ? TYPE_LAB[v] : (sView === "timing" || sView === "swing") ? v.toFixed(2) : pct(v);
 const measLabel = () => sMeas === "pres" ? `high cloud ≥ ${sThr}%` : `high cloud ≥ ${sThr}%, low ≤ ${(SSET && SSET.low_max) || LOW_MAX_DEFAULT}%`;
 function timingColor(c, rmax) {
   const hue = d3.interpolateRainbow(c.peak / NP), t = Math.min(1, c.R / rmax);
@@ -689,6 +757,12 @@ function seasonUpdate() {
     for (let i = 0; i < cv.width; i++) { ctx.fillStyle = d3.interpolateRainbow(i / cv.width); ctx.fillRect(i, 0, 1, cv.height); }
     document.getElementById("lg0").textContent = "Jan"; document.getElementById("lg1").textContent = "Dec";
     document.getElementById("lgnote").textContent = "Colour: when the high-cloud season peaks. Pale: hardly any season. Click a dot to add it below.";
+  } else if (sView === "type") {
+    colorOf = (s, v) => TYPE_COL[v];
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    TYPE_COL.forEach((col, i) => { ctx.fillStyle = col; ctx.fillRect(i * cv.width / 4, 0, cv.width / 4 - 2, cv.height); });
+    document.getElementById("lg0").textContent = "none"; document.getElementById("lg1").textContent = "1 · 2 · 3+";
+    document.getElementById("lgnote").textContent = "Grey: no clear season (the 30-day curve swings less than 12 points). Blue: one active season a year; orange: two; purple: three or more.";
   } else {
     const max = sView === "days" ? 365 : Math.max(0.02, good.length ? d3.quantile(good, 0.98) : 1);
     colorOf = (s, v) => d3.interpolateYlGnBu(0.08 + 0.92 * Math.min(1, v / max));
@@ -700,24 +774,27 @@ function seasonUpdate() {
   dots.attr("fill", (s, i) => isNaN(vals[i]) ? "none" : colorOf(s, vals[i]))
       .classed("off", (s, i) => isNaN(vals[i])).classed("on", s => picked.includes(s.n));
   dots.filter(s => picked.includes(s.n)).raise();
-  const L = sLen * 5;
+  const L = sLen * 5, auto = sBy === "auto";
   const titles = {
     timing: `When the high-cloud season peaks (${measLabel()})`,
-    swing: `Seasonality index: best ${L} days minus worst ${L} days (${measLabel()})`,
-    active: `Share of daylight hours in each site's best ${L} days (${measLabel()})`,
-    quiet: `Share of daylight hours in each site's worst ${L} days (${measLabel()})`,
+    swing: auto ? `Seasonality index: highest minus lowest 30-day share (${measLabel()})` : `Seasonality index: best ${L} days minus worst ${L} days (${measLabel()})`,
+    type: `Number of active seasons a year, found from each site's curve (${measLabel()})`,
+    active: auto ? `Share of daylight hours in each site's active season(s) (${measLabel()})` : `Share of daylight hours in each site's best ${L} days (${measLabel()})`,
+    quiet: auto ? `Share of daylight hours in each site's quiet season(s) (${measLabel()})` : `Share of daylight hours in each site's worst ${L} days (${measLabel()})`,
     days: `Days a year with at least ${sDays}% of daylight hours with ${measLabel()} (30-day average)`,
   };
   document.getElementById("maptitle").textContent = titles[sView] + ` · ECMWF 9 km, ${SSET.years[0]}–${SSET.years[1]}`;
-  document.getElementById("fphelp").textContent = `Year curve: share of daylight hours (30-day average). Grey bands: high cloud ≥ 20% split into thin (20–40%), medium (50–70%) and sheet (80–100%) cover of the model's 9 km box. Line: ${measLabel()}. Shaded: best ${L} days; hatched: worst ${L} days.`;
+  document.getElementById("fphelp").textContent = `Year curve: share of daylight hours (30-day average). Grey bands: high cloud ≥ 20% split into thin (20–40%), medium (50–70%) and sheet (80–100%) cover of the model's 9 km box. Line: ${measLabel()}. ${auto ? "Shaded: active seasons found from the curve; grey: quiet seasons." : `Shaded: best ${L} days; grey: worst ${L} days.`}`;
   const cards = document.getElementById("cards"); cards.innerHTML = "";
   const chosen = picked.map(n => SITES.find(s => s.n === n)).filter(Boolean);
   if (!chosen.length) cards.innerHTML = `<p class="empty">Add a site with the search box, or click a dot on the map.</p>`;
   chosen.forEach(s => cards.appendChild(seasonCard(s)));
-  const ranked = SITES.map((s, i) => [s, vals[i]]).filter(x => !isNaN(x[1])).sort((a, b) => b[1] - a[1]);
-  const rl = (el, arr) => { el.innerHTML = ""; arr.forEach(([s, v]) => { const li = document.createElement("li"); li.innerHTML = `${s.n}<span>${fmtSV(v)}</span>`; li.addEventListener("click", () => addSite(s.n)); el.appendChild(li); }); };
-  const rname = { timing: "most seasonal", swing: "largest seasonal swing", active: "highest best-season share", quiet: "highest worst-season share", days: "most days above the threshold" };
-  const lname = { timing: "least seasonal", swing: "smallest seasonal swing", active: "lowest best-season share", quiet: "lowest worst-season share", days: "fewest days above the threshold" };
+  const rankVal = sView === "type" ? SITES.map(s => { const c = series(s), a = autoSeasons(s); return c && a && !a.none && (c.A1 + c.A2) ? c.A2 / (c.A1 + c.A2) : NaN; }) : vals;
+  const ranked = SITES.map((s, i) => [s, rankVal[i]]).filter(x => !isNaN(x[1])).sort((a, b) => b[1] - a[1]);
+  const fmtR = v => sView === "type" ? `half-year share ${v.toFixed(2)}` : fmtSV(v);
+  const rl = (el, arr) => { el.innerHTML = ""; arr.forEach(([s, v]) => { const li = document.createElement("li"); li.innerHTML = `${s.n}<span>${fmtR(v)}</span>`; li.addEventListener("click", () => addSite(s.n)); el.appendChild(li); }); };
+  const rname = { timing: "most seasonal", swing: "largest seasonal swing", type: "strongest second season", active: auto ? "highest active-season share" : "highest best-season share", quiet: auto ? "highest quiet-season share" : "highest worst-season share", days: "most days above the threshold" };
+  const lname = { timing: "least seasonal", swing: "smallest seasonal swing", type: "most purely one-season", active: auto ? "lowest active-season share" : "lowest best-season share", quiet: auto ? "lowest quiet-season share" : "lowest worst-season share", days: "fewest days above the threshold" };
   document.getElementById("toph").textContent = rname[sView][0].toUpperCase() + rname[sView].slice(1);
   document.getElementById("both").textContent = lname[sView][0].toUpperCase() + lname[sView].slice(1);
   rl(document.getElementById("top"), ranked.slice(0, 20));
@@ -745,13 +822,16 @@ function yearCurve(s, opts = {}) {
   let svg = `<svg class="yc" viewBox="0 0 ${Wd} ${Ht}" role="img" aria-label="Year curve for ${s.n}">`;
   for (let k = 0; k <= 4; k++) svg += `<line x1="${padL}" x2="${Wd - 2}" y1="${y(k / 4)}" y2="${y(k / 4)}" class="ycg"/>`;
   svg += `<text x="${padL - 3}" y="${y(1) + 3}" class="yct" text-anchor="end">100</text><text x="${padL - 3}" y="${y(0.5) + 3}" class="yct" text-anchor="end">50</text><text x="${padL - 3}" y="${y(0) + 3}" class="yct" text-anchor="end">0</text>`;
-  if (opts.season) {
+  const rect = (st, len, cls) => { const a = st, b = st + len; const seg = (p0, p1) => `<rect x="${x(p0)}" y="${padT}" width="${x(p1) - x(p0)}" height="${Ht - padT - padB}" class="${cls}"/>`;
+    return b <= NP ? seg(a, b) : seg(a, NP) + seg(0, b - NP); };
+  if (opts.season && sBy === "fixed") {
     const w = seasonOf(s);
-    if (w) {
-      const rect = (st, cls) => { const a = st, b = st + sLen; const seg = (p0, p1) => `<rect x="${x(p0)}" y="${padT}" width="${x(p1) - x(p0)}" height="${Ht - padT - padB}" class="${cls}"/>`;
-        return b <= NP ? seg(a, b) : seg(a, NP) + seg(0, b - NP); };
-      svg += rect(w.actStart, "ycact") + rect(w.quietStart, "ycq");
-    }
+    if (w) svg += rect(w.actStart, sLen, "ycact") + rect(w.quietStart, sLen, "ycq");
+  }
+  if (opts.season && sBy === "auto") {
+    const a = autoSeasons(s);
+    if (a && !a.none) a.runs.forEach(r => { svg += rect(r.start, r.len, r.hi ? "ycact" : "ycq"); });
+    if (a && !a.none && a.thr) svg += `<line x1="${padL}" x2="${Wd - 2}" y1="${y(a.thr)}" y2="${y(a.thr)}" class="ycthr"/>`;
   }
   if (opts.month) {                                  // month mode: mark the chosen month
     const a = (opts.month - 1) * NP / 12, b = opts.month * NP / 12;
@@ -781,11 +861,28 @@ function yearCurve(s, opts = {}) {
   return svg + "</svg>";
 }
 
+function coverSplit(s, pentads) {                 // thin / medium / sheet shares of hours with high cloud >= 20 %
+  let th = 0, me = 0, sh = 0;
+  pentads.forEach(p => { const r = s.S.h[p]; for (let b = 2; b <= 10; b++) { const k = r[b] + r[11 + b]; if (b <= 4) th += k; else if (b <= 7) me += k; else sh += k; } });
+  const t = th + me + sh; return t ? [th / t, me / t, sh / t] : null;
+}
 function seasonCard(s) {
   const card = document.createElement("div"); card.className = "card";
   const c = series(s), w = seasonOf(s), L = sLen * 5;
   let stats = "No seasonal data for this site.";
-  if (c && w) {
+  if (c && sBy === "auto") {
+    const a = autoSeasons(s), cs = x => x ? `thin ${pct(x[0])} · medium ${pct(x[1])} · sheet ${pct(x[2])}` : "–";
+    const harmTxt = `peak ${pDate(c.peak)} · half-year share ${(c.A1 + c.A2) ? (c.A2 / (c.A1 + c.A2)).toFixed(2) : "–"} (0: one wave a year, 1: two)`;
+    if (!a || a.none) stats = `<div><b>No clear season</b>: the 30-day curve swings only ${a && !isNaN(a.amp) ? Math.round(a.amp * 100) : "–"} points (less than ${MIN_SWING * 100}).</div><div>${harmTxt}</div>`;
+    else {
+      const pts = (r) => Array.from({ length: r.len }, (_, j) => (r.start + j) % NP);
+      const actP = a.runs.filter(r => r.hi).flatMap(pts), quiP = a.runs.filter(r => !r.hi).flatMap(pts);
+      stats = `<div><b>${TYPE_LAB[Math.min(3, a.n)][0].toUpperCase() + TYPE_LAB[Math.min(3, a.n)].slice(1)}</b> · seasonality index <b>${a.amp.toFixed(2)}</b> · break at ${pct(a.thr)}</div>` +
+        a.runs.slice().sort((p, q) => p.start - q.start).map(r => `<div>${r.hi ? "Active" : "Quiet"} ${pSpan(r.start, r.len)} (${r.len * 5} d): <b>${pct(r.share)}</b></div>`).join("") +
+        `<div>${harmTxt}</div><div>Days with ≥ ${sDays}%: <b>${Math.round(daysAbove(s))}</b></div>
+         <div>High-cloud cover, active: ${cs(coverSplit(s, actP))}</div><div>High-cloud cover, quiet: ${cs(coverSplit(s, quiP))}</div>`;
+    }
+  } else if (c && w) {
     // coverage split in the best season, of hours with high cloud >= 20 %
     const split = st => { let th = 0, me = 0, sh = 0; for (let j = 0; j < sLen; j++) { const r = s.S.h[(st + j) % NP]; for (let b = 2; b <= 10; b++) { const k = r[b] + r[11 + b]; if (b <= 4) th += k; else if (b <= 7) me += k; else sh += k; } } const t = th + me + sh; return t ? [th / t, me / t, sh / t] : null; };
     const sa = split(w.actStart), sq = split(w.quietStart);
@@ -851,6 +948,7 @@ function stripTip(ev) {
 }
 
 document.getElementById("smeas").addEventListener("change", e => { sMeas = e.target.value; update(); });
+document.getElementById("sby").addEventListener("change", e => { sBy = e.target.value; document.getElementById("slenwrap").hidden = sBy !== "fixed"; update(); });
 document.getElementById("sview").addEventListener("change", e => { sView = e.target.value; document.getElementById("sdaywrap").hidden = sView !== "days"; update(); });
 document.getElementById("sreg").addEventListener("change", e => { sRegion = e.target.value; drawStrip(); });
 document.getElementById("strip").addEventListener("pointermove", stripTip);
