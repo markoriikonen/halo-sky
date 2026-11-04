@@ -28,3 +28,8 @@ for p in sorted(glob.glob(os.path.join(wdir, "w_*.json.gz"))):
     js(p, b + ".js", "FP_W_" + b[2:])
 js(season, "season.js", "FP_SEASON")
 print("built", out)
+
+# detailed coastline (1:10 million, simplified), loaded by the page only when zoomed in
+land10 = here / "land10.json"
+if land10.exists():
+    Path(out, "data", "land10.js").write_text("window.FP_LAND10=" + land10.read_text() + ";\n")

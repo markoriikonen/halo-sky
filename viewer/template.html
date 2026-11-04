@@ -60,6 +60,7 @@ svg#map { display: block; width: 100%; height: auto; }
 .site { stroke: rgba(0,0,0,.35); stroke-width: .5; cursor: pointer; }
 .site.on { stroke: var(--sel); stroke-width: 2.2; }
 .sphere, .grat, .land, .site { vector-effect: non-scaling-stroke; }
+.coastline { fill: none; stroke: var(--coast); stroke-width: .5; vector-effect: non-scaling-stroke; pointer-events: none; }
 svg#map { cursor: grab; } svg#map:active { cursor: grabbing; }
 .zoombtns { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; gap: 4px; }
 .zoombtns button { font: 500 16px/1 var(--f-data); width: 30px; height: 30px; padding: 0; color: var(--fg);
@@ -394,8 +395,33 @@ const path = d3.geoPath(proj);
 const gZoom = svg.append("g");
 gZoom.append("path").datum({ type: "Sphere" }).attr("class", "sphere").attr("d", path);
 gZoom.append("path").datum(d3.geoGraticule().step([30, 30])()).attr("class", "grat").attr("d", path);
-gZoom.append("path").datum(topojson.feature(LAND, LAND.objects.land)).attr("class", "land").attr("d", path);
+const LAND50 = topojson.feature(LAND, LAND.objects.land);
+const land50 = gZoom.append("path").datum(LAND50).attr("class", "land").attr("d", path);
+const land10 = gZoom.append("path").attr("class", "land").attr("hidden", true);
+const gLayer = gZoom.append("g").attr("class", "koppen");          // Köppen layer: above the land fill, below coastline and dots
+const coastTop = gZoom.append("path").datum(LAND50).attr("class", "coastline").attr("d", path).attr("hidden", true);
 const gDots = gZoom.append("g");
+// detailed (1:10 million) coastline, loaded the first time the map is zoomed in past DETAIL_ZOOM
+const DETAIL_ZOOM = 3.5;
+let land10State = "none", coastRes = false;
+function updateCoast() {
+  const detail = zk >= DETAIL_ZOOM;
+  if (detail && land10State === "none") {
+    land10State = "loading";
+    loadScript("data/land10.js").then(() => {
+      const L10 = window.FP_LAND10; window.FP_LAND10 = null;
+      const f = topojson.feature(L10, L10.objects.land);
+      land10.datum(f).attr("d", path);
+      land10State = "ready"; updateCoast();
+    }).catch(() => { land10State = "failed"; });
+  }
+  const show10 = detail && land10State === "ready";
+  land10.attr("hidden", show10 ? null : true);
+  land50.attr("hidden", show10 ? true : null);
+  if (land10State === "ready" && coastRes !== show10) { coastRes = show10; coastTop.datum(show10 ? land10.datum() : LAND50).attr("d", path); }
+  coastTop.attr("hidden", koppenOn ? null : true);
+}
+let koppenOn = false;
 let zk = 1;
 const dotR = () => 3.3 / Math.pow(zk, 0.7);          // dots grow only slowly when zoomed in
 const zoom = d3.zoom().scaleExtent([1, 16]).translateExtent([[0, 0], [W, H]])
@@ -403,6 +429,7 @@ const zoom = d3.zoom().scaleExtent([1, 16]).translateExtent([[0, 0], [W, H]])
   .on("zoom", ev => {
     zk = ev.transform.k;
     gZoom.attr("transform", ev.transform);
+    updateCoast();
     if (dots) dots.attr("r", dotR());
     tip.hidden = true;
   });
