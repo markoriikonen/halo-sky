@@ -781,7 +781,7 @@ document.getElementById("light").addEventListener("change", async e => {
 const SEASON_URL = "data/season.js";               // sets window.FP_SEASON
 let SSET = null, seasonReady = false;
 let sMeas = "pres", sThr = 20, sView = "timing", sLen = 18, sDays = 50, sRegion = "all", sBy = "auto";
-const MIN_SWING = 0.12, MIN_RUN = 6;                // automatic seasons: least swing of the 30-day curve, shortest season (pentads)
+const MIN_SWING = 0.12, MIN_RUN = 6, MIN_STEP = 0.07;   // automatic seasons: least swing of the 30-day curve, shortest season (pentads), least step between neighbouring seasons
 const NP = 73, LOW_MAX_DEFAULT = 40;
 const pDate = p => { const d = new Date(Date.UTC(2023, 0, 1 + Math.round(p * 5))); return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }); };
 const dDate = day => { const d = new Date(Date.UTC(2023, 0, 1 + ((Math.round(day) % 365) + 365) % 365)); return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }); };
@@ -878,8 +878,22 @@ function autoSeasons(s) {
     for (let j = 0; j < sh.len; j++) lab[(sh.start + j) % NP] = !sh.hi;
     runs = runsOf();
   }
-  if (runs.length < 2) return (c.auto = { none: true, amp });
   const shareOf = (start, len) => { let T = 0, M = 0; for (let j = 0; j < len; j++) { const p = (start + j) % NP; if (c.valid[p]) { T += c.tot[p]; M += c.m[p]; } } return T ? M / T : NaN; };
+  // a season stands on its own only if its share differs from both neighbours by MIN_STEP or more;
+  // otherwise the weakest such season is merged into its neighbours, and the check repeats
+  while (runs.length > 2) {
+    runs.forEach(r => r.share = shareOf(r.start, r.len));
+    let weak = null, wd = Infinity;
+    runs.forEach((r, i) => {
+      const prev = runs[(i - 1 + runs.length) % runs.length], next = runs[(i + 1) % runs.length];
+      const d = Math.min(Math.abs(r.share - prev.share), Math.abs(r.share - next.share));
+      if (d < MIN_STEP && d < wd) { wd = d; weak = r; }
+    });
+    if (!weak) break;
+    for (let j = 0; j < weak.len; j++) lab[(weak.start + j) % NP] = !weak.hi;
+    runs = runsOf();
+  }
+  if (runs.length < 2) return (c.auto = { none: true, amp });
   runs.forEach(r => r.share = shareOf(r.start, r.len));
   let Ta = 0, Ma = 0, Tq = 0, Mq = 0;
   for (let p = 0; p < NP; p++) if (c.valid[p]) { if (lab[p]) { Ta += c.tot[p]; Ma += c.m[p]; } else { Tq += c.tot[p]; Mq += c.m[p]; } }
