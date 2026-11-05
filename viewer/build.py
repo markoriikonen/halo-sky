@@ -27,6 +27,21 @@ for p in sorted(glob.glob(os.path.join(wdir, "w_*.json.gz"))):
     b = os.path.basename(p)[:-8]
     js(p, b + ".js", "FP_W_" + b[2:])
 js(season, "season.js", "FP_SEASON")
+# twilight and night counts (loaded by the page only when chosen), next to the daylight files
+for base, var in ((fp, "FP_DATA"), (season, "FP_SEASON")):
+    for cls in ("twilight", "night"):
+        extra = Path(str(base).replace(".json.gz", f"_{cls}.json.gz"))
+        if extra.exists():
+            js(extra, Path(base).name.replace(".json.gz", f"_{cls}.js"), f"{var}_{cls.upper()}")
+# year-by-year files for the pop-up: season_years/ next to the season file
+ydir = Path(season).parent / "season_years"
+if ydir.exists():
+    import shutil
+    shutil.rmtree(Path(out, "data", "years"), ignore_errors=True)
+    os.makedirs(os.path.join(out, "data", "years"))
+    js(ydir / "index.json.gz", "years/index.js", "FP_YIDX")
+    for b in sorted(ydir.glob("y_*.bin")):
+        js(b, f"years/{b.stem}.js", "FP_Y_" + b.stem[2:])
 print("built", out)
 
 # detailed coastline (1:10 million, simplified), loaded by the page only when zoomed in

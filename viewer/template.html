@@ -108,9 +108,23 @@ svg.yc { display: block; width: 100%; height: auto; margin-top: 6px; }
 .yct { font: 9px var(--f-data); fill: var(--muted); }
 .ycs { fill: rgba(var(--ink), .55); } .ycm { fill: rgba(var(--ink), .32); } .ycth { fill: rgba(var(--ink), .14); }
 .ycl { fill: none; stroke: var(--win); stroke-width: 1.6; }
+.yavg { fill: none; stroke: var(--muted); stroke-width: 1; opacity: .55; }
+.yrbg { fill: rgba(var(--ink), .03); }
 .ycact { fill: var(--winline); opacity: .22; }
 .ycq { fill: rgba(var(--ink), .10); }
 .ycthr { stroke: var(--win); stroke-width: .8; stroke-dasharray: 3 3; opacity: .7; }
+svg.yc { cursor: zoom-in; }
+.ymodal { position: fixed; inset: 0; background: rgba(10, 14, 18, .55); display: grid; place-items: start center; overflow-y: auto; z-index: 50; padding: 24px 12px; }
+.ypanel { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; width: min(760px, 100%); padding: 16px 18px 18px; box-shadow: 0 10px 40px rgba(0,0,0,.3); }
+.yhead { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin-bottom: 8px; }
+.yhead .name { font-weight: 600; font-size: 17px; }
+.yclose { font: 22px/1 var(--f-body); background: none; border: 1px solid var(--rule); border-radius: 4px; width: 32px; height: 32px; cursor: pointer; color: var(--fg); }
+.yrows svg { display: block; width: 100%; height: auto; }
+.ysec { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 14px 0 6px; }
+.ystats { font-family: var(--f-data); font-size: 12px; color: var(--muted); display: grid; gap: 2px; }
+.ystats b { color: var(--fg); font-weight: 500; }
+canvas#yheat { display: block; width: 100%; height: auto; border-radius: 2px; }
+.ylg { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); margin-top: 4px; }
 .sstats { font-family: var(--f-data); font-size: 12px; color: var(--muted); display: grid; gap: 2px; }
 .yclab { font-size: 11px; color: var(--muted); }
 .gramlinks { font-size: 13px; color: var(--muted); }
@@ -136,7 +150,7 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 <div class="wrap">
   <header>
     <h1>Halo Sky Fingerprints</h1>
-    <p class="lede">How often each combination of cloud layers occurs in daylight, from hourly ECMWF data. Set a window with the sliders: the map colours every site by the share of daylight hours that fall inside it. <b>High cloud</b> mode looks for cirrus with a clear view; <b>Mid layer</b> mode looks for an isolated middle layer, either ECMWF's mid-cloud band or cloud in a chosen temperature range.</p>
+    <p class="lede">How often each combination of cloud layers occurs in daylight, from hourly ECMWF data. Set a window with the sliders: the map colours every site by the share of the hours counted that fall inside it. <b>High cloud</b> mode looks for cirrus with a clear view; <b>Mid layer</b> mode looks for an isolated middle layer, either ECMWF's mid-cloud band or cloud in a chosen temperature range.</p>
   </header>
 
   <div class="panel controls">
@@ -206,11 +220,18 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
         <input id="sday" type="range" min="10" max="90" step="5" value="50">
       </label>
     </div>
+    <label class="slider" for="light"><span>Hours counted</span>
+      <select id="light">
+        <option value="day">Daylight (sun ≥ 0°)</option>
+        <option value="twilight">With civil twilight (sun ≥ −6°)</option>
+        <option value="all">All hours, day and night</option>
+      </select>
+    </label>
     <span id="status">Loading data…</span>
   </div>
 
   <div class="panel">
-    <h2 id="maptitle">Share of daylight hours inside the window</h2>
+    <h2 id="maptitle">Share of hours inside the window</h2>
     <div class="kgbar">
       <label class="tog" for="kgon"><input id="kgon" type="checkbox"> Köppen climate layer</label>
       <label class="tog" for="kgop" id="kgopwrap" hidden>opacity <input id="kgop" type="range" min="20" max="100" step="5" value="70"></label>
@@ -254,7 +275,7 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
     </div>
     <div class="stripbox"><canvas id="strip"></canvas></div>
     <div class="axlab" style="padding-left:0;margin-top:4px"><span id="striptip">Hover the strip for values.</span></div>
-    <div class="legend"><span class="ends">0%</span><canvas id="stripLg" width="220" height="10"></canvas><span class="ends">100%</span><span>share of daylight hours with the chosen measure, 30-day average; sites averaged in 2° latitude bands</span></div>
+    <div class="legend"><span class="ends">0%</span><canvas id="stripLg" width="220" height="10"></canvas><span class="ends">100%</span><span>share of the hours counted with the chosen measure, 30-day average; sites averaged in 2° latitude bands</span></div>
   </div>
 
   <div class="ranks">
@@ -263,6 +284,13 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
   </div>
 
   <p class="note" id="foot"></p>
+  <div class="ymodal" id="ymodal" hidden role="dialog" aria-modal="true" aria-labelledby="ytitle">
+    <div class="ypanel">
+      <div class="yhead"><div><div class="name" id="ytitle"></div><div class="meta" id="ymeta"></div></div>
+        <button type="button" class="yclose" id="yclose" aria-label="Close">×</button></div>
+      <div id="ybody"></div>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
@@ -298,7 +326,7 @@ const addYear = arr => { const y = new Array(arr[0].length).fill(0); arr.forEach
 async function load() {
   const d = await fetchJSON(DATA_URL, "FP_DATA");
   SETTINGS = d.settings;
-  SITES = d.sites.map(s => ({ n: s.n, la: s.la, lo: s.lo, el: s.el, m: addYear(s.c), m3: s.c3 ? addYear(s.c3) : null, L: {} }));
+  SITES = d.sites.map(s => { const m = addYear(s.c), m3 = s.c3 ? addYear(s.c3) : null; return { n: s.n, la: s.la, lo: s.lo, el: s.el, m, m3, fp: { day: { m, m3 } }, L: {} }; });
   let L = null;
   try { L = await fetchJSON(LINDEX_URL, "FP_LINDEX"); } catch (e) { console.warn("no layer data", e); }
   if (L) {
@@ -599,11 +627,11 @@ function gridLayer(s) {
   return { g, tot, extra: `hours with ${src === "mid" ? "high" : "colder"} cloud ≤ ${amax}%: ${pct(shown)}` };
 }
 function fpCard(s) {
-  const card = document.createElement("div"); card.className = "card";
+  const card = document.createElement("div"); card.className = "card"; card.dataset.site = s.n;
   const r = mode === "halo" ? gridHalo(s) : gridLayer(s);
   const v = share(s, month);
   card.innerHTML = `<div class="head"><span class="name">${s.n}</span><span class="chip"><button type="button" aria-label="Remove ${s.n}">Remove</button></span></div>
-    <div class="meta">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""}${KG ? " · Köppen " + kgLabel(s.kg) : ""} · ${MONTHS[month]}${r ? " · " + r.tot.toLocaleString("en") + " daylight h" : ""}</div>
+    <div class="meta">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""}${KG ? " · Köppen " + kgLabel(s.kg) : ""} · ${MONTHS[month]}${r ? " · " + r.tot.toLocaleString("en") + " h counted" : ""}</div>
     <div class="share">${r ? `In window: <b>${pct(v)}</b> · ${r.extra}` : "No data for this source yet."}${excluded(s) ? " · above 1500 m: ECMWF mid band reaches cirrus heights here" : ""}</div>`;
   card.querySelector("button").addEventListener("click", () => { picked = picked.filter(n => n !== s.n); update(); });
   if (r) {
@@ -618,7 +646,7 @@ function fpCard(s) {
     card.appendChild(wrap);
   }
   const yc = yearCurve(s, { month: month || 0 });
-  if (yc) { const d = document.createElement("div"); d.innerHTML = yc + `<div class="yclab">Year: high cloud ≥ 20% as thin, medium and sheet cover; line: ${measLabel()}${month ? `; shaded: ${MONTHS[month]}` : ""}</div>`; card.appendChild(d); }
+  if (yc) { const d = document.createElement("div"); d.innerHTML = yc + `<div class="yclab">Year: high cloud ≥ 20% as thin, medium and sheet cover; line: ${measLabel()}${month ? `; shaded: ${MONTHS[month]}` : ""}. Click the curve for each year.</div>`; card.appendChild(d); }
   if (typeof gramLinks === "function") { const d = document.createElement("div"); d.innerHTML = gramLinks(s); card.appendChild(d); }
   return card;
 }
@@ -661,10 +689,10 @@ function update() {
   const title = mode === "halo" ? `high cloud ≥ ${hmin}%, low cloud ≤ ${lmax}%`
     : src === "mid" ? `mid cloud ≥ ${ymin}%, low ≤ ${bmax}%, high ≤ ${amax}% (ECMWF 9 km, ${SETTINGS.years[0]}–${SETTINGS.years[1]})`
     : `cloud at ${winLabel(src)} ≥ ${ymin}%, warmer cloud ≤ ${bmax}%, colder cloud ≤ ${amax}% (ECMWF 25 km, from ${LSET.start.slice(0, 4)})`;
-  document.getElementById("maptitle").textContent = `Share of daylight hours inside the window: ${title}`;
+  document.getElementById("maptitle").textContent = `Share of ${mode === "layer" && src !== "mid" ? LIGHT_LAB.day : LIGHT_LAB[light]} inside the window: ${title}`;
   document.getElementById("fphelp").textContent = mode === "halo"
-    ? "Each cell: % of daylight hours with that low (across) and high (up) cloud cover, 10 % steps. Outlined: the window."
-    : `Each cell: % of daylight hours with that ${src === "mid" ? "mid" : "layer"} (up) and ${src === "mid" ? "low" : "warmer"} (across) cloud cover, 20 % steps, counting only hours with ${src === "mid" ? "high" : "colder"} cloud at most ${amax}%. Outlined: the window.`;
+    ? "Each cell: % of the hours counted with that low (across) and high (up) cloud cover, 10 % steps. Outlined: the window."
+    : `Each cell: % of the hours counted with that ${src === "mid" ? "mid" : "layer"} (up) and ${src === "mid" ? "low" : "warmer"} (across) cloud cover, 20 % steps, counting only hours with ${src === "mid" ? "high" : "colder"} cloud at most ${amax}%. Outlined: the window.`;
   const cards = document.getElementById("cards"); cards.innerHTML = "";
   const chosen = picked.map(n => SITES.find(s => s.n === n)).filter(Boolean);
   if (!chosen.length) cards.innerHTML = `<p class="empty">Add a site with the search box, or click a dot on the map.</p>`;
@@ -711,6 +739,44 @@ function gramLinks(s) {
   const m = month || Math.max(1, new Date().getUTCMonth()), y = lastCompleteYear(m, 1);
   return `<div class="gramlinks">Gram: ${gramLink(s, y, m, 1, `${MONTHS[m]} ${y}`)} · ${gramLink(s, y - 1, m, 1, `${MONTHS[m]} ${y - 1}`)}</div>`;
 }
+// ===================== Light: daylight, + civil twilight, or all hours =====================
+let light = "day";
+const LIGHT_SETS = { day: ["day"], twilight: ["day", "twilight"], all: ["day", "twilight", "night"] };
+const LIGHT_LAB = { day: "daylight hours (sun ≥ 0°)", twilight: "daylight and civil-twilight hours (sun ≥ −6°)", all: "all hours, day and night" };
+const lightLoaded = { day: true }, seasonLightLoaded = { day: true };
+const sumArr = (arrs) => { if (!arrs.length) return null; const out = arrs[0].map(r => Array.isArray(r) ? r.slice() : r); for (let k = 1; k < arrs.length; k++) arrs[k].forEach((r, i) => { if (Array.isArray(r)) r.forEach((v, j) => out[i][j] += v); else out[i] += r; }); return out; };
+async function ensureLight(cls) {
+  if (cls === "day") return;
+  if (!lightLoaded[cls]) {
+    const d = await fetchJSON(`data/fingerprints_${cls}.js`, `FP_DATA_${cls.toUpperCase()}`);
+    const byName = new Map(SITES.map(s => [s.n, s]));
+    d.sites.forEach(r => { const s = byName.get(r.n); if (s) s.fp[cls] = { m: addYear(r.c), m3: r.c3 ? addYear(r.c3) : null }; });
+    lightLoaded[cls] = true;
+  }
+  if (seasonReady && !seasonLightLoaded[cls]) {
+    const d = await fetchJSON(`data/season_${cls}.js`, `FP_SEASON_${cls.toUpperCase()}`);
+    const byName = new Map(SITES.map(s => [s.n, s]));
+    d.sites.forEach(r => { const s = byName.get(r.n); if (s && s.S) s.S.hc[cls] = r.h; });
+    seasonLightLoaded[cls] = true;
+  }
+}
+function applyLight() {
+  const set = LIGHT_SETS[light];
+  SITES.forEach(s => {
+    const parts = set.map(c => s.fp[c]).filter(Boolean);
+    s.m = sumArr(parts.map(p => p.m));
+    s.m3 = parts.every(p => p.m3) ? sumArr(parts.map(p => p.m3)) : null;
+    if (s.S) { s.S.h = sumArr(set.map(c => s.S.hc[c]).filter(Boolean)); s.S.key = null; s.S.c = null; }
+  });
+}
+document.getElementById("light").addEventListener("change", async e => {
+  const v = e.target.value, st = document.getElementById("status");
+  st.textContent = "Loading…";
+  try { for (const c of LIGHT_SETS[v]) await ensureLight(c); }
+  catch (err) { st.textContent = "Could not load those hours"; e.target.value = light; return; }
+  light = v; applyLight(); st.textContent = `${SITES.length} sites`; update();
+});
+
 // ===================== Seasons mode =====================
 const SEASON_URL = "data/season.js";               // sets window.FP_SEASON
 let SSET = null, seasonReady = false;
@@ -726,7 +792,8 @@ async function loadSeason() {
     const d = await fetchJSON(SEASON_URL, "FP_SEASON");
     SSET = d.settings;
     const byName = new Map(SITES.map(s => [s.n, s]));
-    d.sites.forEach(r => { const s = byName.get(r.n); if (s) s.S = { h: r.h }; });
+    d.sites.forEach(r => { const s = byName.get(r.n); if (s) s.S = { h: r.h, hc: { day: r.h } }; });
+    applyLight();
     seasonReady = true;
     const b = document.querySelector('#modes [data-mode="season"]'); if (b) b.disabled = false;
     update();
@@ -881,12 +948,12 @@ function seasonUpdate() {
     timing: `When the high-cloud season peaks (${measLabel()})`,
     swing: auto ? `Seasonality index: highest minus lowest 30-day share (${measLabel()})` : `Seasonality index: best ${L} days minus worst ${L} days (${measLabel()})`,
     type: `Number of active seasons a year, found from each site's curve (${measLabel()})`,
-    active: auto ? `Share of daylight hours in each site's active season(s) (${measLabel()})` : `Share of daylight hours in each site's best ${L} days (${measLabel()})`,
-    quiet: auto ? `Share of daylight hours in each site's quiet season(s) (${measLabel()})` : `Share of daylight hours in each site's worst ${L} days (${measLabel()})`,
-    days: `Days a year with at least ${sDays}% of daylight hours with ${measLabel()} (30-day average)`,
+    active: auto ? `Share of hours in each site's active season(s) (${measLabel()})` : `Share of hours in each site's best ${L} days (${measLabel()})`,
+    quiet: auto ? `Share of hours in each site's quiet season(s) (${measLabel()})` : `Share of hours in each site's worst ${L} days (${measLabel()})`,
+    days: `Days a year with at least ${sDays}% of the hours counted with ${measLabel()} (30-day average)`,
   };
-  document.getElementById("maptitle").textContent = titles[sView] + ` · ECMWF 9 km, ${SSET.years[0]}–${SSET.years[1]}`;
-  document.getElementById("fphelp").textContent = `Year curve: share of daylight hours (30-day average). Grey bands: high cloud ≥ 20% split into thin (20–40%), medium (50–70%) and sheet (80–100%) cover of the model's 9 km box. Line: ${measLabel()}. ${auto ? "Shaded: active seasons found from the curve; grey: quiet seasons." : `Shaded: best ${L} days; grey: worst ${L} days.`}`;
+  document.getElementById("maptitle").textContent = titles[sView] + ` · ${LIGHT_LAB[light]} · ECMWF 9 km, ${SSET.years[0]}–${SSET.years[1]}`;
+  document.getElementById("fphelp").textContent = `Year curve: share of the hours counted (30-day average). Grey bands: high cloud ≥ 20% split into thin (20–40%), medium (50–70%) and sheet (80–100%) cover of the model's 9 km box. Line: ${measLabel()}. ${auto ? "Shaded: active seasons found from the curve; grey: quiet seasons." : `Shaded: best ${L} days; grey: worst ${L} days.`} Click a curve to see each year.`;
   const cards = document.getElementById("cards"); cards.innerHTML = "";
   const chosen = picked.map(n => SITES.find(s => s.n === n)).filter(Boolean);
   if (!chosen.length) cards.innerHTML = `<p class="empty">Add a site with the search box, or click a dot on the map.</p>`;
@@ -907,7 +974,7 @@ function seasonUpdate() {
 // ---- year curve (SVG), used in every mode
 function yearCurve(s, opts = {}) {
   if (!s.S) return null;
-  const Wd = 300, Ht = opts.big ? 120 : 70, padL = 26, padB = 14, padT = 4;
+  const Wd = opts.wide ? 700 : 300, Ht = opts.wide ? 150 : opts.big ? 120 : 70, padL = 26, padB = 14, padT = 4;
   const x = p => padL + (Wd - padL - 2) * p / NP, y = v => padT + (Ht - padT - padB) * (1 - v);
   const h = s.S.h, tot = h.map(r => r.reduce((a, b) => a + b, 0)), mx = Math.max(...tot);
   const ok = tot.map(t => t > 0 && t >= 0.25 * mx);
@@ -969,7 +1036,7 @@ function coverSplit(s, pentads) {                 // thin / medium / sheet share
   const t = th + me + sh; return t ? [th / t, me / t, sh / t] : null;
 }
 function seasonCard(s) {
-  const card = document.createElement("div"); card.className = "card";
+  const card = document.createElement("div"); card.className = "card"; card.dataset.site = s.n;
   const c = series(s), w = seasonOf(s), L = sLen * 5;
   let stats = "No seasonal data for this site.";
   if (c && sBy === "auto") {
@@ -1003,6 +1070,132 @@ function seasonCard(s) {
   card.querySelector("button").addEventListener("click", () => { picked = picked.filter(n => n !== s.n); update(); });
   return card;
 }
+
+// ===================== Year-by-year pop-up =====================
+let YIDX = null; const YCHUNK = new Map();
+async function fetchBin(url, key) {
+  await loadScript(url);
+  const bin = Uint8Array.from(atob(window[key]), ch => ch.charCodeAt(0)); window[key] = null;
+  const ds = new Blob([bin]).stream().pipeThrough(new DecompressionStream("gzip"));
+  return new Uint8Array(await new Response(ds).arrayBuffer());
+}
+async function yearBlock(s) {
+  if (!YIDX) { YIDX = await fetchJSON("data/years/index.js", "FP_YIDX"); YIDX.pos = new Map(YIDX.sites.map((n, i) => [n, i])); }
+  const i = YIDX.pos.get(s.n); if (i == null) return null;
+  const c = Math.floor(i / YIDX.chunk), k = String(c).padStart(3, "0");
+  if (!YCHUNK.has(c)) YCHUNK.set(c, fetchBin(`data/years/y_${k}.js`, `FP_Y_${k}`));
+  const buf = await YCHUNK.get(c), ny = YIDX.years.length, size = 3 * ny * NP * 22, off = (i % YIDX.chunk) * size;
+  return { buf: buf.subarray(off, off + size), ny };
+}
+function yearSeries(blk, yi) {                      // tot and measure counts per pentad for one year, current light and measure
+  const cls = LIGHT_SETS[light].map(c => ({ day: 0, twilight: 1, night: 2 })[c]), tb = sThr / 10;
+  const tot = new Float64Array(NP), m = new Float64Array(NP);
+  cls.forEach(li => {
+    for (let p = 0; p < NP; p++) {
+      const base = ((li * blk.ny + yi) * NP + p) * 22;
+      for (let j = 0; j < 22; j++) tot[p] += blk.buf[base + j];
+      for (let b = tb; b <= 10; b++) { m[p] += blk.buf[base + b]; if (sMeas === "pres") m[p] += blk.buf[base + 11 + b]; }
+    }
+  });
+  return { tot, m };
+}
+function smooth30(tot, m, valid) {
+  return Array.from({ length: NP }, (_, p) => {
+    let T = 0, M = 0, nv = 0;
+    for (let j = -3; j < 3; j++) { const q = p + j; if (q < 0 || q >= NP || !valid[q] || !tot[q]) continue; T += tot[q]; M += m[q]; nv++; }
+    return nv >= 4 && T ? M / T : NaN;
+  });
+}
+async function openYears(s) {
+  const modal = document.getElementById("ymodal"), body = document.getElementById("ybody");
+  document.getElementById("ytitle").textContent = s.n;
+  document.getElementById("ymeta").textContent = `${measLabel()} · ${LIGHT_LAB[light]} · 30-day averages`;
+  body.innerHTML = `<p class="empty">Loading the years…</p>`; modal.hidden = false;
+  let blk;
+  try { blk = await yearBlock(s); } catch (e) { blk = null; }
+  if (!blk) { body.innerHTML = `<p class="empty">No year-by-year data for this site yet.</p>`; return; }
+  const c = series(s), a = sBy === "auto" ? autoSeasons(s) : null, avg = c.smooth, valid = c.valid;
+  const years = YIDX.years, rows = years.map((y, yi) => { const r = yearSeries(blk, yi); return { y, ...r, sm: smooth30(r.tot, r.m, valid) }; });
+  // heat strip: years x pentads
+  const cw = 9, ch = 14, padL = 36, padT = 16, W2 = padL + NP * cw, H2 = padT + rows.length * ch, dpr = Math.max(2, window.devicePixelRatio || 1);
+  let heat = `<canvas id="yheat" width="${W2 * dpr}" height="${H2 * dpr}" style="aspect-ratio:${W2}/${H2}"></canvas><div class="ylg"><span>0%</span><canvas id="yheatlg" width="160" height="8"></canvas><span>100%</span><span>share, 30-day average; blank: no data yet</span></div>`;
+  // small multiples
+  const ymax = Math.min(1, Math.max(0.1, Math.ceil(d3.max(rows.flatMap(r => r.sm.filter(v => !isNaN(v))).concat(avg.filter(v => !isNaN(v)))) * 10) / 10));
+  const Wd = 700, Hr = 44, pl = 34, x = p => pl + (Wd - pl - 4) * p / NP, yv = (v, h) => 3 + (h - 6) * (1 - v / ymax);
+  const line = (arr, h, cls) => { let d = ""; arr.forEach((v, p) => { if (isNaN(v)) return; d += (d && !isNaN(arr[p - 1]) ? "L" : "M") + `${x(p + 0.5)},${yv(v, h)}`; }); return `<path d="${d}" class="${cls}"/>`; };
+  const thr = a && !a.none ? a.thr : null;
+  const runsAbove = (sm) => {                       // a year's active spells: above the average curve's break, gaps under 30 days closed
+    if (thr == null) return [];
+    const on = sm.map(v => !isNaN(v) && v >= thr), out = [];
+    let st = -1;
+    for (let p = 0; p <= NP; p++) { const o = p < NP && on[p]; if (o && st < 0) st = p; if (!o && st >= 0) { out.push([st, p]); st = -1; } }
+    for (let k = out.length - 1; k > 0; k--) if (out[k][0] - out[k - 1][1] < MIN_RUN) { out[k - 1][1] = out[k][1]; out.splice(k, 1); }
+    return out.filter(r => r[1] - r[0] >= MIN_RUN);
+  };
+  let mult = `<svg viewBox="0 0 ${Wd} ${rows.length * Hr + 16}" role="img" aria-label="Year-by-year curves">`;
+  rows.forEach((r, i) => {
+    const y0 = i * Hr;
+    mult += `<g transform="translate(0,${y0})"><rect x="${pl}" y="1" width="${Wd - pl - 4}" height="${Hr - 2}" class="yrbg"/>`;
+    runsAbove(r.sm).forEach(([p0, p1]) => { mult += `<rect x="${x(p0)}" y="1" width="${x(p1) - x(p0)}" height="${Hr - 2}" class="ycact"/>`; });
+    if (thr != null) mult += `<line x1="${pl}" x2="${Wd - 4}" y1="${yv(thr, Hr)}" y2="${yv(thr, Hr)}" class="ycthr"/>`;
+    mult += line(avg, Hr, "yavg") + line(r.sm, Hr, "ycl") + `<text x="${pl - 5}" y="${Hr / 2 + 4}" class="yct" text-anchor="end">${r.y}</text></g>`;
+  });
+  ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"].forEach((tx, i) => { mult += `<text x="${x((i + 0.5) * NP / 12)}" y="${rows.length * Hr + 12}" class="yct" text-anchor="middle">${tx}</text>`; });
+  mult += `</svg>`;
+  // numbers on the variability
+  const shareIn = (r, ps) => { let T = 0, M = 0; ps.forEach(p => { if (valid[p]) { T += r.tot[p]; M += r.m[p]; } }); return T ? M / T : NaN; };
+  const fullYear = r => { let n = 0; for (let p = 0; p < NP; p++) if (valid[p] && r.tot[p]) n++; return n >= valid.filter(Boolean).length * 0.95; };
+  const whole = rows.filter(fullYear), allP = Array.from({ length: NP }, (_, p) => p);
+  let stats = "";
+  if (whole.length) {
+    const yearShare = whole.map(r => [r.y, shareIn(r, allP)]), mean = d3.mean(yearShare, d => d[1]);
+    const hi = yearShare.reduce((m, d) => d[1] > m[1] ? d : m), lo = yearShare.reduce((m, d) => d[1] < m[1] ? d : m);
+    stats += `<div>Whole year: <b>${pct(mean)}</b> on average; highest <b>${hi[0]}</b> ${pct(hi[1])}, lowest <b>${lo[0]}</b> ${pct(lo[1])}</div>`;
+    if (a && !a.none) {
+      const L = a.longestAct, actP = Array.from({ length: L.len }, (_, j) => (L.start + j) % NP);
+      const sh = whole.map(r => [r.y, shareIn(r, actP)]), shHi = sh.reduce((m, d) => d[1] > m[1] ? d : m), shLo = sh.reduce((m, d) => d[1] < m[1] ? d : m);
+      stats += `<div>Main active season (${pSpan(L.start, L.len)}): highest <b>${shHi[0]}</b> ${pct(shHi[1])}, lowest <b>${shLo[0]}</b> ${pct(shLo[1])}, spread ${Math.round((shHi[1] - shLo[1]) * 100)} points</div>`;
+      // start of each year's main active spell: the spell overlapping the average's main season most
+      const starts = [];
+      rows.forEach(r => {
+        const sp = runsAbove(r.sm); let best = null, bo = 0;
+        sp.forEach(([p0, p1]) => { let o = 0; for (let p = p0; p < p1; p++) if (actP.includes(p)) o++; if (o > bo) { bo = o; best = [p0, p1]; } });
+        if (best && best[0] > 0) starts.push([r.y, best[0], best[1]]);
+      });
+      if (starts.length >= 3 && L.start + L.len <= NP) {
+        const ss = starts.map(d => d[1]).sort((p, q) => p - q), ee = starts.filter(d => d[2] < NP).map(d => d[2]).sort((p, q) => p - q);
+        const e = starts.reduce((m, d) => d[1] < m[1] ? d : m), l = starts.reduce((m, d) => d[1] > m[1] ? d : m);
+        stats += `<div>Main season starts: typically <b>${dDate(d3.median(ss) * 5)}</b>; earliest ${dDate(e[1] * 5)} (${e[0]}), latest ${dDate(l[1] * 5)} (${l[0]})</div>`;
+        if (ee.length >= 3) stats += `<div>and ends: typically <b>${dDate(d3.median(ee) * 5 - 1)}</b>, between ${dDate(ee[0] * 5 - 1)} and ${dDate(ee[ee.length - 1] * 5 - 1)}</div>`;
+      } else if (L.start + L.len > NP) stats += `<div>The main season runs over the turn of the year, so its yearly start dates are not compared here.</div>`;
+    } else stats += `<div>No clear season in the average curve, so seasons are not compared year by year.</div>`;
+    stats += `<div>${whole.length} whole years (${whole[0].y}–${whole[whole.length - 1].y})${rows.length > whole.length ? `; ${rows[rows.length - 1].y} so far, to ${YIDX.last.slice(0, 10)}` : ""}.</div>`;
+  }
+  body.innerHTML = `<div class="ysec">Average ${years[0]}–${years[years.length - 1] - (rows.length > whole.length ? 1 : 0)}</div>${yearCurve(s, { wide: true, season: mode === "season" }) || ""}
+    <div class="ysec">Year by year</div>${heat}<div class="yrows" style="margin-top:8px">${mult}</div>
+    <div class="ysec">Variability</div><div class="ystats">${stats}</div>
+    <p class="note" style="margin:10px 0 0">Year panels share one scale, 0 to ${Math.round(ymax * 100)}%. Thin grey line in each year: the multi-year average. Shaded: that year's spells above the average curve's break value${thr != null ? ` (${pct(thr)})` : ""}, gaps under 30 days closed.</p>`;
+  // paint the heat strip
+  const cv = document.getElementById("yheat"), ctx = cv.getContext("2d"), fg = getComputedStyle(document.documentElement).getPropertyValue("--muted").trim() || "#666";
+  ctx.scale(dpr, dpr);
+  ctx.font = "10px IBM Plex Mono, monospace"; ctx.fillStyle = fg; ctx.textAlign = "center";
+  ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"].forEach((tx, i) => ctx.fillText(tx, padL + (i + 0.5) * NP / 12 * cw, 10));
+  rows.forEach((r, i) => {
+    ctx.textAlign = "right"; ctx.fillStyle = fg; ctx.fillText(String(r.y), padL - 5, padT + i * ch + 10);
+    r.sm.forEach((v, p) => { if (isNaN(v)) return; ctx.fillStyle = d3.interpolateYlGnBu(0.08 + 0.92 * Math.min(1, v)); ctx.fillRect(padL + p * cw, padT + i * ch, cw, ch - 1); });
+  });
+  const lg = document.getElementById("yheatlg"), lx = lg.getContext("2d");
+  for (let i = 0; i < lg.width; i++) { lx.fillStyle = d3.interpolateYlGnBu(0.08 + 0.92 * i / lg.width); lx.fillRect(i, 0, 1, lg.height); }
+}
+function closeYears() { document.getElementById("ymodal").hidden = true; }
+document.getElementById("yclose").addEventListener("click", closeYears);
+document.getElementById("ymodal").addEventListener("click", e => { if (e.target.id === "ymodal") closeYears(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeYears(); });
+document.getElementById("cards").addEventListener("click", e => {
+  const svgEl = e.target.closest("svg.yc"); if (!svgEl) return;
+  const card = svgEl.closest(".card"), name = card && card.dataset.site;
+  const s = name && SITES.find(x => x.n === name); if (s) openYears(s);
+});
 
 // ---- latitude-season strip
 const REGIONS = { all: [-180, 180], am: [-170, -30], eu: [-30, 60], as: [60, 180] };
@@ -1046,7 +1239,7 @@ function stripTip(ev) {
   if (p < 0 || p >= NP || r < 0 || r >= g.N.length || !g.N[r]) { tipS.textContent = "Hover the strip for values."; return; }
   let t = 0, k = 0; for (let j = -3; j < 3; j++) { const q = (p + j + NP) % NP; t += g.T[r][q]; k += g.M[r][q]; }
   const la = m.top - r * m.band;
-  tipS.textContent = `${la - m.band}°–${la}° · around ${pDate(p + 0.5)} · ${t ? pct(k / t) : "–"} of daylight hours with ${measLabel()} · ${g.N[r]} sites`;
+  tipS.textContent = `${la - m.band}°–${la}° · around ${pDate(p + 0.5)} · ${t ? pct(k / t) : "–"} of the hours counted with ${measLabel()} · ${g.N[r]} sites`;
 }
 
 document.getElementById("smeas").addEventListener("change", e => { sMeas = e.target.value; update(); });
