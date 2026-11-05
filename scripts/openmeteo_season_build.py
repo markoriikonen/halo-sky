@@ -13,9 +13,14 @@ and counts, for every site, by five-day period ("pentad", 73 per year):
      unbroken episode they belong to: 1, 2-3, 4-6, 7-12, 13-24, >24 hours
                                                             ->  6 numbers per pentad
 
-From these the viewer gets presence (how often), coverage (thin vs sheet) and
-persistence (wisps vs long sheets) for any season. Writes
-~/Downloads/grams/openmeteo/season.json.gz and prints the test sites.
+The counts are made in three light classes, each in its own file, so the viewer
+can show daylight only, daylight plus twilight, or all hours:
+    season.json.gz            sun at least 0 deg (with p)
+    season_twilight.json.gz   sun between -6 and 0 deg
+    season_night.json.gz      sun below -6 deg
+and, for the year-by-year pop-up, every year separately (2017 to the last pulled
+day, the current year partial) in small binary files, a group of sites each:
+    season_years/index.json.gz, season_years/y_000.bin ...
 """
 import sys
 import json
@@ -26,10 +31,10 @@ import numpy as np
 
 BASE = Path.home() / "Downloads" / "grams" / "openmeteo"
 SRC = BASE / "stats9km"
-OUT = BASE / "season.json.gz"
 
 YEAR_FROM, YEAR_TO = 2017, 2025      # whole years only
-SUN_MIN_DEG = 0.0                    # daylight for the coverage counts
+LIGHT = {"": (0.0, 91.0), "_twilight": (-6.0, 0.0), "_night": (-91.0, -6.0)}   # file suffix: sun from, to (deg)
+CHUNK = 50                           # sites per year-by-year file
 LOW_MAX = 40                         # low cloud split for the halo window
 PRESENT = 20                         # high cloud counts as present at >= this %
 EPISODE_BINS = [1, 2, 4, 7, 13, 25]  # lower edges of the episode-length classes, hours
@@ -82,12 +87,21 @@ def site_counts(rec):
     low, high = series(rec, "cloud_cover_low"), series(rec, "cloud_cover_high")
     sun = sun_elevation(rec["lat"], rec["lon"], times)
 
-    # coverage, daylight
-    ok = inyr & (sun >= SUN_MIN_DEG) & ~np.isnan(low) & ~np.isnan(high)
-    hb = np.clip(np.rint(high[ok] / 10).astype(int), 0, 10)
-    lc = (np.rint(low[ok] / 10) * 10 > LOW_MAX).astype(int)          # 0: low <= LOW_MAX, 1: more
-    h = np.zeros((73, 2, 11), np.int32)
-    np.add.at(h, (pent[ok], lc, hb), 1)
+    # coverage by light class: whole years for the averages, every year for the pop-up
+    good = ~np.isnan(low) & ~np.isnan(high)
+    hb_all = np.clip(np.rint(np.nan_to_num(high) / 10).astype(int), 0, 10)
+    lc_all = (np.rint(np.nan_to_num(low) / 10) * 10 > LOW_MAX).astype(int)   # 0: low <= LOW_MAX, 1: more
+    yrs = np.arange(YEAR_FROM, int(years[good].max()) + 1) if good.any() else np.arange(YEAR_FROM, YEAR_TO + 1)
+    hs, Y = {}, np.zeros((len(LIGHT), len(yrs), 73, 2, 11), np.int32)
+    for li, (suf, (lo, hi)) in enumerate(LIGHT.items()):
+        lit = good & (sun >= lo) & (sun < hi)
+        ok = lit & inyr
+        h = np.zeros((73, 2, 11), np.int32)
+        np.add.at(h, (pent[ok], lc_all[ok], hb_all[ok]), 1)
+        hs[suf] = h
+        ok = lit & (years >= yrs[0]) & (years <= yrs[-1])
+        np.add.at(Y, (li, years[ok] - yrs[0], pent[ok], lc_all[ok], hb_all[ok]), 1)
+    h = hs[""]
 
     # persistence, all hours (an episode does not stop at sunset); missing values break a run
     present = (high >= PRESENT) & ~np.isnan(high)
@@ -96,7 +110,8 @@ def site_counts(rec):
     eb = np.searchsorted(EPISODE_BINS, run[sel], side="right") - 1
     p = np.zeros((73, len(EPISODE_BINS)), np.int32)
     np.add.at(p, (pent[sel], eb), 1)
-    return h, p
+    last = str(times[good][-1]) if good.any() else None
+    return hs, p, Y, yrs, last
 
 
 def months_to_pentads(months):
@@ -135,21 +150,31 @@ def main():
     if test:
         want = {n for n, _ in TEST_SITES}
         files = [q for q in files if any(q.name.startswith(w.replace(" ", "_")) for w in want)]
-    out = {"settings": {"years": [YEAR_FROM, YEAR_TO], "sun_min_deg": SUN_MIN_DEG, "low_max": LOW_MAX,
-                        "present": PRESENT, "episode_bins": EPISODE_BINS, "pentads": 73,
-                        "h": "per pentad: [low<=low_max: high 0..100 step 10] + [low>low_max: same], daylight hours",
-                        "p": "per pentad: high-cloud hours (all hours) by episode length class"},
-           "sites": []}
-    res = {}
+    outs = {suf: {"settings": {"years": [YEAR_FROM, YEAR_TO], "sun_min_deg": lo, "sun_max_deg": hi,
+                               "light": suf.strip("_") or "day", "low_max": LOW_MAX,
+                               "present": PRESENT, "episode_bins": EPISODE_BINS, "pentads": 73,
+                               "h": "per pentad: [low<=low_max: high 0..100 step 10] + [low>low_max: same], hours in this light class",
+                               "p": "per pentad: high-cloud hours (all hours) by episode length class"},
+                  "sites": []} for suf, (lo, hi) in LIGHT.items()}
+    res, years_blocks, years_names, yrs_all, last_all = {}, [], [], None, None
     for i, q in enumerate(files, 1):
         with gzip.open(q, "rt", encoding="utf-8") as fh:
             rec = json.load(fh)
-        h, p = site_counts(rec)
+        hs, p, Y, yrs, last = site_counts(rec)
+        h = hs[""]
         res[rec["name"]] = (h, p)
         el = (rec.get("grid") or {}).get("elevation", rec.get("elev_m"))
-        out["sites"].append({"n": rec["name"], "la": rec["lat"], "lo": rec["lon"],
-                             "el": None if el is None else round(float(el)),
-                             "h": h.reshape(73, -1).tolist(), "p": p.tolist()})
+        for suf in LIGHT:
+            site = {"n": rec["name"], "la": rec["lat"], "lo": rec["lon"],
+                    "el": None if el is None else round(float(el)), "h": hs[suf].reshape(73, -1).tolist()}
+            if suf == "":
+                site["p"] = p.tolist()
+            outs[suf]["sites"].append(site)
+        # year-by-year: one uint8 block per site, [light 3][year][pentad 73][22]
+        if yrs_all is None or len(yrs) > len(yrs_all):
+            yrs_all = yrs
+        years_blocks.append(Y); years_names.append(rec["name"])
+        last_all = max(last_all or "", last or "")
         if i % 100 == 0:
             print(f"  {i}/{len(files)}")
     print()
@@ -160,9 +185,29 @@ def main():
         else:
             print(f"{nm}: not found")
     if not test:
-        with gzip.open(OUT, "wt", encoding="utf-8") as fh:
-            json.dump(out, fh, separators=(",", ":"))
-        print(f"\n{len(files)} sites -> {OUT}")
+        for suf, out in outs.items():
+            path = BASE / f"season{suf}.json.gz"
+            with gzip.open(path, "wt", encoding="utf-8") as fh:
+                json.dump(out, fh, separators=(",", ":"))
+            print(f"{len(files)} sites -> {path}")
+        ydir = BASE / "season_years"
+        ydir.mkdir(exist_ok=True)
+        for old in ydir.glob("y_*.bin"):
+            old.unlink()
+        ny = len(yrs_all)
+        for k in range(0, len(years_blocks), CHUNK):
+            parts = []
+            for Y in years_blocks[k:k + CHUNK]:
+                full = np.zeros((len(LIGHT), ny, 73, 2, 11), np.int32)
+                full[:, :Y.shape[1]] = Y
+                parts.append(np.clip(full, 0, 255).astype(np.uint8).tobytes())
+            (ydir / f"y_{k // CHUNK:03d}.bin").write_bytes(gzip.compress(b"".join(parts), 9))
+        idx = {"years": [int(y) for y in yrs_all], "last": last_all, "chunk": CHUNK, "light": [s.strip("_") or "day" for s in LIGHT],
+               "layout": "uint8 per site: [light][year][pentad 73][low<=low_max, low>low_max][high 0..100 step 10]",
+               "sites": years_names}
+        with gzip.open(ydir / "index.json.gz", "wt", encoding="utf-8") as fh:
+            json.dump(idx, fh, separators=(",", ":"))
+        print(f"year-by-year: {len(years_blocks)} sites, years {yrs_all[0]}-{yrs_all[-1]} (to {last_all}) -> {ydir}")
 
 
 if __name__ == "__main__":

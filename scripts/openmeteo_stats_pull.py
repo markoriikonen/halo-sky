@@ -29,6 +29,7 @@ import datetime as dt
 import urllib.request
 import urllib.parse
 import urllib.error
+import socket
 from pathlib import Path
 
 BASE    = Path.home() / "Downloads" / "grams" / "openmeteo"
@@ -66,21 +67,23 @@ def fetch(key, lat, lon, elev, d0, d1):
         p["elevation"] = elev
     url = URL + "?" + urllib.parse.urlencode(p, safe=",")
     req = urllib.request.Request(url, headers={"User-Agent": "halo-stats-pull"})
-    for attempt in range(5):
+    waits = [15, 30, 60, 120, 240]
+    for attempt in range(len(waits) + 1):
         try:
-            with urllib.request.urlopen(req, timeout=120) as r:
+            with urllib.request.urlopen(req, timeout=300) as r:
                 return json.loads(r.read().decode("utf-8"))
         except urllib.error.HTTPError as e:
-            body = e.read().decode("utf-8", "replace")[:300]
-            if e.code in (429, 500, 502, 503, 504) and attempt < 4:
-                wait = 10 * (attempt + 1)
-                print(f"      HTTP {e.code}, retrying in {wait} s")
-                time.sleep(wait)
+            body = e.read().decode("utf-8", "replace")[:120].replace("\n", " ")
+            if e.code in (429, 500, 502, 503, 504) and attempt < len(waits):
+                print(f"      HTTP {e.code}, retrying in {waits[attempt]} s")
+                time.sleep(waits[attempt])
                 continue
             raise RuntimeError(f"HTTP {e.code}: {body}")
-        except urllib.error.URLError as e:
-            if attempt < 4:
-                time.sleep(10 * (attempt + 1))
+        except (urllib.error.URLError, TimeoutError, socket.timeout, ConnectionError, ValueError) as e:
+            # ValueError: an empty or cut-off answer that is not valid JSON
+            if attempt < len(waits):
+                print(f"      {type(e).__name__}, retrying in {waits[attempt]} s")
+                time.sleep(waits[attempt])
                 continue
             raise
 

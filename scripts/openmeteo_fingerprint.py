@@ -10,8 +10,11 @@ daylight hours in each cell of an 11 x 11 table:
 separately for each calendar month. Writes one compact file,
 ~/Downloads/grams/openmeteo/fingerprints.json.gz, that the viewer reads.
 
-Settings below: the years used, the sun elevation that counts as daylight,
-and whether mid cloud counts as obstructing (added to low) or is ignored.
+The hours are counted in three light classes, each written to its own file,
+so the viewer can show daylight only, daylight plus twilight, or all hours:
+    fingerprints.json.gz            sun at least 0 deg (daylight)
+    fingerprints_twilight.json.gz   sun between -6 and 0 deg (civil twilight)
+    fingerprints_night.json.gz      sun below -6 deg
 """
 import json
 import gzip
@@ -22,10 +25,9 @@ import numpy as np
 
 BASE = Path.home() / "Downloads" / "grams" / "openmeteo"
 SRC = BASE / "stats9km"
-OUT = BASE / "fingerprints.json.gz"
 
 YEAR_FROM, YEAR_TO = 2017, 2025      # whole years only, so every month counts equally
-SUN_MIN_DEG = 0.0                    # daylight = sun at least this high (degrees)
+LIGHT = {"": (0.0, 91.0), "_twilight": (-6.0, 0.0), "_night": (-91.0, -6.0)}   # file suffix: sun from, to (deg)
 OBSTRUCTION = "low"                  # "low", or "low+mid" (mid cloud added to low, capped at 100)
 
 
@@ -45,7 +47,7 @@ def sun_elevation(lat, lon, utc):
                                 np.cos(la) * np.cos(dec) * np.cos(ha)))
 
 
-def fingerprint(rec):
+def fingerprint(rec, sun_lo, sun_hi):
     """Return (counts[12, 11, 11], counts3[12, 6, 6, 6]).
     counts:  daylight hours per month by (high, low) in 10 % steps.
     counts3: daylight hours per month by (high, mid, low) in 20 % steps."""
@@ -62,7 +64,7 @@ def fingerprint(rec):
         low = np.minimum(100.0, low + mid)
     # instantaneous values at the full hour; sun taken at the same moment
     sun = sun_elevation(rec["lat"], rec["lon"], times)
-    ok = ((years >= YEAR_FROM) & (years <= YEAR_TO) & (sun >= SUN_MIN_DEG)
+    ok = ((years >= YEAR_FROM) & (years <= YEAR_TO) & (sun >= sun_lo) & (sun < sun_hi)
           & ~np.isnan(low) & ~np.isnan(high))
     lb = np.clip(np.rint(low[ok] / 10).astype(int), 0, 10)
     hb = np.clip(np.rint(high[ok] / 10).astype(int), 0, 10)
@@ -83,26 +85,30 @@ def fingerprint(rec):
 
 def main():
     files = sorted(p for p in SRC.glob("*.json.gz") if not p.name.startswith("_"))
-    out = {"settings": {"years": [YEAR_FROM, YEAR_TO], "sun_min_deg": SUN_MIN_DEG,
-                        "obstruction": OBSTRUCTION, "bins": "0-100 step 10, rounded",
-                        "bins3": "high, mid, low; 0-100 step 20, rounded; index (h*6+m)*6+l"},
-           "sites": []}
+    outs = {suf: {"settings": {"years": [YEAR_FROM, YEAR_TO], "sun_min_deg": lo, "sun_max_deg": hi,
+                               "light": suf.strip("_") or "day",
+                               "obstruction": OBSTRUCTION, "bins": "0-100 step 10, rounded",
+                               "bins3": "high, mid, low; 0-100 step 20, rounded; index (h*6+m)*6+l"},
+                  "sites": []} for suf, (lo, hi) in LIGHT.items()}
     for i, p in enumerate(files, 1):
         with gzip.open(p, "rt", encoding="utf-8") as fh:
             rec = json.load(fh)
-        c, c3 = fingerprint(rec)
         el = (rec.get("grid") or {}).get("elevation")
         if el is None:
             el = rec.get("elev_m")
-        out["sites"].append({"n": rec["name"], "la": rec["lat"], "lo": rec["lon"],
-                             "el": None if el is None else round(float(el)),
-                             "c": c.reshape(12, -1).tolist(),
-                             "c3": c3.reshape(12, -1).tolist()})
+        for suf, (lo, hi) in LIGHT.items():
+            c, c3 = fingerprint(rec, lo, hi)
+            outs[suf]["sites"].append({"n": rec["name"], "la": rec["lat"], "lo": rec["lon"],
+                                       "el": None if el is None else round(float(el)),
+                                       "c": c.reshape(12, -1).tolist(),
+                                       "c3": c3.reshape(12, -1).tolist()})
         if i % 100 == 0:
             print(f"  {i}/{len(files)}")
-    with gzip.open(OUT, "wt", encoding="utf-8") as fh:
-        json.dump(out, fh, separators=(",", ":"))
-    print(f"{len(files)} sites -> {OUT}")
+    for suf, out in outs.items():
+        path = BASE / f"fingerprints{suf}.json.gz"
+        with gzip.open(path, "wt", encoding="utf-8") as fh:
+            json.dump(out, fh, separators=(",", ":"))
+        print(f"{len(files)} sites -> {path}")
 
 
 if __name__ == "__main__":
