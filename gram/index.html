@@ -30,6 +30,9 @@ label.f input.w { width: 220px; }
 .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
 .seg button { font: 13px var(--f-data); padding: 7px 10px; border: 0; background: var(--bg); color: var(--fg); cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--fg); color: var(--panel); }
+.stylebar { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin: 0 0 10px; }
+.stylebar label.f { display: flex; align-items: center; gap: 8px; }
+.stylebar input[type=range] { width: 140px; accent-color: var(--accent); }
 button.go { font: 500 14px var(--f-body); padding: 8px 16px; border-radius: 4px; border: 1px solid var(--fg); background: var(--fg); color: var(--panel); cursor: pointer; }
 button.go:disabled { opacity: .5; cursor: default; }
 .hint { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
@@ -75,6 +78,15 @@ canvas#gram { display: block; background: #fff; border-radius: 3px; }
 
   <div class="panel">
     <div class="gramhead" id="gramhead"></div>
+    <div class="stylebar" id="stylebar">
+      <div class="seg" id="gstyle" role="group" aria-label="Height gram style">
+        <button type="button" data-s="smooth" aria-pressed="true">Smooth</button>
+        <button type="button" data-s="blocks" aria-pressed="false">Pressure-level blocks</button>
+      </div>
+      <label class="f" for="bh" id="bhwrap" hidden>Block height <b id="bhv"></b>
+        <input id="bh" type="range" min="10" max="100" step="5" value="70">
+      </label>
+    </div>
     <div class="scroll" id="scroll">
       <canvas id="gram" width="10" height="10"></canvas>
       <div class="tip" id="tip" hidden></div>
@@ -97,6 +109,12 @@ const SUN = { day: "#f2cf6b", twi: "#a9b4c9", night: "#3d4559" };
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 let gtype = "height";
+// height-gram style: smooth shading between levels, or one block per pressure level and hour
+const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+const Q0 = new URLSearchParams(location.search);
+let gStyle = Q0.get("style") || store.get("hsg-style") || "smooth";
+let blockH = +(Q0.get("bh") || store.get("hsg-bh") || 70);
+let lastDraw = null;
 const $ = id => document.getElementById(id);
 
 // ---------- controls
@@ -117,11 +135,20 @@ function availText() {
 document.querySelectorAll("#type button").forEach(b => b.addEventListener("click", () => {
   gtype = b.dataset.t;
   document.querySelectorAll("#type button").forEach(x => x.setAttribute("aria-pressed", x === b));
-  fillYears(); availText();
+  fillYears(); availText(); styleUI();
 }));
 
 // from the address: ?name=&lat=&lon=&type=height|lmh&year=&month=&months=&season=best|worst
 const P = new URLSearchParams(location.search);
+function styleUI() {
+  document.querySelectorAll("#gstyle button").forEach(b => b.setAttribute("aria-pressed", b.dataset.s === gStyle));
+  $("bhwrap").hidden = gStyle !== "blocks"; $("bh").value = blockH; $("bhv").textContent = blockH + "%";
+  $("stylebar").hidden = gtype !== "height";
+}
+document.querySelectorAll("#gstyle button").forEach(b => b.addEventListener("click", () => {
+  gStyle = b.dataset.s; store.set("hsg-style", gStyle); styleUI(); if (lastDraw) render(...lastDraw);
+}));
+$("bh").addEventListener("input", () => { blockH = +$("bh").value; store.set("hsg-bh", blockH); styleUI(); if (lastDraw && gStyle === "blocks") render(...lastDraw); });
 $("name").value = P.get("name") || "";
 $("lat").value = P.get("lat") || "";
 $("lon").value = P.get("lon") || "";
@@ -199,7 +226,9 @@ async function draw() {
       try { lev = await getJSON(`${base}&hourly=${vars.join(",")}&models=ecmwf_ifs025`, "pressure levels", 90000); }
       catch (e) { levErr = e.message; }
     }
-    render(lmh, lev, { name: $("name").value.trim(), lat, lon, start, end });
+    lastDraw = [lmh, lev, { name: $("name").value.trim(), lat, lon, start, end }];
+    styleUI();
+    render(...lastDraw);
     if (levErr) status(`The pressure levels did not come through (${levErr}), so only the low/mid/high gram is shown. Try the height gram again later.`, true);
     else status(`Drawn: ${lmh.hourly.time.length} hours. Hover the gram for values.`);
     const q = new URLSearchParams({ name: $("name").value.trim(), lat, lon, type: gtype, year: $("year").value, month: $("month").value, months: $("months").value });
@@ -392,7 +421,30 @@ function drawHeight(ctx, lev, n, X, yPlot, plotW, plotH, pxH, mL) {
   const off = document.createElement("canvas"); off.width = n; off.height = rows;
   off.getContext("2d").putImageData(img, 0, 0);
   ctx.imageSmoothingEnabled = true;
-  ctx.drawImage(off, mL, yPlot, plotW, plotH);
+  if (gStyle !== "blocks") ctx.drawImage(off, mL, yPlot, plotW, plotH);
+  else {
+    // One block per pressure level and hour. The level's band reaches halfway to the levels below and above;
+    // the block fills blockH % of it, centred on the level's own height (clipped to the band), so at small
+    // heights each level shrinks to a line at exactly the height where the model gives a value.
+    const yOf = z => yPlot + (Z_TOP - z) / DZ, f = blockH / 100;
+    for (let i = 0; i < n; i++) {
+      const L = levelHeights(h, i, ground).filter(o => o.z >= ground).sort((a, b) => a.z - b.z);
+      const x0 = Math.round(X(i)), cw = Math.max(1, Math.round(X(i + 1)) - x0), w = cw - (pxH >= 4 && f < 1 ? 1 : 0);
+      L.forEach((o, k) => {
+        const lo = k === 0 ? ground : (L[k - 1].z + o.z) / 2, hi = k === L.length - 1 ? o.z + (o.z - lo) : (o.z + L[k + 1].z) / 2;
+        if (lo >= Z_TOP) return;
+        const a = Math.pow(Math.min(1, Math.max(0, o.c / 100)), GAMMA);
+        if (a < 0.02) return;
+        const half = f * (hi - lo) / 2, b0 = Math.max(lo, o.z - half), b1 = Math.min(hi, o.z + half, Z_TOP);
+        const g = Math.round(mix(255, C_CLOUD[0], a));
+        ctx.fillStyle = `rgb(${g},${g},${g})`;
+        const top = Math.round(yOf(b1)), bot = Math.max(top + 1, Math.round(yOf(b0)));
+        ctx.fillRect(x0, top, w, bot - top);
+      });
+      ctx.fillStyle = `rgb(${C_GROUND.join(",")})`;
+      ctx.fillRect(x0, Math.round(yOf(ground)), cw, Math.round(yPlot + plotH - yOf(ground)));
+    }
+  }
 
   ctx.save();
   ctx.beginPath(); ctx.rect(mL, yPlot, plotW, plotH); ctx.clip();
