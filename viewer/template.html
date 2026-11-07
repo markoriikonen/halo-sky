@@ -52,6 +52,11 @@ h2 { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: u
 label.tog { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer; align-self: center; }
 .site.off { fill: none !important; stroke: var(--muted); stroke-width: .8; }
 [hidden] { display: none !important; }
+.mslide { display: flex; align-items: center; gap: 8px; margin-top: 6px; font: 500 13px var(--f-data); }
+.mslide input { flex: 1; min-width: 160px; accent-color: var(--win); }
+.mslide.idle input { opacity: .45; }
+.mslide output { min-width: 30px; }
+.mslide button { font: 500 13px var(--f-data); color: var(--fg); background: transparent; border: 1px solid var(--rule); border-radius: 4px; padding: 3px 8px; cursor: pointer; min-width: 34px; }
 .mapbox { position: relative; }
 svg#map { display: block; width: 100%; height: auto; }
 .sphere { fill: var(--ocean); stroke: var(--coast); stroke-width: .8; }
@@ -172,6 +177,11 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
     <div id="monthwrap">
       <h2>Month</h2>
       <div class="months" id="months" role="group" aria-label="Month"></div>
+      <div class="mslide idle" id="mslide">
+        <button type="button" id="mplay" aria-label="Play months">▶</button>
+        <input id="mrange" type="range" min="1" max="12" step="1" value="1" aria-label="Month slider">
+        <output id="mrangev">Jan</output>
+      </div>
     </div>
     <div class="controls" id="haloSliders">
       <label class="slider" for="hmin"><span>High cloud at least <b id="hminv"></b></span>
@@ -383,8 +393,25 @@ const mEl = document.getElementById("months");
 MONTHS.forEach((lab, i) => {
   const b = document.createElement("button"); b.type = "button";
   b.textContent = lab; b.setAttribute("aria-pressed", i === 0);
-  b.addEventListener("click", () => { month = i; [...mEl.children].forEach((x, j) => x.setAttribute("aria-pressed", j === i)); update(); });
+  b.addEventListener("click", () => { stopPlay(); setMonth(i); });
   mEl.appendChild(b);
+});
+const mRange = document.getElementById("mrange"), mPlay = document.getElementById("mplay");
+let playTimer = null;
+function setMonth(i) {
+  month = i;
+  [...mEl.children].forEach((x, j) => x.setAttribute("aria-pressed", j === i));
+  if (i) { mRange.value = i; document.getElementById("mrangev").textContent = MONTHS[i]; }
+  document.getElementById("mslide").classList.toggle("idle", !i);
+  update();
+}
+function stopPlay() { if (playTimer) { clearInterval(playTimer); playTimer = null; mPlay.textContent = "▶"; mPlay.setAttribute("aria-label", "Play months"); } }
+mRange.addEventListener("input", () => { stopPlay(); setMonth(+mRange.value); });
+mPlay.addEventListener("click", () => {
+  if (playTimer) return stopPlay();
+  if (!month) setMonth(+mRange.value);
+  mPlay.textContent = "❚❚"; mPlay.setAttribute("aria-label", "Pause");
+  playTimer = setInterval(() => setMonth(month % 12 + 1), 900);
 });
 document.querySelectorAll("#modes button").forEach(b => b.addEventListener("click", () => {
   mode = b.dataset.mode;
@@ -395,6 +422,7 @@ document.querySelectorAll("#modes button").forEach(b => b.addEventListener("clic
   document.getElementById("tempwrap").hidden = mode !== "layer" || srcKind !== "temp";
   document.getElementById("seasonCtl").hidden = mode !== "season";
   document.getElementById("monthwrap").hidden = mode === "season";
+  if (mode === "season") stopPlay();
   document.getElementById("strippanel").hidden = mode !== "season";
   document.querySelector(".fptogs").hidden = mode === "season";
   if (mode !== "season") { document.getElementById("toph").textContent = "Most hours in the window"; document.getElementById("both").textContent = "Fewest hours in the window"; document.getElementById("lgnote").textContent = "Click a dot to add its fingerprint below."; }
