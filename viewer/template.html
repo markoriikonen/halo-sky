@@ -205,6 +205,8 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
           <option value="timing">Timing of the season</option>
           <option value="swing">Seasonality index (0–1)</option>
           <option value="type">Number of seasons</option>
+          <option value="agree">Season repeats (halves agree)</option>
+          <option value="reliab">Season reliability (0–1)</option>
           <option value="active">Active season</option>
           <option value="quiet">Quiet season</option>
           <option value="days">Days above a threshold</option>
@@ -859,7 +861,10 @@ function autoSeasons(s) {
     const va = d3.variance(a) || 0, vb = d3.variance(b) || 0, score = a.length * va + b.length * vb;
     if (!best || score < best.score) best = { score, thr };
   }
-  if (amp < MIN_SWING || !best) return (c.auto = { none: true, amp });
+  const k = seasonCheck(s);
+  if (!best) return (c.auto = { none: true, amp });
+  if (k && !isNaN(k.agree)) { if (!(k.agree >= AGREE_MIN && k.luck < LUCK_MAX)) return (c.auto = { none: true, amp, test: k }); }
+  else if (amp < MIN_SWING) return (c.auto = { none: true, amp });
   // label each pentad; gaps (polar night) take the label of the pentad before
   const lab = new Array(NP);
   let first = v.findIndex(x => !isNaN(x));
@@ -901,6 +906,31 @@ function autoSeasons(s) {
   return (c.auto = { none: false, amp, thr: best.thr, runs, n: act.length, actShare: Ma / Ta, quietShare: Mq / Tq,
     longestAct: act.reduce((m, r) => r.len > m.len ? r : m, act[0]), longestQuiet: qui.reduce((m, r) => r.len > m.len ? r : m, qui[0]) });
 }
+// ---- season tests (precomputed per site, light, measure and threshold by openmeteo_season_checks.py)
+let CHK = null;
+const AGREE_MIN = 0.5, LUCK_MAX = 0.05;
+async function loadChecks() {
+  try {
+    const d = await fetchJSON("data/season_checks.js", "FP_CHECKS");
+    CHK = d.settings;
+    const byName = new Map(SITES.map(s => [s.n, s]));
+    Object.entries(d.sites).forEach(([n, v]) => { const s = byName.get(n); if (s) s.chk = v; });
+    SITES.forEach(s => { if (s.S) { s.S.key = null; s.S.c = null; } });
+    update();
+  } catch (e) { console.warn("no season checks", e); }
+}
+function seasonCheck(s) {                          // {agree, luck, rel} for the current settings, or null
+  if (!CHK || !s.chk) return null;
+  const li = CHK.light.indexOf(light), mi = CHK.measures.indexOf(sMeas), ti = CHK.thresholds.indexOf(sThr);
+  if (li < 0 || mi < 0 || ti < 0) return null;
+  const i = ((li * CHK.measures.length + mi) * CHK.thresholds.length + ti) * 3, v = s.chk;
+  return { agree: v[i] === 255 ? NaN : v[i] / 100 - 1, luck: v[i + 1] === 255 ? NaN : v[i + 1] / 200, rel: v[i + 2] === 255 ? NaN : v[i + 2] / 100 - 1 };
+}
+const fmtLuck = l => isNaN(l) ? "–" : l < 0.005 ? "< 0.5%" : l < 0.1 ? (l * 100).toFixed(1) + "%" : Math.round(l * 100) + "%";
+function checkLine(s) {
+  const k = seasonCheck(s); if (!k) return "";
+  return `<div>Season test: halves agree <b>${isNaN(k.agree) ? "–" : k.agree.toFixed(2)}</b> · chance by luck <b>${fmtLuck(k.luck)}</b> · reliability <b>${isNaN(k.rel) ? "–" : k.rel.toFixed(2)}</b></div>`;
+}
 function daysAbove(s) {
   const c = series(s); if (!c) return NaN;
   let n = 0, any = false;
@@ -912,6 +942,7 @@ function seasonValue(s) {
   if (sView === "timing") return c.R;
   if (sView === "days") return daysAbove(s);
   if (sView === "type") { const a = autoSeasons(s); return a ? (a.none ? 0 : Math.min(3, a.n)) : NaN; }
+  if (sView === "agree" || sView === "reliab") { const k = seasonCheck(s); if (!k) return NaN; const v = sView === "agree" ? k.agree : k.rel; return isNaN(v) ? NaN : Math.max(0, v); }
   if (sBy === "auto") {
     const a = autoSeasons(s); if (!a) return NaN;
     if (sView === "swing") return a.amp;
@@ -922,7 +953,7 @@ function seasonValue(s) {
 }
 const TYPE_LAB = ["no clear season", "one season", "two seasons", "three or more"];
 const TYPE_COL = ["#c9cfd4", "#2b8cbe", "#e6550d", "#756bb1"];
-const fmtSV = v => isNaN(v) ? "–" : sView === "days" ? `${Math.round(v)} d` : sView === "type" ? TYPE_LAB[v] : (sView === "timing" || sView === "swing") ? v.toFixed(2) : pct(v);
+const fmtSV = v => isNaN(v) ? "–" : sView === "days" ? `${Math.round(v)} d` : sView === "type" ? TYPE_LAB[v] : (sView === "timing" || sView === "swing" || sView === "agree" || sView === "reliab") ? v.toFixed(2) : pct(v);
 const measLabel = () => sMeas === "pres" ? `high cloud ≥ ${sThr}%` : `high cloud ≥ ${sThr}%, low ≤ ${(SSET && SSET.low_max) || LOW_MAX_DEFAULT}%`;
 function timingColor(c, rmax) {
   const hue = d3.interpolateRainbow(c.peak / NP), t = Math.min(1, c.R / rmax);
@@ -945,9 +976,9 @@ function seasonUpdate() {
     ctx.clearRect(0, 0, cv.width, cv.height);
     TYPE_COL.forEach((col, i) => { ctx.fillStyle = col; ctx.fillRect(i * cv.width / 4, 0, cv.width / 4 - 2, cv.height); });
     document.getElementById("lg0").textContent = "none"; document.getElementById("lg1").textContent = "1 · 2 · 3+";
-    document.getElementById("lgnote").textContent = "Grey: no clear season (the 30-day curve swings less than 12 points). Blue: one active season a year; orange: two; purple: three or more.";
+    document.getElementById("lgnote").textContent = "Grey: no clear season (the two halves of the record do not agree on a seasonal shape, or its swing could be weather alone). Blue: one active season a year; orange: two; purple: three or more.";
   } else {
-    const max = sView === "days" ? 365 : Math.max(0.02, good.length ? d3.quantile(good, 0.98) : 1);
+    const max = sView === "days" ? 365 : (sView === "agree" || sView === "reliab") ? 1 : Math.max(0.02, good.length ? d3.quantile(good, 0.98) : 1);
     colorOf = (s, v) => d3.interpolateYlGnBu(0.08 + 0.92 * Math.min(1, v / max));
     for (let i = 0; i < cv.width; i++) { ctx.fillStyle = d3.interpolateYlGnBu(0.08 + 0.92 * i / cv.width); ctx.fillRect(i, 0, 1, cv.height); }
     document.getElementById("lg0").textContent = sView === "days" ? "0 d" : sView === "swing" ? "0" : "0%";
@@ -962,6 +993,8 @@ function seasonUpdate() {
     timing: `When the high-cloud season peaks (${measLabel()})`,
     swing: auto ? `Seasonality index: highest minus lowest 30-day share (${measLabel()})` : `Seasonality index: best ${L} days minus worst ${L} days (${measLabel()})`,
     type: `Number of active seasons a year, found from each site's curve (${measLabel()})`,
+    agree: `Does the season repeat? Agreement of the odd- and even-year averages, 2017–2025 (${measLabel()})`,
+    reliab: `Season reliability: share of each year's ups and downs that the average season explains (${measLabel()})`,
     active: auto ? `Share of hours in each site's active season(s) (${measLabel()})` : `Share of hours in each site's best ${L} days (${measLabel()})`,
     quiet: auto ? `Share of hours in each site's quiet season(s) (${measLabel()})` : `Share of hours in each site's worst ${L} days (${measLabel()})`,
     days: `Days a year with at least ${sDays}% of the hours counted with ${measLabel()} (30-day average)`,
@@ -976,8 +1009,8 @@ function seasonUpdate() {
   const ranked = SITES.map((s, i) => [s, rankVal[i]]).filter(x => !isNaN(x[1])).sort((a, b) => b[1] - a[1]);
   const fmtR = v => sView === "type" ? `half-year share ${v.toFixed(2)}` : fmtSV(v);
   const rl = (el, arr) => { el.innerHTML = ""; arr.forEach(([s, v]) => { const li = document.createElement("li"); li.innerHTML = `${s.n}<span>${fmtR(v)}</span>`; li.addEventListener("click", () => addSite(s.n)); el.appendChild(li); }); };
-  const rname = { timing: "most seasonal", swing: "largest seasonal swing", type: "strongest second season", active: auto ? "highest active-season share" : "highest best-season share", quiet: auto ? "highest quiet-season share" : "highest worst-season share", days: "most days above the threshold" };
-  const lname = { timing: "least seasonal", swing: "smallest seasonal swing", type: "most purely one-season", active: auto ? "lowest active-season share" : "lowest best-season share", quiet: auto ? "lowest quiet-season share" : "lowest worst-season share", days: "fewest days above the threshold" };
+  const rname = { agree: "most repeatable season", reliab: "most reliable season", timing: "most seasonal", swing: "largest seasonal swing", type: "strongest second season", active: auto ? "highest active-season share" : "highest best-season share", quiet: auto ? "highest quiet-season share" : "highest worst-season share", days: "most days above the threshold" };
+  const lname = { agree: "least repeatable season", reliab: "least reliable season", timing: "least seasonal", swing: "smallest seasonal swing", type: "most purely one-season", active: auto ? "lowest active-season share" : "lowest best-season share", quiet: auto ? "lowest quiet-season share" : "lowest worst-season share", days: "fewest days above the threshold" };
   document.getElementById("toph").textContent = rname[sView][0].toUpperCase() + rname[sView].slice(1);
   document.getElementById("both").textContent = lname[sView][0].toUpperCase() + lname[sView].slice(1);
   rl(document.getElementById("top"), ranked.slice(0, 20));
@@ -1056,13 +1089,17 @@ function seasonCard(s) {
   if (c && sBy === "auto") {
     const a = autoSeasons(s), cs = x => x ? `thin ${pct(x[0])} · medium ${pct(x[1])} · sheet ${pct(x[2])}` : "–";
     const harmTxt = `peak ${pDate(c.peak)} · half-year share ${(c.A1 + c.A2) ? (c.A2 / (c.A1 + c.A2)).toFixed(2) : "–"} (0: one wave a year, 1: two)`;
-    if (!a || a.none) stats = `<div><b>No clear season</b>: the 30-day curve swings only ${a && !isNaN(a.amp) ? Math.round(a.amp * 100) : "–"} points (less than ${MIN_SWING * 100}).</div><div>${harmTxt}</div>`;
+    if (!a || a.none) {
+      const k = a && a.test, why = k ? [k.agree < AGREE_MIN ? `the odd- and even-year halves agree only ${k.agree.toFixed(2)} (needs ${AGREE_MIN})` : "", !(k.luck < LUCK_MAX) ? `a swing this size comes from weather alone ${fmtLuck(k.luck)} of the time` : ""].filter(Boolean).join("; ")
+        : `the 30-day curve swings only ${a && !isNaN(a.amp) ? Math.round(a.amp * 100) : "–"} points`;
+      stats = `<div><b>No clear season</b>: ${why}.</div>${checkLine(s)}<div>${harmTxt}</div>`;
+    }
     else {
       const pts = (r) => Array.from({ length: r.len }, (_, j) => (r.start + j) % NP);
       const actP = a.runs.filter(r => r.hi).flatMap(pts), quiP = a.runs.filter(r => !r.hi).flatMap(pts);
       stats = `<div><b>${TYPE_LAB[Math.min(3, a.n)][0].toUpperCase() + TYPE_LAB[Math.min(3, a.n)].slice(1)}</b> · seasonality index <b>${a.amp.toFixed(2)}</b> · break at ${pct(a.thr)}</div>` +
         a.runs.slice().sort((p, q) => p.start - q.start).map(r => `<div>${r.hi ? "Active" : "Quiet"} ${pSpan(r.start, r.len)} (${r.len * 5} d): <b>${pct(r.share)}</b></div>`).join("") +
-        `<div>${harmTxt}</div><div>Days with ≥ ${sDays}%: <b>${Math.round(daysAbove(s))}</b></div>
+        checkLine(s) + `<div>${harmTxt}</div><div>Days with ≥ ${sDays}%: <b>${Math.round(daysAbove(s))}</b></div>
          <div>High-cloud cover, active: ${cs(coverSplit(s, actP))}</div><div>High-cloud cover, quiet: ${cs(coverSplit(s, quiP))}</div>`;
     }
   } else if (c && w) {
@@ -1137,7 +1174,8 @@ async function openYears(s) {
   const ymax = Math.min(1, Math.max(0.1, Math.ceil(d3.max(rows.flatMap(r => r.sm.filter(v => !isNaN(v))).concat(avg.filter(v => !isNaN(v)))) * 10) / 10));
   const Wd = 700, Hr = 44, pl = 34, x = p => pl + (Wd - pl - 4) * p / NP, yv = (v, h) => 3 + (h - 6) * (1 - v / ymax);
   const line = (arr, h, cls) => { let d = ""; arr.forEach((v, p) => { if (isNaN(v)) return; d += (d && !isNaN(arr[p - 1]) ? "L" : "M") + `${x(p + 0.5)},${yv(v, h)}`; }); return `<path d="${d}" class="${cls}"/>`; };
-  const thr = a && !a.none ? a.thr : null;
+  const avgVals = avg.filter(v => !isNaN(v)).sort(d3.ascending);
+  const clear = !!(a && !a.none), thr = clear ? a.thr : (avgVals.length ? d3.quantile(avgVals, 0.5) : null);
   const runsAbove = (sm) => {                       // a year's active spells: above the average curve's break, gaps under 30 days closed
     if (thr == null) return [];
     const on = sm.map(v => !isNaN(v) && v >= thr), out = [];
@@ -1182,13 +1220,15 @@ async function openYears(s) {
         stats += `<div>Main season starts: typically <b>${dDate(d3.median(ss) * 5)}</b>; earliest ${dDate(e[1] * 5)} (${e[0]}), latest ${dDate(l[1] * 5)} (${l[0]})</div>`;
         if (ee.length >= 3) stats += `<div>and ends: typically <b>${dDate(d3.median(ee) * 5 - 1)}</b>, between ${dDate(ee[0] * 5 - 1)} and ${dDate(ee[ee.length - 1] * 5 - 1)}</div>`;
       } else if (L.start + L.len > NP) stats += `<div>The main season runs over the turn of the year, so its yearly start dates are not compared here.</div>`;
-    } else stats += `<div>No clear season in the average curve, so seasons are not compared year by year.</div>`;
+    } else stats += `<div>No clear season in the average curve, so season dates are not compared year by year.</div>`;
+    const k = seasonCheck(s);
+    if (k) stats += `<div>Halves agree <b>${isNaN(k.agree) ? "–" : k.agree.toFixed(2)}</b> (is the season there?) · chance by luck <b>${fmtLuck(k.luck)}</b> · reliability <b>${isNaN(k.rel) ? "–" : k.rel.toFixed(2)}</b> (will it be there in a given year?)</div>`;
     stats += `<div>${whole.length} whole years (${whole[0].y}–${whole[whole.length - 1].y})${rows.length > whole.length ? `; ${rows[rows.length - 1].y} so far, to ${YIDX.last.slice(0, 10)}` : ""}.</div>`;
   }
   body.innerHTML = `<div class="ysec">Average ${years[0]}–${years[years.length - 1] - (rows.length > whole.length ? 1 : 0)}</div>${yearCurve(s, { wide: true, season: mode === "season" }) || ""}
     <div class="ysec">Year by year</div>${heat}<div class="yrows" style="margin-top:8px">${mult}</div>
     <div class="ysec">Variability</div><div class="ystats">${stats}</div>
-    <p class="note" style="margin:10px 0 0">Year panels share one scale, 0 to ${Math.round(ymax * 100)}%. Thin grey line in each year: the multi-year average. Shaded: that year's spells above the average curve's break value${thr != null ? ` (${pct(thr)})` : ""}, gaps under 30 days closed.</p>`;
+    <p class="note" style="margin:10px 0 0">Year panels share one scale, 0 to ${Math.round(ymax * 100)}%. Thin grey line in each year: the multi-year average. Shaded: that year's spells above ${clear ? "the average curve's break value" : "the average curve's median (it has no clear season)"}${thr != null ? ` (${pct(thr)})` : ""}, gaps under 30 days closed. Shading that wanders from year to year means the season is not reliable.</p>`;
   // paint the heat strip
   const cv = document.getElementById("yheat"), ctx = cv.getContext("2d"), fg = getComputedStyle(document.documentElement).getPropertyValue("--muted").trim() || "#666";
   ctx.scale(dpr, dpr);
@@ -1295,7 +1335,7 @@ load().catch(e => { document.getElementById('status').textContent = 'Could not l
     `Daylight: sun at least ${SETTINGS.sun_min_deg}° above the horizon.`;
   update();
   kgLoad().then(() => update());
-  loadSeason();
+  loadSeason().then(loadChecks);
 }).catch(e => { document.getElementById("status").textContent = "Could not load the data: " + e.message; });
 }
 // fetch the data only after the page itself has loaded, so it shows at once

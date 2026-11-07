@@ -15,10 +15,11 @@ The scripts expect a folder `~/Downloads/grams/openmeteo/` holding the location 
 |---|---|---|---|
 | 1 | `openmeteo_stats_pull.py all` | IFS HRES 9 km | Hourly low/mid/high cloud, 2017 → yesterday, per site |
 | 2 | `openmeteo_fingerprint.py` | – | Monthly daylight counts of low × high (10 % steps) and high × mid × low (20 %) → `fingerprints.json.gz` |
-| 3 | `openmeteo_season_build.py` | – | High-cloud counts per five-day period, coverage split, episode lengths → `season.json.gz` |
+| 3 | `openmeteo_season_build.py` | – | High-cloud counts per five-day period in daylight, twilight and night, plus every year separately → `season*.json.gz`, `season_years/` |
 | 4 | `openmeteo_profile_pull.py` | IFS 0.25° | Temperature and cloud cover on 13 pressure levels, 2024 → yesterday, every daylight hour, per site |
 | 5 | `openmeteo_layer_build.py` | – | Daylight counts of cloud inside / warmer than / colder than each temperature window → `layer_windows/` |
-| 6 | `viewer/build.py` | – | Assembles the viewer page and its data files |
+| 6 | `openmeteo_season_checks.py` | – | Per site: do the odd- and even-year halves agree, could the swing be weather alone, how reliable is the season → `season_checks.json.gz` |
+| 7 | `viewer/build.py` | – | Assembles the viewer page and its data files |
 
 Other scripts: `openmeteo_boundary_check.py` (where ECMWF's mid/high split falls in temperature at chosen sites), `openmeteo_gram.py` and `openmeteo_quick.py` (PNG grams with matplotlib), `openmeteo_layer_pull.py` (earlier fixed-window version of steps 4–5).
 

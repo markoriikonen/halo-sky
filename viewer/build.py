@@ -33,6 +33,10 @@ for base, var in ((fp, "FP_DATA"), (season, "FP_SEASON")):
         extra = Path(str(base).replace(".json.gz", f"_{cls}.json.gz"))
         if extra.exists():
             js(extra, Path(base).name.replace(".json.gz", f"_{cls}.js"), f"{var}_{cls.upper()}")
+# season tests (openmeteo_season_checks.py), next to the season file
+chk = Path(season).parent / "season_checks.json.gz"
+if chk.exists():
+    js(chk, "season_checks.js", "FP_CHECKS")
 # year-by-year files for the pop-up: season_years/ next to the season file
 ydir = Path(season).parent / "season_years"
 if ydir.exists():
