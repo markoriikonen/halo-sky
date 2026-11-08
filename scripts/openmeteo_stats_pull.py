@@ -135,7 +135,8 @@ def main():
     if arg == "all":
         todo, arg = [], None
         for f in ("locations_current.csv", "locations_new.csv",
-                  "locations_admin_100km.csv", "locations_extra.csv", "locations_handpicked.csv"):
+                  "locations_admin_100km.csv", "locations_extra.csv", "locations_handpicked.csv",
+                  "locations_cities.csv"):
             if (BASE / f).exists():
                 todo += sites(f)
     elif arg and arg.lower().endswith(".csv"):
