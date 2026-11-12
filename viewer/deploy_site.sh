@@ -7,7 +7,10 @@ set -e
 REPO=$(cd "$(dirname "$0")/.." && pwd)
 VIEW=${1:-/home/claude/site}
 OUT=$(mktemp -d)
-cp "$REPO/index.html" "$OUT/"
+# the landing page on the site branch points at the viewer copy next to it
+sed -e 's#href="https://claude.ai/artifact/QLgEuMgeaU1XYKTv3nErfs"#href="fingerprints/"#' \
+    -e 's#A world map of about 2,000 sites: cloud-layer fingerprints, the elliptical-halo mid-layer search and high-cloud seasons.#A world map of about 2,500 sites: cloud-layer fingerprints, the elliptical-halo mid-layer search, high-cloud seasons, and photographed halo displays.#' \
+    "$REPO/index.html" > "$OUT/index.html"
 cp -r "$REPO/gram" "$REPO/locations" "$OUT/"
 mkdir -p "$OUT/fingerprints"
 cp -r "$VIEW/index.html" "$VIEW/data" "$OUT/fingerprints/"
