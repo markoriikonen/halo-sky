@@ -26,6 +26,11 @@ js(os.path.join(wdir, "index.json.gz"), "layer_index.js", "FP_LINDEX")
 for p in sorted(glob.glob(os.path.join(wdir, "w_*.json.gz"))):
     b = os.path.basename(p)[:-8]
     js(p, b + ".js", "FP_W_" + b[2:])
+# all-hours temperature windows, from the folder next to the daylight one (layer_windows_all)
+wall = wdir.rstrip("/\\") + "_all"
+for p in sorted(glob.glob(os.path.join(wall, "w_*.json.gz"))):
+    b = os.path.basename(p)[:-8]
+    js(p, "w_all_" + b[2:] + ".js", "FP_WA_" + b[2:])
 js(season, "season.js", "FP_SEASON")
 # twilight and night counts (loaded by the page only when chosen), next to the daylight files
 for base, var in ((fp, "FP_DATA"), (season, "FP_SEASON")):

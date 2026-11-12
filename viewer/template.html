@@ -308,7 +308,6 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
     <label class="slider" for="light" id="lightwrap"><span>Hours counted</span>
       <select id="light">
         <option value="day">Daylight (sun ≥ 0°)</option>
-        <option value="twilight">With civil twilight (sun ≥ −6°)</option>
         <option value="all">All hours, day and night</option>
       </select>
     </label>
@@ -390,7 +389,8 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 <script>
 const DATA_URL = "data/fingerprints.js";          // sets window.FP_DATA (base64 gzip JSON)
 const LINDEX_URL = "data/layer_index.js";          // sets window.FP_LINDEX: settings + site order
-const winURL = k => { const [a, b] = k.split("..").map(Number); return [`data/w_${-a}_${-b}.js`, `FP_W_${-a}_${-b}`]; };
+const winURL = (k, all) => { const [a, b] = k.split("..").map(Number); return all ? [`data/w_all_${-a}_${-b}.js`, `FP_WA_${-a}_${-b}`] : [`data/w_${-a}_${-b}.js`, `FP_W_${-a}_${-b}`]; };
+const wKey = k => (light === "all" ? "A:" : "") + k;            // daylight and all-hours windows are kept apart
 let LORDER = [], WLOADED = new Map(), srcKind = "mid", wWarm = -10, wCold = -20;
 const LAND = __LAND__;
 const MONTHS = ["Year","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -428,18 +428,19 @@ async function load() {
     LORDER = L.sites.map(r => byName.get(r.n) || null);
   }
 }
-function ensureWin(k) {                       // load one temperature window on first use
-  if (!WLOADED.has(k)) {
-    const [url, key] = winURL(k);
-    WLOADED.set(k, fetchJSON(url, key).then(d => {
+function ensureWin(k) {                       // load one temperature window on first use, for the hours counted
+  const sk = wKey(k);
+  if (!WLOADED.has(sk)) {
+    const [url, key] = winURL(k, light === "all");
+    WLOADED.set(sk, fetchJSON(url, key).then(d => {
       d.c.forEach((flat, i) => {
         const s = LORDER[i]; if (!s) return;
         const m = []; for (let j = 0; j < 12; j++) m.push(flat.slice(j * 216, (j + 1) * 216));
-        s.L[k] = addYear(m);
+        s.L[sk] = addYear(m);
       });
     }));
   }
-  return WLOADED.get(k);
+  return WLOADED.get(sk);
 }
 
 // ---- shares
@@ -463,7 +464,7 @@ function shareHalo(s, mo) {
   }
   return tot ? win / tot : NaN;
 }
-function arr3(s, mo) { return src === "mid" ? (s.m3 ? s.m3[mo] : null) : (s.L[src] ? s.L[src][mo] : null); }
+function arr3(s, mo) { return src === "mid" ? (s.m3 ? s.m3[mo] : null) : (s.L[wKey(src)] ? s.L[wKey(src)][mo] : null); }
 // 216-vector index (a*6+y)*6+b ; a = above/high, y = layer/mid, b = below/low ; bins 0..5 = 0..100 %
 function shareLayer(s, mo) {
   const c = arr3(s, mo); if (!c) return NaN;
@@ -859,7 +860,7 @@ function update() {
   const title = mode === "halo" ? `high cloud ≥ ${hmin}%, low cloud ≤ ${lmax}%`
     : src === "mid" ? `mid cloud ≥ ${ymin}%, low ≤ ${bmax}%, high ≤ ${amax}% (ECMWF 9 km, ${SETTINGS.years[0]}–${SETTINGS.years[1]})`
     : `cloud at ${winLabel(src)} ≥ ${ymin}%, warmer cloud ≤ ${bmax}%, colder cloud ≤ ${amax}% (ECMWF 25 km, from ${LSET.start.slice(0, 4)})`;
-  document.getElementById("maptitle").textContent = mode === "halo" && hBy === "pres" ? presT : `Share of ${mode === "layer" && src !== "mid" ? LIGHT_LAB.day : LIGHT_LAB[light]} inside the window: ${title}`;
+  document.getElementById("maptitle").textContent = mode === "halo" && hBy === "pres" ? presT : `Share of ${LIGHT_LAB[light]} inside the window: ${title}`;
   document.getElementById("fphelp").textContent = mode === "halo" && hBy === "pres"
     ? `Presence only: % of the hours counted with high and low cloud present (≥ ${pThr}%) or absent, cover not counted. The model's cover is rounded to 10 % steps, so "≥ 10%" means about 5 % or more.${pView === "hnl" ? " Outlined: the window." : ""}`
     : mode === "halo"
@@ -944,9 +945,13 @@ function applyLight() {
 document.getElementById("light").addEventListener("change", async e => {
   const v = e.target.value, st = document.getElementById("status");
   st.textContent = "Loading…";
-  try { for (const c of LIGHT_SETS[v]) await ensureLight(c); }
-  catch (err) { st.textContent = "Could not load those hours"; e.target.value = light; return; }
-  light = v; applyLight(); st.textContent = `${SITES.length} sites`; update();
+  const prev = light;
+  try {
+    for (const c of LIGHT_SETS[v]) await ensureLight(c);
+    light = v;
+    if (mode === "layer" && src !== "mid") await ensureWin(src);
+  } catch (err) { light = prev; st.textContent = "Could not load those hours"; e.target.value = light; return; }
+  applyLight(); st.textContent = `${SITES.length} sites`; update();
 });
 
 // ===================== Seasons mode =====================
