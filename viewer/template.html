@@ -156,7 +156,18 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 .borders { fill: none; stroke: var(--coast); stroke-width: .55; vector-effect: non-scaling-stroke; pointer-events: none; opacity: .9; }
 .disp { cursor: pointer; }
 .disp .hx { vector-effect: non-scaling-stroke; }
-.disp:hover .hxo, .disp.on .hxo { stroke: var(--sel); stroke-width: 2.4; }
+.disp .latest { fill: none; stroke: rgb(var(--ink)); stroke-width: 1.3; opacity: .75; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; }
+@media (prefers-reduced-motion: no-preference) { .disp .latest { animation: latest 2.6s ease-out infinite; } }
+@keyframes latest { 0% { transform: scale(.75); opacity: .9; } 70% { transform: scale(1.25); opacity: 0; } 100% { transform: scale(1.25); opacity: 0; } }
+.dunder { font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 5px; align-items: center; margin-top: 6px; }
+.dunder span { border: 1px solid var(--rule); border-radius: 3px; padding: 1px 6px; color: var(--fg); }
+.strip { display: flex; flex-wrap: wrap; gap: 4px; }
+.strip button { display: grid; justify-items: center; gap: 1px; background: none; border: 1px solid transparent; border-radius: 4px; padding: 3px 4px; cursor: pointer; color: var(--fg); }
+.strip button:hover { border-color: var(--rule); }
+.strip button[aria-pressed="true"] { border-color: rgb(var(--ink)); }
+.strip span { font: 10.5px var(--f-data); color: var(--muted); }
+.linkbtn { background: none; border: 0; padding: 0 0 0 8px; font: inherit; text-transform: none; letter-spacing: 0; color: var(--fg); text-decoration: underline; cursor: pointer; }
+.dlist tr.on { background: var(--bg); }
 .dseg { display: flex; flex-wrap: wrap; gap: 4px; }
 .dseg button { font: 13px var(--f-body); color: var(--fg); background: transparent; border: 1px solid var(--rule); border-radius: 4px; padding: 4px 8px; cursor: pointer; }
 .dseg button[aria-pressed="true"] { background: rgb(var(--ink)); color: var(--on-ink); border-color: rgb(var(--ink)); }
@@ -176,11 +187,11 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 :root[data-theme="dark"] .dfirst .wf { color: #ee7b9c; } :root[data-theme="dark"] .dfirst .nf { color: #6cc28f; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .dfirst .wf { color: #ee7b9c; } :root:not([data-theme="light"]) .dfirst .nf { color: #6cc28f; } }
 .dhalos { display: flex; flex-wrap: wrap; gap: 3px; }
-.dhalos span { font: 500 11.5px var(--f-data); border: 1px solid var(--rule); border-radius: 3px; padding: 1px 5px; }
+.dhalos span { font: 12.5px var(--f-body); border: 1px solid var(--rule); border-radius: 3px; padding: 1px 5px; }
 .dhalos span.doubt { border-style: dashed; color: var(--muted); }
-.dthumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.dthumbs { display: grid; gap: 10px; }
 .dthumbs figure { margin: 0; display: grid; gap: 3px; }
-.dthumbs img { width: 100%; height: 120px; object-fit: cover; border-radius: 4px; border: 1px solid var(--rule); background: var(--bg); display: block; }
+.dthumbs img { width: 100%; height: auto; border-radius: 4px; border: 1px solid var(--rule); background: var(--bg); display: block; }
 .dthumbs figcaption { font-size: 11.5px; color: var(--muted); }
 .ddocs { font-size: 13px; display: grid; gap: 2px; }
 .ddocs a, .dthumbs a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 2px; }
@@ -286,7 +297,8 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
       </label>
     </div>
     <div class="controls" id="dispCtl" hidden>
-      <label class="slider" for="dq"><span>Find</span><input id="dq" class="dfind" type="search" placeholder="halo code or name, observer, place…" autocomplete="off"></label>
+      <div><h2>Show</h2><div class="dseg" id="dscope"><button type="button" data-v="recent" aria-pressed="true">Live map</button><button type="button" data-v="all" aria-pressed="false">All displays</button></div></div>
+      <label class="slider" for="dq"><span>Search</span><input id="dq" class="dfind" type="search" placeholder="e.g. world firsts by Marko Riikonen" autocomplete="off"><span class="dunder" id="dunder" hidden></span></label>
       <label class="slider" for="dy0" style="min-width:0"><span>From year</span><select id="dy0"></select></label>
       <label class="slider" for="dy1" style="min-width:0"><span>To year</span><select id="dy1"></select></label>
       <div><h2>Light source</h2><div class="dseg" id="dlight"><button type="button" data-v="sun" aria-pressed="true">Sun</button><button type="button" data-v="moon" aria-pressed="true">Moon</button><button type="button" data-v="artificial" aria-pressed="true">Artificial</button></div></div>
@@ -355,7 +367,7 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 
   <div class="panel" id="displist" hidden>
     <h2 id="displisth">Displays</h2>
-    <div style="overflow-x:auto"><table class="dlist"><thead><tr><th>Date</th><th>Place</th><th>Hexagon</th><th>Halos</th><th>Firsts</th><th>Observers</th></tr></thead><tbody id="dlistbody"></tbody></table></div>
+    <div style="overflow-x:auto"><table class="dlist"><thead><tr><th>Date</th><th>Place</th><th>Halos</th><th>Firsts</th><th>Observers</th></tr></thead><tbody id="dlistbody"></tbody></table></div>
   </div>
 
   <div class="ranks">
@@ -1480,91 +1492,173 @@ document.getElementById("bdon").addEventListener("change", e => gBorders.attr("h
 // ===================== Displays mode: photographed halo displays from the Halo Display Log =====================
 const D_CLASSES = ["random", "plate", "column", "Parry", "Lowitz", "Tricker"];      // hexagon sides clockwise from the top
 const D_LIGHT = { sun: "#e9a623", moon: "#9fb3c8", artificial: "#c7653b" };
-const D_TROPIC = 20;
+const D_MIXED = "#8d99a6";
+const D_TROPIC = 20, LIVE_DAYS = 30, LIVE_MIN = 20, PLACE_KM = 25;
 const C_ALIAS = { "usa": "united states of america", "united states": "united states of america", "czech republic": "czechia", "uk": "united kingdom", "great britain": "united kingdom" };
-let DISP = null, DFORMS = {}, dispLoading = null, dispPicked = [], dispSel = [];
+let DISP = null, DFORMS = {}, dispLoading = null, dispPicked = [], dispSel = [], dispLoc = null, dScope = "recent", dLatest = null, dLiveNote = "";
 const dState = { q: "", y0: null, y1: null, light: new Set(["sun", "moon", "artificial"]), cloud: new Set(["High", "Mid", "Low", "Ice fog"]), firsts: false };
+const esc = s => String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
 const dName = d => [d.place, d.country].filter(Boolean).join(", ") || "Unknown place";
 const dObs = d => [...new Set(d.items.flatMap(it => it.by))];
 const dShows = (it, c) => it.shows == null || it.shows.includes(c);
 const dCredit = (d, c) => [...new Set(d.items.filter(it => dShows(it, c)).flatMap(it => it.by))];
 const hName = c => (DFORMS[c] || [c])[0];
-function dInfo(d) {
-  const lat = Math.abs(+d.lat), lit = new Set(); let odd = 0, dodd = 0, ms = 0, R = 0, E = 0, B = 0;
+const hCount = d => d.halos.filter(c => !d.doubtful.includes(c)).length;
+const dKey = d => (d.date || "") + "T" + (String(d.time || "").match(/^\d{1,2}(:\d{2})?/) || ["00"])[0].padStart(2, "0");
+function dFlags(d) {
+  const lat = Math.abs(+d.lat), f = { lit: new Set(), odd: 0, dodd: 0, ms: 0, R: 0, E: 0, B: 0, wf: d.novel.length > 0, nfc: d.nfc.length > 0, nfp: d.nfp.length > 0 };
   d.halos.forEach(c => {
-    const f = DFORMS[c]; if (!f || d.doubtful.includes(c)) return;
-    const [, cls, rare, mark] = f;
-    if (cls && (rare === 1 || (rare === 2 && d.lat !== "" && lat < D_TROPIC))) lit.add(cls);
-    if (mark === "odd") odd = 1; if (mark === "dodd") dodd = 1; if (mark === "ms") ms = 1; if (mark === "R") R = 1; if (mark === "E") E = 1; if (mark === "B") B = 1;
+    const F = DFORMS[c]; if (!F || d.doubtful.includes(c)) return;
+    const [, cls, rare, mark] = F;
+    if (cls && (rare === 1 || (rare === 2 && d.lat !== "" && lat < D_TROPIC))) f.lit.add(cls);
+    if (mark === "odd") f.odd = 1; if (mark === "dodd") f.dodd = 1; if (mark === "ms") f.ms = 1; if (mark === "R") f.R = 1; if (mark === "E") f.E = 1; if (mark === "B") f.B = 1;
   });
-  return { lit, marks: (dodd ? "✚✚" : odd ? "✚" : "") + (ms ? "²" : "") + (R ? "R" : "") + (E ? "E" : "") + (B ? "B" : ""),
-    wf: d.novel.length > 0, nfc: d.nfc.length > 0, nfp: d.nfp.length > 0 };
+  return f;
 }
+function aggFlags(list) {
+  const a = { lit: new Set(), odd: 0, dodd: 0, ms: 0, R: 0, E: 0, B: 0, wf: false, nfc: false, nfp: false };
+  list.forEach(d => { const f = dFlags(d); f.lit.forEach(c => a.lit.add(c)); ["odd", "dodd", "ms", "R", "E", "B"].forEach(k => a[k] = a[k] || f[k]); ["wf", "nfc", "nfp"].forEach(k => a[k] = a[k] || f[k]); });
+  return a;
+}
+const markStr = f => (f.dodd ? "✚✚" : f.odd ? "✚" : "") + (f.ms ? "M" : "") + (f.R ? "R" : "") + (f.E ? "E" : "") + (f.B ? "B" : "");
+function badges(f, R) {          // star or pennant top right, marks bottom right
+  let s = "";
+  if (f.wf) s += `<text x="${R * 0.72}" y="${-R * 0.5}" font-size="${R * 1.05}" fill="#d0306a" stroke="var(--panel)" stroke-width="${R * 0.12}" paint-order="stroke">★</text>`;
+  else if (f.nfc || f.nfp) s += `<g transform="translate(${R * 0.9},${-R * 1.25})"><path d="M0 0v${R * 1.1}M0 0l${R * 0.75} ${R * 0.28}-${R * 0.75} ${R * 0.28}z" stroke="#2f7d4f" stroke-width="${R * 0.14}" fill="${f.nfc ? "#2f7d4f" : "var(--panel)"}"/></g>`;
+  const m = markStr(f);
+  if (m) s += `<text x="${R * 1.1}" y="${R * 1.05}" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * 0.72}" fill="rgb(var(--ink))" stroke="var(--panel)" stroke-width="${R * 0.15}" paint-order="stroke">${m}</text>`;
+  return s;
+}
+const hexPts = R => [...Array(6)].map((_, k) => { const a = Math.PI / 180 * (-120 + 60 * k); return [R * Math.cos(a), R * Math.sin(a)]; });
+function hexSVG(d, R, opts = {}) {
+  const f = dFlags(d), docOnly = d.items.length > 0 && d.items.every(it => it.type === "description"), col = D_LIGHT[d.light] || D_MIXED;
+  const pts = hexPts(R), n = hCount(d);
+  let s = `<polygon class="hx" points="${pts.map(p => p.map(v => v.toFixed(2)).join(",")).join(" ")}" fill="${docOnly ? "var(--panel)" : col}" ${docOnly ? `stroke="${col}" stroke-width="1.6"` : ""}/>`;
+  D_CLASSES.forEach((c, k) => { if (!f.lit.has(c)) return; const [a, b] = [pts[k], pts[(k + 1) % 6]];
+    s += `<line class="hx" x1="${a[0].toFixed(2)}" y1="${a[1].toFixed(2)}" x2="${b[0].toFixed(2)}" y2="${b[1].toFixed(2)}" stroke="rgb(var(--ink))" stroke-width="${opts.big ? 4.5 : 2.6}" stroke-linecap="round"/>`; });
+  s += `<text y="${R * 0.33}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * (n >= 10 ? 0.82 : 0.95)}" fill="${docOnly ? "rgb(var(--ink))" : "#1c2329"}">${n}</text>`;
+  return s + (opts.nobadge ? "" : badges(f, R));
+}
+function dotSVG(list, R) {
+  const lights = new Set(list.map(d => d.light)), col = lights.size === 1 ? (D_LIGHT[[...lights][0]] || D_MIXED) : D_MIXED;
+  const r = R * (1 + 0.16 * Math.log2(list.length));
+  return `<circle r="${r.toFixed(2)}" fill="${col}"/><text y="${R * 0.33}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * 0.95}" fill="#1c2329">${list.length}</text>` + badges(aggFlags(list), r);
+}
+const dLabel = d => `${hCount(d)} halos${markStr(dFlags(d)) ? " " + markStr(dFlags(d)) : ""}${d.novel.length ? " ★" : ""}`;
+const dYear = d => +String(d.date || "").slice(0, 4);
 function dPos(d) {
-  if (d.lat !== "" && d.lon !== "" && d.lat != null && !isNaN(+d.lat)) return { xy: proj([+d.lon, +d.lat]), approx: false };
+  if (d.lat !== "" && d.lon !== "" && d.lat != null && !isNaN(+d.lat)) return { ll: [+d.lon, +d.lat], approx: false };
   const f = COUNTRIES.get(C_ALIAS[(d.country || "").toLowerCase()] || (d.country || "").toLowerCase());
   if (!f) return null;
   let g = f.geometry;                                     // largest polygon, so overseas parts do not pull the centre
   if (g.type === "MultiPolygon") { let best = null, ba = -1; g.coordinates.forEach(c => { const a = d3.geoArea({ type: "Polygon", coordinates: c }); if (a > ba) { ba = a; best = c; } }); g = { type: "Polygon", coordinates: best }; }
-  return { xy: proj(d3.geoCentroid(g)), approx: true };
+  return { ll: d3.geoCentroid(g), approx: true };
 }
-function hexSVG(d, R, opts = {}) {
-  const h = dInfo(d), docOnly = d.items.length > 0 && d.items.every(it => it.type === "description"), col = D_LIGHT[d.light] || "#999";
-  const pts = [...Array(6)].map((_, k) => { const a = Math.PI / 180 * (-120 + 60 * k); return [R * Math.cos(a), R * Math.sin(a)]; });
-  const ps = pts.map(p => p.map(v => v.toFixed(2)).join(",")).join(" ");
-  let s = `<polygon class="hx hxo" points="${ps}" fill="${docOnly ? "var(--panel)" : col}" stroke="${col}" stroke-width="${docOnly ? 1.6 : 1}" ${opts.approx ? 'stroke-dasharray="3 2"' : ""}/>`;
-  D_CLASSES.forEach((c, k) => { if (!h.lit.has(c)) return; const [a, b] = [pts[k], pts[(k + 1) % 6]];
-    s += `<line class="hx" x1="${a[0].toFixed(2)}" y1="${a[1].toFixed(2)}" x2="${b[0].toFixed(2)}" y2="${b[1].toFixed(2)}" stroke="rgb(var(--ink))" stroke-width="${opts.big ? 4.5 : 2.6}" stroke-linecap="round"/>`; });
-  s += `<text y="${R * 0.36}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * 1.0}" fill="${docOnly ? "rgb(var(--ink))" : "#1c2329"}">${h.lit.size}</text>`;
-  if (h.wf) s += `<text x="${R * 0.75}" y="${-R * 0.55}" font-size="${R * 1.05}" fill="#d0306a" stroke="var(--panel)" stroke-width="${R * 0.12}" paint-order="stroke">★</text>`;
-  else if (h.nfc || h.nfp) s += `<g transform="translate(${R * 0.9},${-R * 1.25})"><path d="M0 0v${R * 1.1}M0 0l${R * 0.75} ${R * 0.28}-${R * 0.75} ${R * 0.28}z" stroke="#2f7d4f" stroke-width="${R * 0.14}" fill="${h.nfc ? "#2f7d4f" : "var(--panel)"}"/></g>`;
-  if (h.marks && opts.marks) s += `<text x="${R * 1.15}" y="${R * 1.05}" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * 0.72}" fill="rgb(var(--ink))" stroke="var(--panel)" stroke-width="${R * 0.15}" paint-order="stroke">${h.marks}</text>`;
-  return s;
+
+// ---- reading the search box: plain phrases become filters, the rest is matched as words ----
+const STOP = new Set("the a an by of in on at from with and or all any every show me list find where which what were was is are that those these display displays halo halos arc arcs observed seen photographed recorded".split(" "));
+function parseQuery(q) {
+  let s = " " + q.toLowerCase().replace(/[“”"’'?!.,;:]/g, " ") + " ";
+  const f = { wf: false, nf: false, nfp: false, y0: null, y1: null, light: null, cloud: null, words: [], chips: [] };
+  const take = (re, fn) => { s = s.replace(re, (...m) => { fn(m); return " "; }); };
+  take(/\bpossible national firsts?\b/g, () => { f.nfp = true; f.chips.push("possible national firsts"); });
+  take(/\bnational firsts?\b/g, () => { f.nf = true; f.chips.push("national firsts"); });
+  take(/\b(world firsts?|novel halos?|new halos?|discover(y|ies))\b/g, () => { f.wf = true; f.chips.push("world firsts"); });
+  take(/\b(between|from)\s+(\d{4})\s+(and|to|-|–)\s+(\d{4})\b/g, m => { f.y0 = +m[2]; f.y1 = +m[4]; });
+  take(/\b(\d{4})\s*[-–]\s*(\d{4})\b/g, m => { f.y0 = +m[1]; f.y1 = +m[2]; });
+  take(/\b(before|until|till)\s+(\d{4})\b/g, m => { f.y1 = +m[2] - (m[1] === "before" ? 1 : 0); });
+  take(/\b(after|since)\s+(\d{4})\b/g, m => { f.y0 = +m[2] + (m[1] === "after" ? 1 : 0); });
+  take(/\b(1[5-9]\d\d|20\d\d)\b/g, m => { f.y0 = f.y1 = +m[1]; });
+  take(/\b(moon ?light|moon|lunar)\b/g, () => { f.light = "moon"; });
+  take(/\b(artificial( light)?|lamp|spot ?lights?|search ?lights?|street ?lights?|lights?)\b/g, () => { f.light = "artificial"; });
+  take(/\b(sun ?light|solar|sun)\b/g, () => { f.light = "sun"; });
+  take(/\b(ice fog|diamond dust)\b/g, () => { f.cloud = "Ice fog"; });
+  take(/\b(high cloud|cirrus)\b/g, () => { f.cloud = "High"; });
+  take(/\b(mid( |-)?(level )?cloud|altocumulus)\b/g, () => { f.cloud = "Mid"; });
+  take(/\b(low cloud|stratocumulus)\b/g, () => { f.cloud = "Low"; });
+  if (f.y0 || f.y1) f.chips.push(f.y0 === f.y1 ? String(f.y0) : f.y0 && f.y1 ? `${f.y0}–${f.y1}` : f.y0 ? `from ${f.y0}` : `up to ${f.y1}`);
+  if (f.light) f.chips.push(f.light === "artificial" ? "artificial light" : f.light);
+  if (f.cloud) f.chips.push(f.cloud);
+  f.words = s.split(/\s+/).filter(w => w && !STOP.has(w));
+  if (f.words.length) f.chips.push(f.words.map(w => `“${w}”`).join(" "));
+  return f;
 }
-function dLabel(d) { const h = dInfo(d); return `${h.lit.size}${h.marks}${h.wf ? " ★" : ""}`; }
-function dYear(d) { return +String(d.date || "").slice(0, 4); }
-function dPass(d) {
-  const y = dYear(d);
-  if (dState.y0 && y < dState.y0) return false;
-  if (dState.y1 && y > dState.y1) return false;
-  if (!dState.light.has(d.light)) return false;
+function dPass(d, Q) {
+  const y = dYear(d), y0 = Q.y0 || dState.y0, y1 = Q.y1 || dState.y1;
+  if (y0 && y < y0) return false;
+  if (y1 && y > y1) return false;
+  if (!dState.light.has(d.light) || (Q.light && d.light !== Q.light)) return false;
   if (d.cloud.length && !d.cloud.some(c => dState.cloud.has(c))) return false;
+  if (Q.cloud && !d.cloud.includes(Q.cloud)) return false;
   if (dState.firsts && !(d.novel.length || d.nfc.length || d.nfp.length)) return false;
-  const q = dState.q.trim().toLowerCase();
-  if (q) {
+  if (Q.wf && !d.novel.length) return false;
+  if (Q.nf && !(d.nfc.length || d.nfp.length)) return false;
+  if (Q.nfp && !d.nfp.length) return false;
+  if (Q.words.length) {
     const hay = [d.place, d.country, d.date, ...dObs(d), ...d.halos, ...d.halos.map(hName)].join(" | ").toLowerCase();
-    if (!q.split(/\s+/).every(w => hay.includes(w))) return false;
+    if (!Q.words.every(w => hay.includes(w) || (w.length > 3 && w.endsWith("s") && hay.includes(w.slice(0, -1))))) return false;
   }
   return true;
 }
-const dScale = () => 1 / Math.pow(zk, 0.7);
-function dispScale() { gDisp.selectAll("g.disp").attr("transform", d => `translate(${d._xy[0]},${d._xy[1]}) scale(${dScale()}) translate(${d._off[0]},${d._off[1]})`); }
-function dispDraw() {
-  const shown = dispSel.filter(d => d._pos);
-  const groups = d3.group(shown, d => `${Math.round(d._pos.xy[0] * 2)}_${Math.round(d._pos.xy[1] * 2)}`);
-  groups.forEach(list => list.forEach((d, i) => {           // displays at the same spot fan out around it
-    const n = list.length, a = -Math.PI / 2 + i * 2 * Math.PI / Math.max(n, 1), r = n > 1 ? 16 + 2 * n : 0;
-    d._xy = d._pos.xy; d._off = [r * Math.cos(a), r * Math.sin(a)];
-  }));
-  const sel = gDisp.selectAll("g.disp").data(shown, d => d.id).join("g").attr("class", "disp")
-    .html(d => hexSVG(d, 10, { approx: d._pos.approx, marks: true }))
-    .classed("on", d => dispPicked.includes(d.id))
-    .on("pointerenter pointermove", (ev, d) => dispTip(ev, d)).on("pointerleave", () => { tip.hidden = true; })
-    .on("click", (ev, d) => { ev.stopPropagation(); dPick(d.id); });
-  sel.sort((a, b) => (a.date < b.date ? -1 : 1));
-  dispScale();
+
+// ---- grouping: the same place (within 25 km), then whatever would overlap on screen ----
+function hav(a, b) { const r = Math.PI / 180, dl = (b[1] - a[1]) * r, dn = (b[0] - a[0]) * r; const h = Math.sin(dl / 2) ** 2 + Math.cos(a[1] * r) * Math.cos(b[1] * r) * Math.sin(dn / 2) ** 2; return 12742 * Math.asin(Math.sqrt(h)); }
+function placeGroups() {
+  const heads = [];
+  DISP.filter(d => d._pos).forEach(d => {
+    const h = heads.find(p => hav(p.ll, d._pos.ll) <= PLACE_KM);
+    if (h) d._place = h.id; else { d._place = heads.length; heads.push({ id: heads.length, ll: d._pos.ll }); }
+  });
 }
-function dispTip(ev, d) {
-  tip.innerHTML = `<div>${esc(dName(d))}${d._pos.approx ? " (country only)" : ""}</div><div class="c">${esc(d.date)}${d.time ? " " + esc(d.time) : ""} · ${esc(d.light)} · ${d.halos.length} halos · ${esc(dLabel(d))}</div>` +
-    (d.novel.length ? `<div class="c">world first: ${d.novel.map(esc).join(", ")}</div>` : "") + (d.nfc.length + d.nfp.length ? `<div class="c">national first: ${[...d.nfc, ...d.nfp.map(c => c + "?")].map(esc).join(", ")}</div>` : "");
+const dScale = () => 1 / Math.pow(zk, 0.7);
+function clusters(list) {
+  const byPlace = [...d3.group(list.filter(d => d._pos), d => d._place).values()].map(m => ({ m, xy: proj(m[0]._pos.ll) }));
+  byPlace.sort((a, b) => b.m.length - a.m.length);
+  const out = [], near = 26 * dScale();
+  byPlace.forEach(c => { const o = out.find(o => Math.hypot(o.xy[0] - c.xy[0], o.xy[1] - c.xy[1]) < near); if (o) o.m.push(...c.m); else out.push({ m: c.m.slice(), xy: c.xy }); });
+  out.forEach(c => { c.m.sort((a, b) => dKey(b).localeCompare(dKey(a))); c.key = c.m.map(d => d.id).join("_"); });
+  return out;
+}
+function dispScale() { dispDraw(); }
+function dispDraw() {
+  const cl = clusters(dispSel);
+  gDisp.selectAll("g.disp").data(cl, c => c.key).join("g").attr("class", "disp")
+    .html(c => (dScope === "recent" && dLatest && c.m.includes(dLatest) ? `<circle class="latest" r="17"/>` : "") + (c.m.length === 1 ? hexSVG(c.m[0], 10) : dotSVG(c.m, 10)))
+    .attr("transform", c => `translate(${c.xy[0]},${c.xy[1]}) scale(${dScale()})`)
+    .on("pointerenter pointermove", (ev, c) => dispTip(ev, c)).on("pointerleave", () => { tip.hidden = true; })
+    .on("click", (ev, c) => { ev.stopPropagation(); tip.hidden = true; c.m.length === 1 ? (dispLoc = null, dPick(c.m[0].id)) : openLoc(c); });
+}
+function placeTitle(list) {
+  const names = [...new Set(list.map(dName))];
+  return names.length <= 2 ? names.join(" · ") : `${names.slice(0, 2).join(" · ")} and ${names.length - 2} more`;
+}
+function dispTip(ev, c) {
+  const m = c.m;
+  if (m.length === 1) {
+    const d = m[0];
+    tip.innerHTML = `<div>${esc(dName(d))}${d._pos.approx ? " (country only)" : ""}</div><div class="c">${esc(d.date)}${d.time ? " " + esc(d.time) : ""} · ${esc(d.light)} · ${esc(dLabel(d))}</div>` +
+      (d.novel.length ? `<div class="c">world first: ${d.novel.map(c => esc(hName(c))).join(", ")}</div>` : "") +
+      (d.nfc.length + d.nfp.length ? `<div class="c">national first: ${[...d.nfc.map(hName), ...d.nfp.map(c => hName(c) + " (possible)")].map(esc).join(", ")}</div>` : "");
+  } else {
+    const ds = m.map(d => d.date).sort(), wf = m.reduce((s, d) => s + d.novel.length, 0), nf = m.reduce((s, d) => s + d.nfc.length + d.nfp.length, 0), a = aggFlags(m);
+    const lead = dQ.wf ? `${wf} world first halo${wf === 1 ? "" : "s"} in these ${m.length} displays` : dQ.nf || dQ.nfp ? `${nf} national first halo${nf === 1 ? "" : "s"} in these ${m.length} displays` : `${m.length} displays, ${esc(ds[0])} – ${esc(ds[ds.length - 1])}`;
+    tip.innerHTML = `<div>${esc(placeTitle(m))}</div><div class="c">${lead}</div>` +
+      (!dQ.wf && wf ? `<div class="c">${wf} world first halo${wf === 1 ? "" : "s"}</div>` : "") + (!(dQ.nf || dQ.nfp) && nf ? `<div class="c">${nf} national first halo${nf === 1 ? "" : "s"}</div>` : "") +
+      (a.lit.size ? `<div class="c">rare forms in ${D_CLASSES.filter(x => a.lit.has(x)).join(", ")}</div>` : "") +
+      `<div class="c" style="margin-top:4px">${m.slice(0, 5).map(d => `${esc(d.date)} · ${esc(d.place || d.country)} · ${esc(dLabel(d))}`).join("<br>")}${m.length > 5 ? `<br>and ${m.length - 5} more` : ""}</div><div class="c">click to see them all</div>`;
+  }
   tip.hidden = false;
   const r = box.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top;
-  tip.style.left = Math.min(Math.max(4, x + 12), r.width - tip.offsetWidth - 4) + "px"; tip.style.top = Math.max(4, y - 70) + "px";
+  tip.style.left = Math.min(Math.max(4, x + 12), r.width - tip.offsetWidth - 4) + "px"; tip.style.top = Math.max(4, y - tip.offsetHeight - 10) + "px";
 }
-const esc = s => String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+function openLoc(c) {
+  dispLoc = { ids: c.m.map(d => d.id), title: placeTitle(c.m) };
+  dispCards(); dispList();
+  document.getElementById("cards").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
 function dPick(id) {
   dispPicked = dispPicked.filter(x => x !== id); dispPicked.unshift(id); dispPicked = dispPicked.slice(0, 8);
-  dispCards(); gDisp.selectAll("g.disp").classed("on", d => dispPicked.includes(d.id));
+  dispCards(); dispList();
   document.getElementById("cards").scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 function addDays(iso, k) { const t = new Date(iso + "T00:00:00Z"); t.setUTCDate(t.getUTCDate() + k); return t.toISOString().slice(0, 10); }
@@ -1585,53 +1679,70 @@ function dGram(d) {
 }
 function dCard(d) {
   const el = document.createElement("div"); el.className = "dcard";
-  const h = dInfo(d);
+  const f = dFlags(d);
   const firsts = [...d.novel.map(c => ["wf", "World first", c]), ...d.nfc.map(c => ["nf", "National first", c]), ...d.nfp.map(c => ["nf", "Possible national first", c])];
   const sc = it => (it.card ? 4 : 0) + ([...d.novel, ...d.nfc, ...d.nfp].some(c => dShows(it, c)) ? 2 : 0);
   const thumbs = d.items.filter(it => it.thumb).sort((a, b) => sc(b) - sc(a)).slice(0, 3);
   const T = { photo: "Photo", video: "Video", description: "Description" };
-  el.innerHTML = `<div class="dh"><svg width="64" height="64" viewBox="-32 -32 64 64" aria-hidden="true">${hexSVG(d, 22, { approx: d._pos && d._pos.approx, big: true })}</svg>
+  el.innerHTML = `<div class="dh"><svg width="64" height="64" viewBox="-32 -32 64 64" aria-hidden="true">${hexSVG(d, 22, { big: true })}</svg>
       <div class="dt"><div class="dname">${esc(dName(d))}</div>
         <div class="dmeta">${esc(d.date)}${d.enddate ? "–" + esc(d.enddate) : ""}${d.time ? " · " + esc(d.time) : ""} · ${esc(d.light)}${d.cloud.length ? " · " + d.cloud.map(esc).join(", ") : ""}</div>
-        <div class="dmeta">${esc(dLabel(d))} · ${h.lit.size ? "rare forms in " + D_CLASSES.filter(c => h.lit.has(c)).join(", ") : "no rare oriented forms"}${d._pos && d._pos.approx ? " · location: country only" : ""}</div></div>
+        <div class="dmeta">${esc(dLabel(d))} · ${f.lit.size ? "rare forms in " + D_CLASSES.filter(c => f.lit.has(c)).join(", ") : "no rare oriented forms"}${d._pos && d._pos.approx ? " · location: country only" : ""}</div></div>
       <button type="button" class="dx" aria-label="Close this card">×</button></div>` +
-    (firsts.length ? `<div class="dfirst">${firsts.map(([k, lab, c]) => `<div><span class="${k}">${k === "wf" ? "★ " : ""}${lab}:</span> ${esc(c)} ${esc(hName(c))} — ${esc(dCredit(d, c).join(", ") || "no documentation shows it")}</div>`).join("")}</div>` : "") +
-    (thumbs.length ? `<div class="dthumbs">${thumbs.map(it => `<figure>${it.link ? `<a href="${esc(it.link)}" target="_blank" rel="noopener">` : ""}<img src="data/disp/${esc(it.thumb)}" alt="${esc(T[it.type] + " by " + it.by.join(", "))}" loading="lazy">${it.link ? "</a>" : ""}<figcaption>${T[it.type]} · ${esc(it.by.join(", "))}</figcaption></figure>`).join("")}</div>` : "") +
-    `<div class="dhalos">${d.halos.map(c => `<span class="${d.doubtful.includes(c) ? "doubt" : ""}" title="${esc(hName(c))}${d.doubtful.includes(c) ? " (doubtful)" : ""}">${esc(c)}${d.doubtful.includes(c) ? "?" : ""}</span>`).join("")}</div>` +
+    (firsts.length ? `<div class="dfirst">${firsts.map(([k, lab, c]) => `<div><span class="${k}">${k === "wf" ? "★ " : ""}${lab}:</span> ${esc(hName(c))} — ${esc(dCredit(d, c).join(", ") || "no documentation shows it")}</div>`).join("")}</div>` : "") +
+    `<div class="dhalos">${d.halos.map(c => `<span class="${d.doubtful.includes(c) ? "doubt" : ""}" title="${esc(c)}">${esc(hName(c))}${d.doubtful.includes(c) ? " (doubtful)" : ""}</span>`).join("")}</div>` +
     `<div class="ddocs">${d.items.map(it => `<div>${T[it.type]} · ${esc(it.by.join(", "))}${it.link ? ` · <a href="${esc(it.link)}" target="_blank" rel="noopener">source</a>` : ""}</div>`).join("")}</div>` +
     `<div class="gramlinks">${dGram(d) || (d.date < "2017-01-01" ? "No gram: the model data starts in 2017." : d._pos && d._pos.approx ? "No gram: the exact place is not known." : "")}</div>` +
-    (d.notes ? `<div class="ddocs">${esc(d.notes)}</div>` : "");
-  el.querySelector(".dx").addEventListener("click", () => { dispPicked = dispPicked.filter(x => x !== d.id); dispCards(); gDisp.selectAll("g.disp").classed("on", x => dispPicked.includes(x.id)); });
+    (d.notes ? `<div class="ddocs">${esc(d.notes)}</div>` : "") +
+    (thumbs.length ? `<div class="dthumbs">${thumbs.map(it => `<figure>${it.link ? `<a href="${esc(it.link)}" target="_blank" rel="noopener">` : ""}<img src="data/disp/${esc(it.thumb)}" alt="${esc(T[it.type] + " by " + it.by.join(", "))}" loading="lazy">${it.link ? "</a>" : ""}<figcaption>${T[it.type]} · ${esc(it.by.join(", "))}</figcaption></figure>`).join("")}</div>` : "");
+  el.querySelector(".dx").addEventListener("click", () => { dispPicked = dispPicked.filter(x => x !== d.id); dispCards(); dispList(); });
+  return el;
+}
+function locCard() {
+  const list = dispLoc.ids.map(id => DISP.find(d => d.id === id)).filter(Boolean).sort((a, b) => dKey(a).localeCompare(dKey(b)));
+  const el = document.createElement("div"); el.className = "dcard dloc";
+  const ds = list.map(d => d.date);
+  el.innerHTML = `<div class="dh"><div class="dt"><div class="dname">${esc(dispLoc.title)}</div><div class="dmeta">${list.length} displays · ${esc(ds[0])} – ${esc(ds[ds.length - 1])}</div></div>
+      <button type="button" class="dx" aria-label="Close this place">×</button></div>
+    <div class="strip">${list.map(d => `<button type="button" data-id="${esc(d.id)}" aria-pressed="${dispPicked.includes(d.id)}" title="${esc(dName(d) + " · " + dLabel(d))}"><svg width="40" height="40" viewBox="-20 -20 40 40" aria-hidden="true">${hexSVG(d, 13)}</svg><span>${esc(d.date)}</span></button>`).join("")}</div>
+    <div class="dmeta">Click a hexagon to open that display.</div>`;
+  el.querySelector(".dx").addEventListener("click", () => { dispLoc = null; dispCards(); dispList(); });
+  el.querySelectorAll(".strip button").forEach(b => b.addEventListener("click", () => dPick(b.dataset.id)));
   return el;
 }
 function dispCards() {
   const cards = document.getElementById("cards"); cards.innerHTML = "";
   const list = dispPicked.map(id => DISP.find(d => d.id === id)).filter(Boolean);
-  if (!list.length) cards.innerHTML = `<p class="empty">Click a hexagon on the map, or a row in the list below, to see the display here.</p>`;
+  if (dispLoc) cards.appendChild(locCard());
+  if (!list.length && !dispLoc) cards.innerHTML = `<p class="empty">Click a hexagon or a numbered dot on the map, or a row in the list below.</p>`;
   list.forEach(d => cards.appendChild(dCard(d)));
 }
 function dispLegend() {
-  const ex = { light: "sun", items: [{ type: "photo" }], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], lat: 60 };
-  const side = (k) => { const R = 15, a0 = Math.PI / 180 * (-120 + 60 * k), a1 = a0 + Math.PI / 3; return [(R + 9) * Math.cos((a0 + a1) / 2), (R + 9) * Math.sin((a0 + a1) / 2)]; };
-  const hex = `<svg width="120" height="76" viewBox="-60 -38 120 76" aria-hidden="true"><polygon points="${[...Array(6)].map((_, k) => { const a = Math.PI / 180 * (-120 + 60 * k); return (15 * Math.cos(a)).toFixed(1) + "," + (15 * Math.sin(a)).toFixed(1); }).join(" ")}" fill="var(--panel)" stroke="rgb(var(--ink))" stroke-width="1.2"/>` +
-    ["random", "plate", "column", "Parry", "Lowitz", "Tricker"].map((c, k) => { const [x, y] = side(k); return `<text x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="${x > 2 ? "start" : x < -2 ? "end" : "middle"}" font-size="9" fill="var(--muted)">${c}</text>`; }).join("") + `</svg>`;
-  const sw = (fill, stroke, dash) => `<svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><polygon points="${[...Array(6)].map((_, k) => { const a = Math.PI / 180 * (-120 + 60 * k); return (7 * Math.cos(a)).toFixed(1) + "," + (7 * Math.sin(a)).toFixed(1); }).join(" ")}" fill="${fill}" stroke="${stroke}" stroke-width="1.3" ${dash ? 'stroke-dasharray="2.5 1.5"' : ""}/></svg>`;
+  const side = k => { const R = 15, a0 = Math.PI / 180 * (-120 + 60 * k), a1 = a0 + Math.PI / 3; return [(R + 9) * Math.cos((a0 + a1) / 2), (R + 9) * Math.sin((a0 + a1) / 2)]; };
+  const hex = `<svg width="120" height="76" viewBox="-60 -38 120 76" aria-hidden="true"><polygon points="${hexPts(15).map(p => p.map(v => v.toFixed(1)).join(",")).join(" ")}" fill="var(--panel)" stroke="rgb(var(--ink))" stroke-width="1.2"/><text y="4" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" font-weight="600" fill="rgb(var(--ink))">17</text>` +
+    D_CLASSES.map((c, k) => { const [x, y] = side(k); return `<text x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="${x > 2 ? "start" : x < -2 ? "end" : "middle"}" font-size="9" fill="var(--muted)">${c}</text>`; }).join("") + `</svg>`;
+  const sw = (fill, stroke) => `<svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><polygon points="${hexPts(7).map(p => p.map(v => v.toFixed(1)).join(",")).join(" ")}" fill="${fill}" ${stroke ? `stroke="${stroke}" stroke-width="1.3"` : ""}/></svg>`;
   document.getElementById("displegend").innerHTML =
-    `<span class="k">${hex}<span>A side is drawn bold when the display has a rare halo of that crystal orientation; the number counts the bold sides.</span></span>` +
-    `<span class="k">${sw(D_LIGHT.sun, D_LIGHT.sun)} sun</span><span class="k">${sw(D_LIGHT.moon, D_LIGHT.moon)} moon</span><span class="k">${sw(D_LIGHT.artificial, D_LIGHT.artificial)} artificial light</span>` +
-    `<span class="k">${sw("var(--panel)", "var(--muted)")} description only</span><span class="k">${sw("var(--panel)", "var(--muted)", 1)} country only, place not known</span>` +
+    `<span class="k">${hex}<span>One display. The number is how many halos it had. A side is drawn bold when it had a rare halo of that crystal orientation.</span></span>` +
+    `<span class="k"><svg width="22" height="22" viewBox="-11 -11 22 22" aria-hidden="true"><circle r="10" fill="${D_MIXED}"/><text y="3.5" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" font-weight="600" fill="#1c2329">4</text></svg> several displays at one place; zoom in to separate nearby places</span>` +
+    `<span class="k"><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><circle r="11" fill="none" stroke="rgb(var(--ink))" stroke-width="1.2" opacity=".7"/>${hexSVG({ light: "sun", items: [{ type: "photo" }], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], lat: 60 }, 7, { nobadge: true }).replace(/>0</, "><")}</svg> the latest display</span>` +
+    `<span class="k">${sw(D_LIGHT.sun)} sun</span><span class="k">${sw(D_LIGHT.moon)} moon</span><span class="k">${sw(D_LIGHT.artificial)} artificial light</span><span class="k">${sw("var(--panel)", "var(--muted)")} description only</span>` +
     `<span class="k"><b style="color:#d0306a">★</b> world first</span><span class="k"><svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="#2f7d4f"/></svg> national first <svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="var(--panel)"/></svg> possible</span>` +
-    `<span class="k"><b>✚</b> odd radius <b>✚✚</b> double-odd radius <b>²</b> multiple scattering <b>R</b> surface reflection <b>E</b> elliptical <b>B</b> Bottlinger's ring</span>`;
+    `<span class="k"><b>✚</b> odd radius <b>✚✚</b> double-odd radius <b>M</b> multiple scattering <b>R</b> surface reflection <b>E</b> elliptical <b>B</b> Bottlinger's ring</span>`;
 }
 function dispList() {
   const body = document.getElementById("dlistbody");
-  const list = dispSel.slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-  body.innerHTML = list.map(d => `<tr data-id="${esc(d.id)}"><td class="num">${esc(d.date)}</td><td>${esc(dName(d))}${d._pos ? "" : " <span class=\"dmeta\">(not on map)</span>"}</td><td class="num">${esc(dLabel(d))}</td><td class="num">${d.halos.length}</td>` +
-    `<td class="num">${[...d.novel.map(c => "★" + c), ...d.nfc, ...d.nfp.map(c => c + "?")].map(esc).join(" ")}</td><td>${esc(dObs(d).join(", "))}</td></tr>`).join("") ||
-    `<tr><td colspan="6" class="empty">No display matches these filters.</td></tr>`;
+  let list = dispSel.slice();
+  if (dispLoc) list = dispLoc.ids.map(id => DISP.find(d => d.id === id)).filter(Boolean);
+  list.sort((a, b) => dKey(b).localeCompare(dKey(a)));
+  body.innerHTML = list.map(d => `<tr data-id="${esc(d.id)}" class="${dispPicked.includes(d.id) ? "on" : ""}"><td class="num">${esc(d.date)}</td><td>${esc(dName(d))}${d._pos ? "" : ' <span class="dmeta">(not on map)</span>'}</td><td class="num">${hCount(d)}${esc(markStr(dFlags(d)))}</td>` +
+    `<td>${[...d.novel.map(c => "★ " + hName(c)), ...d.nfc.map(hName), ...d.nfp.map(c => hName(c) + " (possible)")].map(esc).join("; ")}</td><td>${esc(dObs(d).join(", "))}</td></tr>`).join("") ||
+    `<tr><td colspan="5" class="empty">No display matches.</td></tr>`;
   body.querySelectorAll("tr[data-id]").forEach(tr => tr.addEventListener("click", () => dPick(tr.dataset.id)));
-  document.getElementById("displisth").textContent = `Displays: ${list.length} of ${DISP.length}`;
+  document.getElementById("displisth").innerHTML = dispLoc ? `Displays at ${esc(dispLoc.title)}: ${list.length} <button type="button" class="linkbtn" id="dlistall">show the whole list</button>` : `Displays: ${list.length}${dScope === "recent" ? " recent" : ` of ${DISP.length}`}`;
+  const all = document.getElementById("dlistall"); if (all) all.addEventListener("click", () => { dispLoc = null; dispCards(); dispList(); });
 }
+let dQ = parseQuery("");
 async function dispUpdate() {
   if (!DISP) {
     document.getElementById("maptitle").textContent = "Loading the displays…";
@@ -1646,19 +1757,34 @@ async function dispUpdate() {
     try { await dispLoading; } catch (e) { document.getElementById("maptitle").textContent = "The displays could not be loaded."; return; }
   }
   DISP.forEach(d => { d._pos = dPos(d); });
-  dispSel = DISP.filter(dPass);
+  placeGroups();
+  dQ = parseQuery(dState.q);
+  let pool = DISP;
+  if (dScope === "recent") {           // the last 30 days, but never fewer than the 20 latest displays
+    const cut = new Date(Date.now() - LIVE_DAYS * 864e5).toISOString().slice(0, 10);
+    const byNew = DISP.slice().sort((a, b) => dKey(b).localeCompare(dKey(a)));
+    const inWin = byNew.filter(d => (d.enddate || d.date) >= cut);
+    pool = inWin.length >= LIVE_MIN ? inWin : byNew.slice(0, LIVE_MIN);
+    dLiveNote = inWin.length >= LIVE_MIN ? `the last ${LIVE_DAYS} days` : `the ${pool.length} latest displays${pool.length ? `, since ${pool[pool.length - 1].date}` : ""}`;
+    dLatest = byNew[0] || null;
+  }
+  dispSel = pool.filter(d => dPass(d, dQ));
   const off = dispSel.filter(d => !d._pos).length;
-  document.getElementById("maptitle").textContent = `Photographed and recorded halo displays: ${dispSel.length} shown${off ? ` (${off} without a location)` : ""}`;
+  document.getElementById("maptitle").textContent = (dScope === "recent" ? `Live map: ${dLiveNote}` : `All displays: ${dispSel.length} of ${DISP.length} shown`) + (off ? ` (${off} without a location)` : "");
+  const und = document.getElementById("dunder");
+  und.hidden = !dState.q.trim(); und.innerHTML = dQ.chips.length ? "Searching for: " + dQ.chips.map(c => `<span>${esc(c)}</span>`).join("") : "";
   dispDraw(); dispList(); dispCards();
 }
-document.getElementById("dq").addEventListener("input", e => { dState.q = e.target.value; dispUpdate(); });
-["dy0", "dy1"].forEach((id, k) => document.getElementById(id).addEventListener("change", e => { dState[k ? "y1" : "y0"] = +e.target.value || null; dispUpdate(); }));
+function setScope(s) { dScope = s; document.querySelectorAll("#dscope button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === s)); }
+document.getElementById("dscope").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; setScope(b.dataset.v); dispLoc = null; dispUpdate(); });
+document.getElementById("dq").addEventListener("input", e => { dState.q = e.target.value; if (dState.q.trim() && dScope === "recent") setScope("all"); dispLoc = null; dispUpdate(); });
+["dy0", "dy1"].forEach((id, k) => document.getElementById(id).addEventListener("change", e => { dState[k ? "y1" : "y0"] = +e.target.value || null; if (e.target.value) setScope("all"); dispLoc = null; dispUpdate(); }));
 [["dlight", "light"], ["dcloud", "cloud"]].forEach(([id, key]) => document.getElementById(id).addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
   const s = dState[key]; s.has(b.dataset.v) ? s.delete(b.dataset.v) : s.add(b.dataset.v);
-  b.setAttribute("aria-pressed", s.has(b.dataset.v)); dispUpdate();
+  b.setAttribute("aria-pressed", s.has(b.dataset.v)); dispLoc = null; dispUpdate();
 }));
-document.getElementById("dfirsts").addEventListener("change", e => { dState.firsts = e.target.checked; dispUpdate(); });
+document.getElementById("dfirsts").addEventListener("change", e => { dState.firsts = e.target.checked; if (e.target.checked) setScope("all"); dispLoc = null; dispUpdate(); });
 
 function start() {
 load().catch(e => { document.getElementById('status').textContent = 'Could not load the data: ' + e.message; throw e; }).then(() => {
