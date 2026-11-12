@@ -158,6 +158,7 @@ textarea { resize: vertical; min-height: 54px; }
         <div class="sugg" id="halo-s" hidden></div>
         <span class="hint">Click a halo to mark it doubtful, a world first or a national first. Or pick from the list on the right.</span></div>
       <div class="preview" id="preview"></div>
+      <div class="row"><div class="f"><label for="maxsim">Most halos at the same time</label><input id="maxsim" inputmode="numeric" placeholder="optional"><span class="hint">only for the biggest displays: the halo count of the richest stage</span></div></div>
       <div class="f"><span class="lab">Documentation</span>
         <div id="items" class="items"></div>
         <div><button class="btn" id="additem" type="button">Add documentation</button></div>
@@ -192,7 +193,7 @@ const esc = s => String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": 
 // ---------- state ----------
 let db = null, canWrite = true, displays = [], current = null, dirty = false;
 const blank = () => ({ id: null, date: "", enddate: "", time: "", place: "", country: "", lat: "", lon: "", light: "sun",
-  cloud: [], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], items: [blankItem()], notes: "" });
+  cloud: [], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], items: [blankItem()], maxsim: "", notes: "" });
 const blankItem = () => ({ type: "photo", by: [], link: "", image: "", perm: "", shows: null, card: false });   // shows null = all halos
 // earlier records kept documentation, links and image on the display itself: turn them into items
 function migrate(d) {
@@ -370,7 +371,7 @@ $("country").addEventListener("input", e => {
 });
 
 // plain fields
-const PLAIN = ["date", "enddate", "time", "place", "country", "lat", "lon", "notes"];
+const PLAIN = ["date", "enddate", "time", "place", "country", "lat", "lon", "maxsim", "notes"];
 PLAIN.forEach(id => $(id).addEventListener("input", () => { rec[id] = $(id).value; changed(); if (id === "lat") renderPreview(); }));
 $("lat").addEventListener("paste", e => {
   const t = (e.clipboardData || window.clipboardData).getData("text");
@@ -549,6 +550,7 @@ function validate() {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(rec.date)) p.push("date as YYYY-MM-DD");
   if (rec.enddate && !/^\d{4}-\d{2}-\d{2}$/.test(rec.enddate)) p.push("end date as YYYY-MM-DD");
   if (rec.time.trim()) { const n = normTime(rec.time); if (n === null) p.push("time as 23:05, 2305 or 23, or a span like 10:30-14:15"); else rec.time = n; }
+  if (String(rec.maxsim ?? "").trim() && !/^\d+$/.test(String(rec.maxsim).trim())) p.push("most halos at the same time as a whole number");
   if (rec.lat !== "" && !(Math.abs(+rec.lat) <= 90)) p.push("latitude between -90 and 90");
   if (rec.lon !== "" && !(Math.abs(+rec.lon) <= 180)) p.push("longitude between -180 and 180");
   if (!rec.place && !rec.country) p.push("a place or at least a country");

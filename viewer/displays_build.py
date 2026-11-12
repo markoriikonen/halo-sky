@@ -58,7 +58,7 @@ for f in sorted(ddir.glob("*.json"), key=lambda p: int(re.sub(r"\D", "", p.stem)
                 missing.append((d["id"], k, src))
         items.append({"type": it.get("type", "photo"), "by": split_names(it.get("by", [])), "link": it.get("link", ""),
                       "thumb": thumb, "perm": it.get("perm", ""), "shows": it.get("shows"), "card": bool(it.get("card"))})
-    keep = ["id", "date", "enddate", "time", "place", "country", "lat", "lon", "light", "cloud", "halos", "doubtful", "novel", "nfc", "nfp", "notes"]
+    keep = ["id", "date", "enddate", "time", "place", "country", "lat", "lon", "light", "cloud", "halos", "doubtful", "novel", "nfc", "nfp", "maxsim", "notes"]
     rec = {k: d.get(k) for k in keep}
     rec["items"] = items
     displays.append(rec)

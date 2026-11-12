@@ -1491,7 +1491,8 @@ document.getElementById("bdon").addEventListener("change", e => gBorders.attr("h
 
 // ===================== Displays mode: photographed halo displays from the Halo Display Log =====================
 const D_CLASSES = ["random", "plate", "column", "Parry", "Lowitz", "Tricker"];      // hexagon sides clockwise from the top
-const D_LIGHT = { sun: "#e9a623", moon: "#9fb3c8", artificial: "#c7653b" };
+const D_LIGHT = { sun: "#ff4100", moon: "#cd9b9b", artificial: "#4876ff" };
+const D_TEXT = { "#ff4100": "#ffffff", "#cd9b9b": "#1c2329", "#4876ff": "#ffffff", "#8d99a6": "#1c2329" };
 const D_MIXED = "#8d99a6";
 const D_TROPIC = 20, LIVE_DAYS = 30, LIVE_MIN = 20, PLACE_KM = 25;
 const C_ALIAS = { "usa": "united states of america", "united states": "united states of america", "czech republic": "czechia", "uk": "united kingdom", "great britain": "united kingdom" };
@@ -1536,13 +1537,13 @@ function hexSVG(d, R, opts = {}) {
   let s = `<polygon class="hx" points="${pts.map(p => p.map(v => v.toFixed(2)).join(",")).join(" ")}" fill="${docOnly ? "var(--panel)" : col}" ${docOnly ? `stroke="${col}" stroke-width="1.6"` : ""}/>`;
   D_CLASSES.forEach((c, k) => { if (!f.lit.has(c)) return; const [a, b] = [pts[k], pts[(k + 1) % 6]];
     s += `<line class="hx" x1="${a[0].toFixed(2)}" y1="${a[1].toFixed(2)}" x2="${b[0].toFixed(2)}" y2="${b[1].toFixed(2)}" stroke="rgb(var(--ink))" stroke-width="${opts.big ? 4.5 : 2.6}" stroke-linecap="round"/>`; });
-  s += `<text y="${R * 0.33}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * (n >= 10 ? 0.82 : 0.95)}" fill="${docOnly ? "rgb(var(--ink))" : "#1c2329"}">${n}</text>`;
+  s += `<text y="${R * 0.33}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * (n >= 10 ? 0.82 : 0.95)}" fill="${docOnly ? "rgb(var(--ink))" : D_TEXT[col] || "#1c2329"}">${n}</text>`;
   return s + (opts.nobadge ? "" : badges(f, R));
 }
 function dotSVG(list, R) {
   const lights = new Set(list.map(d => d.light)), col = lights.size === 1 ? (D_LIGHT[[...lights][0]] || D_MIXED) : D_MIXED;
   const r = R * (1 + 0.16 * Math.log2(list.length));
-  return `<circle r="${r.toFixed(2)}" fill="${col}"/><text y="${R * 0.33}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * 0.95}" fill="#1c2329">${list.length}</text>` + badges(aggFlags(list), r);
+  return `<circle r="${r.toFixed(2)}" fill="${col}"/><text y="${R * 0.33}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * 0.95}" fill="${D_TEXT[col] || "#1c2329"}">${list.length}</text>` + badges(aggFlags(list), r);
 }
 const dLabel = d => `${hCount(d)} halos${markStr(dFlags(d)) ? " " + markStr(dFlags(d)) : ""}${d.novel.length ? " ★" : ""}`;
 const dYear = d => +String(d.date || "").slice(0, 4);
@@ -1654,12 +1655,12 @@ function dispTip(ev, c) {
 function openLoc(c) {
   dispLoc = { ids: c.m.map(d => d.id), title: placeTitle(c.m) };
   dispCards(); dispList();
-  document.getElementById("cards").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  document.getElementById("cards").parentElement.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 function dPick(id) {
   dispPicked = dispPicked.filter(x => x !== id); dispPicked.unshift(id); dispPicked = dispPicked.slice(0, 8);
   dispCards(); dispList();
-  document.getElementById("cards").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  document.getElementById("cards").parentElement.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 function addDays(iso, k) { const t = new Date(iso + "T00:00:00Z"); t.setUTCDate(t.getUTCDate() + k); return t.toISOString().slice(0, 10); }
 function dGram(d) {
@@ -1687,7 +1688,7 @@ function dCard(d) {
   el.innerHTML = `<div class="dh"><svg width="64" height="64" viewBox="-32 -32 64 64" aria-hidden="true">${hexSVG(d, 22, { big: true })}</svg>
       <div class="dt"><div class="dname">${esc(dName(d))}</div>
         <div class="dmeta">${esc(d.date)}${d.enddate ? "–" + esc(d.enddate) : ""}${d.time ? " · " + esc(d.time) : ""} · ${esc(d.light)}${d.cloud.length ? " · " + d.cloud.map(esc).join(", ") : ""}</div>
-        <div class="dmeta">${esc(dLabel(d))} · ${f.lit.size ? "rare forms in " + D_CLASSES.filter(c => f.lit.has(c)).join(", ") : "no rare oriented forms"}${d._pos && d._pos.approx ? " · location: country only" : ""}</div></div>
+        <div class="dmeta">${esc(dLabel(d))}${d.maxsim ? ` · at most ${esc(d.maxsim)} at the same time` : ""} · ${f.lit.size ? "rare forms in " + D_CLASSES.filter(c => f.lit.has(c)).join(", ") : "no rare oriented forms"}${d._pos && d._pos.approx ? " · location: country only" : ""}</div></div>
       <button type="button" class="dx" aria-label="Close this card">×</button></div>` +
     (firsts.length ? `<div class="dfirst">${firsts.map(([k, lab, c]) => `<div><span class="${k}">${k === "wf" ? "★ " : ""}${lab}:</span> ${esc(hName(c))} — ${esc(dCredit(d, c).join(", ") || "no documentation shows it")}</div>`).join("")}</div>` : "") +
     `<div class="dhalos">${d.halos.map(c => `<span class="${d.doubtful.includes(c) ? "doubt" : ""}" title="${esc(c)}">${esc(hName(c))}${d.doubtful.includes(c) ? " (doubtful)" : ""}</span>`).join("")}</div>` +
@@ -1724,7 +1725,7 @@ function dispLegend() {
   const sw = (fill, stroke) => `<svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><polygon points="${hexPts(7).map(p => p.map(v => v.toFixed(1)).join(",")).join(" ")}" fill="${fill}" ${stroke ? `stroke="${stroke}" stroke-width="1.3"` : ""}/></svg>`;
   document.getElementById("displegend").innerHTML =
     `<span class="k">${hex}<span>One display. The number is how many halos it had. A side is drawn bold when it had a rare halo of that crystal orientation.</span></span>` +
-    `<span class="k"><svg width="22" height="22" viewBox="-11 -11 22 22" aria-hidden="true"><circle r="10" fill="${D_MIXED}"/><text y="3.5" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" font-weight="600" fill="#1c2329">4</text></svg> several displays at one place; zoom in to separate nearby places</span>` +
+    `<span class="k"><svg width="22" height="22" viewBox="-11 -11 22 22" aria-hidden="true"><circle r="10" fill="${D_MIXED}"/><text y="3.5" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" font-weight="600" fill="#1c2329">4</text></svg> several nearby displays; zoom in to separate the locations. Grey when their light sources differ.</span>` +
     `<span class="k"><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><circle r="11" fill="none" stroke="rgb(var(--ink))" stroke-width="1.2" opacity=".7"/>${hexSVG({ light: "sun", items: [{ type: "photo" }], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], lat: 60 }, 7, { nobadge: true }).replace(/>0</, "><")}</svg> the latest display</span>` +
     `<span class="k">${sw(D_LIGHT.sun)} sun</span><span class="k">${sw(D_LIGHT.moon)} moon</span><span class="k">${sw(D_LIGHT.artificial)} artificial light</span><span class="k">${sw("var(--panel)", "var(--muted)")} description only</span>` +
     `<span class="k"><b style="color:#d0306a">★</b> world first</span><span class="k"><svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="#2f7d4f"/></svg> national first <svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="var(--panel)"/></svg> possible</span>` +
