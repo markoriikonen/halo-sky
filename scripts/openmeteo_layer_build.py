@@ -3,17 +3,18 @@ openmeteo_layer_build.py  -  count temperature windows from the saved profiles
 
 Run:   python openmeteo_layer_build.py
 
-Reads openmeteo/profiles25km/*.npz (from openmeteo_profile_pull.py) and, for
-every temperature window in WINDOWS, counts the daylight hours per month by
+Reads openmeteo/profiles25km_all/*.npz (from openmeteo_profile_pull_all.py) and, for
+every temperature window in WINDOWS, counts the hours per month by
 
     layer  = cloud cover inside the window      (e.g. between -10 and -20 C)
     below  = cloud cover warmer than the window
     above  = cloud cover colder than the window
 
-in 20 % steps, as before. Writes the files the viewer reads:
+in 20 % steps, twice: daylight hours only (sun at least 0 deg) and all hours.
+Writes the files the viewer reads:
 
-    openmeteo/layer_windows/index.json.gz         settings and site list
-    openmeteo/layer_windows/w_<warm>_<cold>.json.gz   one file per window
+    openmeteo/layer_windows/        daylight      index.json.gz + w_<warm>_<cold>.json.gz
+    openmeteo/layer_windows_all/    all hours     the same files
 
 ALOFT_ONLY: a window that reaches the ground (the air at the surface is no
 warmer than the window's warm edge, as in a Siberian winter) does not count
@@ -28,9 +29,8 @@ from pathlib import Path
 import numpy as np
 
 BASE = Path.home() / "Downloads" / "grams" / "openmeteo"
-SRC = BASE / "profiles25km"
-OUT = BASE / "layer_windows"
-SUN_MIN_DEG = 0.0
+SRC = BASE / "profiles25km_all"
+OUTS = {"layer_windows": 0.0, "layer_windows_all": -91.0}      # folder: lowest sun elevation counted
 ALOFT_ONLY = True
 EDGES = list(range(0, -45, -5))                     # 0, -5, ... -40 C
 WIDTHS = (5, 10, 15, 20)
@@ -55,12 +55,12 @@ def fine_weights(levels):
     return lv, np.exp(xf), W
 
 
-def site_counts(z):
+def site_counts(z, sun_min):
     meta = json.loads(str(z["meta"]))
     levels = meta["levels"]
     order = np.argsort(levels)                        # columns sorted 50 ... 1000 hPa
     lv, pf, W = fine_weights(levels)
-    keep = z["sun"] >= SUN_MIN_DEG
+    keep = z["sun"] >= sun_min
     T = z["T"][keep][:, order].astype(float)
     C = z["C"][keep][:, order].astype(float)
     ps = z["ps"][keep] / 10.0
@@ -94,30 +94,32 @@ def site_counts(z):
 
 def main():
     files = sorted(p for p in SRC.glob("*.npz") if not p.name.startswith("_"))
-    OUT.mkdir(parents=True, exist_ok=True)
-    sites, per_win = [], {wkey(w): [] for w in WINDOWS}
-    start = None
+    sites, start = [], None
+    per = {o: {wkey(w): [] for w in WINDOWS} for o in OUTS}
     t0 = time.time()
     for i, p in enumerate(files, 1):
         z = np.load(p)
-        meta, cnt = site_counts(z)
-        sites.append({"n": meta["name"], "la": meta["lat"], "lo": meta["lon"],
-                      "first": meta["first"], "last": meta["last"]})
+        for o, sun_min in OUTS.items():
+            meta, cnt = site_counts(z, sun_min)
+            for k, v in cnt.items():
+                per[o][k].append(v.tolist())
+        sites.append({"n": meta["name"], "la": meta["lat"], "lo": meta["lon"], "first": meta["first"], "last": meta["last"]})
         start = min(start or meta["first"], meta["first"])
-        for k, v in cnt.items():
-            per_win[k].append(v.tolist())
         if i % 100 == 0:
             print(f"  {i}/{len(files)}  ({(time.time() - t0) / 60:.1f} min)")
-    index = {"settings": {"model": "ecmwf_ifs025", "start": start[:10], "sun_min_deg": SUN_MIN_DEG,
-                          "aloft_only": ALOFT_ONLY, "windows": [wkey(w) for w in WINDOWS],
-                          "bins3": "above, layer, below; 0-100 step 20; index (a*6+m)*6+b; 12 months"},
-             "sites": sites}
-    with gzip.open(OUT / "index.json.gz", "wt", encoding="utf-8") as fh:
-        json.dump(index, fh, separators=(",", ":"))
-    for w in WINDOWS:
-        with gzip.open(OUT / f"w_{-w[0]}_{-w[1]}.json.gz", "wt", encoding="utf-8") as fh:
-            json.dump({"key": wkey(w), "c": per_win[wkey(w)]}, fh, separators=(",", ":"))
-    print(f"{len(files)} sites, {len(WINDOWS)} windows -> {OUT}")
+    for o, sun_min in OUTS.items():
+        out = BASE / o
+        out.mkdir(parents=True, exist_ok=True)
+        index = {"settings": {"model": "ecmwf_ifs025", "start": start[:10], "sun_min_deg": sun_min,
+                              "aloft_only": ALOFT_ONLY, "windows": [wkey(w) for w in WINDOWS],
+                              "bins3": "above, layer, below; 0-100 step 20; index (a*6+m)*6+b; 12 months"},
+                 "sites": sites}
+        with gzip.open(out / "index.json.gz", "wt", encoding="utf-8") as fh:
+            json.dump(index, fh, separators=(",", ":"))
+        for w in WINDOWS:
+            with gzip.open(out / f"w_{-w[0]}_{-w[1]}.json.gz", "wt", encoding="utf-8") as fh:
+                json.dump({"key": wkey(w), "c": per[o][wkey(w)]}, fh, separators=(",", ":"))
+        print(f"{len(files)} sites, {len(WINDOWS)} windows -> {out}")
 
 
 if __name__ == "__main__":
