@@ -1,0 +1,601 @@
+<title>Halo Display Log</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: three panes on desktop (display list | record form | halo picker), stacked on a phone. */
+:root {
+  --bg: #f3f5f7; --panel: #ffffff; --fg: #18212b; --muted: #5b6875; --rule: #d6dde3;
+  --ice: #2f7fb5; --ice-soft: #e2eef7; --ice-fg: #0f4f7c;
+  --on-ice: #ffffff; --doubt: #a36a00; --novel: #b8325a; --first: #2f7d4f; --danger: #b3261e;
+  --f-ui: "IBM Plex Sans", system-ui, sans-serif;
+  --f-code: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #10161c; --panel: #172028; --fg: #e3e9ee; --muted: #93a1ad; --rule: #2a3742;
+  --ice: #6fb3e3; --ice-soft: #1d3446; --ice-fg: #bfe0f5;
+  --on-ice: #0c2233; --doubt: #e0a43a; --novel: #ee7b9c; --first: #6cc28f; --danger: #f08a80; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #10161c; --panel: #172028; --fg: #e3e9ee; --muted: #93a1ad; --rule: #2a3742;
+  --ice: #6fb3e3; --ice-soft: #1d3446; --ice-fg: #bfe0f5;
+  --on-ice: #0c2233; --doubt: #e0a43a; --novel: #ee7b9c; --first: #6cc28f; --danger: #f08a80; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 14px/1.45 var(--f-ui); }
+.app { display: grid; grid-template-columns: 220px minmax(0, 1fr) minmax(0, 1.05fr); gap: 14px;
+  padding-block: 14px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  height: 100%; }
+html, body { height: 100%; }
+@media (max-width: 1100px) { .app { grid-template-columns: 200px minmax(0, 1fr); } .picker { grid-column: 1 / -1; } }
+@media (max-width: 700px) { .app { grid-template-columns: minmax(0, 1fr); height: auto; } }
+.pane { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; min-width: 0; display: flex; flex-direction: column; min-height: 0; }
+.pane > header { padding: 10px 12px; border-bottom: 1px solid var(--rule); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pane > header h2 { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); flex: 1; }
+.scroll { overflow: auto; min-height: 0; flex: 1; }
+@media (max-width: 700px) { .scroll { max-height: 70vh; } }
+button { font: inherit; color: inherit; cursor: pointer; }
+.btn { border: 1px solid var(--rule); background: var(--panel); border-radius: 5px; padding: 5px 10px; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--ice); border-color: var(--ice); color: var(--on-ice); font-weight: 600; }
+.btn.danger { color: var(--danger); }
+:focus-visible { outline: 2px solid var(--ice); outline-offset: 1px; }
+input, textarea, select { font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--rule); border-radius: 5px; padding: 6px 8px; width: 100%; min-width: 0; }
+textarea { resize: vertical; min-height: 54px; }
+
+/* display list */
+.dlist { list-style: none; margin: 0; padding: 4px; }
+.dlist li button { width: 100%; text-align: left; border: 0; background: none; padding: 7px 8px; border-radius: 4px; display: grid; grid-template-columns: auto 1fr; gap: 0 8px; }
+.dlist li button:hover { background: var(--bg); }
+.dlist li button[aria-current="true"] { background: var(--ice-soft); }
+.dlist .id { font: 500 12px var(--f-code); color: var(--muted); grid-row: span 2; padding-top: 1px; }
+.dlist .pl { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dlist .dt { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.empty { color: var(--muted); padding: 14px 12px; font-size: 13px; }
+
+/* form */
+.form { padding: 12px; display: grid; gap: 12px; }
+.row { display: grid; gap: 10px; align-items: start; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+.f { display: grid; gap: 3px; min-width: 0; position: relative; }
+.f > label, .lab { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.hint { font-size: 11px; color: var(--muted); }
+.seg { display: flex; flex-wrap: wrap; gap: 4px; }
+.seg button { border: 1px solid var(--rule); background: var(--panel); border-radius: 5px; padding: 4px 10px; }
+.seg button[aria-pressed="true"] { background: var(--ice-soft); border-color: var(--ice); color: var(--ice-fg); font-weight: 600; }
+
+/* token fields */
+.tokens { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; border: 1px solid var(--rule); border-radius: 5px; background: var(--bg); padding: 4px; min-height: 36px; }
+.tokens input { border: 0; background: transparent; flex: 1; min-width: 90px; padding: 3px 4px; }
+.tokens input:focus { outline: none; }
+.tok { display: inline-flex; align-items: center; gap: 4px; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 2px 4px 2px 7px; font-size: 13px; }
+.tok .x { border: 0; background: none; color: var(--muted); padding: 0 3px; line-height: 1; }
+.tok.halo { font-family: var(--f-code); cursor: pointer; }
+.tok.halo.doubt { border-style: dashed; color: var(--doubt); }
+.tok .b { font: 600 10px var(--f-ui); border-radius: 3px; padding: 0 3px; color: #fff; }
+.b.nov { background: var(--novel); } .b.nf { background: var(--first); } .b.nfp { background: none; color: var(--first); border: 1px solid var(--first); }
+.sugg { position: absolute; z-index: 20; left: 0; right: 0; top: 100%; background: var(--panel); border: 1px solid var(--rule); border-radius: 5px; box-shadow: 0 6px 18px rgb(0 0 0 / .15); max-height: 260px; overflow: auto; }
+.sugg button { display: flex; gap: 8px; width: 100%; text-align: left; border: 0; background: none; padding: 6px 9px; }
+.sugg button.on, .sugg button:hover { background: var(--ice-soft); }
+.sugg code { font-family: var(--f-code); min-width: 62px; color: var(--ice-fg); }
+.sugg small { color: var(--muted); margin-left: auto; }
+.menu { position: absolute; z-index: 30; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; box-shadow: 0 6px 18px rgb(0 0 0 / .18); padding: 4px; display: grid; min-width: 210px; }
+.menu button { border: 0; background: none; text-align: left; padding: 6px 9px; border-radius: 4px; display: flex; gap: 8px; align-items: center; }
+.menu button:hover { background: var(--bg); }
+.menu .ttl { font: 500 12px var(--f-code); color: var(--muted); padding: 4px 9px 6px; border-bottom: 1px solid var(--rule); margin-bottom: 3px; }
+.menu .chk { width: 14px; text-align: center; }
+
+/* hexagon preview */
+.preview { display: flex; gap: 14px; align-items: center; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 6px; background: var(--bg); }
+.preview svg { flex: none; }
+.preview .sum { font-size: 13px; display: grid; gap: 2px; min-width: 0; }
+.preview .lbl { font: 600 17px var(--f-code); }
+
+/* picker */
+.pick-search { flex-basis: 100%; }
+.grp { border-bottom: 1px solid var(--rule); }
+.grp > button.gh { width: 100%; border: 0; background: none; text-align: left; padding: 8px 12px; display: flex; gap: 8px; align-items: baseline; font-weight: 600; }
+.grp > button.gh .n { font-weight: 400; font-size: 12px; color: var(--muted); }
+.grp > button.gh .cnt { margin-left: auto; font: 500 12px var(--f-code); color: var(--ice-fg); }
+.grp .body { padding: 0 12px 10px; display: grid; gap: 6px; }
+.grp .sub { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { border: 1px solid var(--rule); background: var(--panel); border-radius: 4px; padding: 3px 7px; display: inline-flex; gap: 6px; align-items: baseline; text-align: left; }
+.chip code { font: 500 12px var(--f-code); color: var(--ice-fg); }
+.chip span { font-size: 12.5px; }
+.chip:hover { border-color: var(--ice); }
+.chip[aria-pressed="true"] { background: var(--ice); border-color: var(--ice); color: var(--on-ice); }
+.chip[aria-pressed="true"] code { color: var(--on-ice); }
+.chip.doubt[aria-pressed="true"] { background: var(--doubt); border-color: var(--doubt); }
+
+.items { display: grid; gap: 8px; }
+.item { border: 1px solid var(--rule); border-radius: 6px; padding: 10px; display: grid; gap: 8px; background: var(--bg); }
+.item .top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.item .num { font: 600 12px var(--f-code); color: var(--muted); }
+.item .acts { margin-left: auto; display: flex; gap: 6px; }
+.item input { background: var(--panel); }
+.item .tokens { background: var(--panel); }
+.shows { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.shows .chip { padding: 2px 6px; }
+.shows .chip code { font-size: 11.5px; }
+.oncard { display: inline-flex; gap: 5px; align-items: center; font-size: 12.5px; }
+.oncard input { width: auto; }
+.bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 10px 12px; border-top: 1px solid var(--rule); }
+.status { font-size: 12.5px; color: var(--muted); margin-right: auto; }
+.status.err { color: var(--danger); }
+.ro { background: var(--ice-soft); color: var(--ice-fg); padding: 8px 12px; font-size: 13px; }
+@media (prefers-reduced-motion: no-preference) { .chip, .tok, .btn { transition: background-color .12s, border-color .12s; } }
+</style>
+
+<div class="app">
+  <section class="pane" aria-label="Displays">
+    <header><h2>Displays</h2><button class="btn primary" id="newbtn" type="button">New</button>
+      <input id="dfilter" class="pick-search" type="search" placeholder="Filter by place, observer, halo…" aria-label="Filter displays"></header>
+    <div class="scroll"><ul class="dlist" id="dlist"></ul><p class="empty" id="dempty">No displays yet. The form is ready for display 1: fill it in and press Save.</p></div>
+  </section>
+
+  <section class="pane" aria-label="Display record">
+    <header><h2 id="ftitle">New display</h2><span class="hint" id="fid"></span></header>
+    <div class="ro" id="robanner" hidden>You can view the log but not change it.</div>
+    <div class="scroll"><form class="form" id="form" autocomplete="off">
+      <div class="row">
+        <div class="f"><label for="date">Date</label><input id="date" placeholder="YYYY-MM-DD" inputmode="numeric"></div>
+        <div class="f"><label for="enddate">End date</label><input id="enddate" placeholder="if later" inputmode="numeric"></div>
+        <div class="f"><label for="time">Time</label><input id="time" placeholder="e.g. 10:30-14:15"><span class="hint">local; 23:05, 2305 or 23; add Z for UTC</span></div>
+      </div>
+      <div class="row">
+        <div class="f"><label for="place">Place</label><input id="place"><div class="sugg" id="place-s" hidden></div></div>
+        <div class="f"><label for="country">Country</label><input id="country"><div class="sugg" id="country-s" hidden></div></div>
+      </div>
+      <div class="row">
+        <div class="f"><label for="lat">Latitude</label><input id="lat" inputmode="decimal" placeholder="e.g. 66.50"><span class="hint">paste "66.5, 25.7" here to fill both</span></div>
+        <div class="f"><label for="lon">Longitude</label><input id="lon" inputmode="decimal" placeholder="e.g. 25.73"></div>
+      </div>
+      <div class="row">
+        <div class="f"><span class="lab">Light source</span><div class="seg" id="light" data-single>
+          <button type="button" data-v="sun">Sun</button><button type="button" data-v="moon">Moon</button><button type="button" data-v="artificial">Artificial</button></div></div>
+        <div class="f"><span class="lab">Cloud</span><div class="seg" id="cloud">
+          <button type="button" data-v="High">High</button><button type="button" data-v="Mid">Mid</button><button type="button" data-v="Low">Low</button><button type="button" data-v="Ice fog">Ice fog</button></div></div>
+      </div>
+      <div class="f"><label for="halo-in">Halo forms</label>
+        <div class="tokens" id="halos"><input id="halo-in" placeholder="type a code or name, Enter to add"></div>
+        <div class="sugg" id="halo-s" hidden></div>
+        <span class="hint">Click a halo to mark it doubtful, a world first or a national first. Or pick from the list on the right.</span></div>
+      <div class="preview" id="preview"></div>
+      <div class="f"><span class="lab">Documentation</span>
+        <div id="items" class="items"></div>
+        <div><button class="btn" id="additem" type="button">Add documentation</button></div>
+        <span class="hint">One item per photo, video or written report. The makers are the display's observers; credit for a world first or national first goes to the makers of the items that show it.</span></div>
+      <div class="f"><label for="notes">Notes</label><textarea id="notes"></textarea></div>
+    </form></div>
+    <div class="bar">
+      <span class="status" id="status" role="status">Connecting to the log…</span>
+      <button class="btn danger" id="delbtn" type="button" hidden>Delete</button>
+      <button class="btn" id="delyes" type="button" hidden>Yes, delete this display</button>
+      <button class="btn primary" id="savebtn" type="button">Save</button>
+    </div>
+  </section>
+
+  <section class="pane picker" aria-label="Halo forms">
+    <header><h2>Halo forms</h2><button class="btn" id="collapse" type="button">Collapse all</button>
+      <input id="pfilter" class="pick-search" type="search" placeholder="Find a halo by code or name" aria-label="Find a halo"></header>
+    <div class="scroll" id="picker"></div>
+  </section>
+</div>
+
+<script>
+const FORMS = /*FORMS*/[];
+const GROUP_NAMES = {"ORIENTATION UNDETERMINABLE":"Orientation undeterminable","RANDOM ORIENTATION":"Random orientation","PLATE ORIENTATION":"Plate orientation","COLUMN ORIENTATION":"Column orientation","PARRY ORIENTATION":"Parry orientation","LOWITZ ORIENTATION":"Lowitz orientation","TRICKER ORIENTATION (experimental)":"Tricker orientation (experimental)","MULTI-SCATTERING":"Multiple scattering","DIFFUSED SOURCE":"Diffused source","SURFACE REFLECTION":"Surface reflection","ODD RADIUS CIRCULAR HALOS":"Odd radius circular halos","ODD RADIUS PLATE ARCS":"Odd radius plate arcs","ODD RADIUS COLUMN ARCS":"Odd radius column arcs","EXOTICS":"Exotics"};
+const CLASSES = ["random", "plate", "column", "Parry", "Lowitz", "Tricker"];   // hexagon sides clockwise from the top
+const TROPIC = 20;                                                            // fliphelion counts as rare within this latitude
+const FORM = {};                                                              // code -> first entry
+FORMS.forEach(([c, n, g, s, cls, rare, mark]) => { if (!FORM[c]) FORM[c] = { c, n, g, s, cls, rare, mark }; });
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+
+// ---------- state ----------
+let db = null, canWrite = true, displays = [], current = null, dirty = false;
+const blank = () => ({ id: null, date: "", enddate: "", time: "", place: "", country: "", lat: "", lon: "", light: "sun",
+  cloud: [], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], items: [blankItem()], notes: "" });
+const blankItem = () => ({ type: "photo", by: [], link: "", image: "", perm: "", shows: null, card: false });   // shows null = all halos
+// earlier records kept documentation, links and image on the display itself: turn them into items
+function migrate(d) {
+  if (Array.isArray(d.items)) return d;
+  const links = d.links || [];
+  const items = [{ type: d.docu || "photo", by: d.imageby ? [d.imageby] : (d.observers || []).slice(), link: links[0] || "", image: d.image || "", perm: d.perm || "", shows: null, card: false }];
+  links.slice(1).forEach(l => items.push({ ...blankItem(), type: "description", by: (d.observers || []).slice(), link: l }));
+  const out = { ...d, items };
+  ["docu", "links", "image", "imageby", "perm"].forEach(k => delete out[k]);
+  return out;
+}
+const itemShows = (it, c) => it.shows === null || it.shows.includes(c);
+function creditFor(c) { const s = new Set(); rec.items.forEach(it => { if (itemShows(it, c)) it.by.forEach(b => s.add(b)); }); return [...s]; }
+const observersOf = r => [...new Set(r.items.flatMap(it => it.by))];
+const docTypes = r => [...new Set(r.items.map(it => it.type))];
+let rec = blank();
+
+// ---------- halo logic ----------
+function hexInfo(r) {
+  const lat = Math.abs(parseFloat(r.lat));
+  const lit = new Set(); let odd = false, dodd = false, ms = false, refl = false, E = false, B = false;
+  for (const c of r.halos) {
+    const f = FORM[c]; if (!f || r.doubtful.includes(c)) continue;
+    const rare = f.rare === 1 || (f.rare === 2 && lat < TROPIC);
+    if (f.cls && rare) lit.add(f.cls);
+    if (f.mark === "odd") odd = true; if (f.mark === "dodd") dodd = true; if (f.mark === "ms") ms = true;
+    if (f.mark === "R") refl = true; if (f.mark === "E") E = true; if (f.mark === "B") B = true;
+  }
+  const marks = (dodd ? "✚✚" : odd ? "✚" : "") + (ms ? "²" : "") + (refl ? "R" : "") + (E ? "E" : "") + (B ? "B" : "");
+  return { lit, marks, novel: r.novel.length > 0, nfc: r.nfc.length > 0, nfp: r.nfp.length > 0 };
+}
+const hollow = r => (r.items || []).length > 0 && r.items.every(it => it.type === "description");
+const LIGHT_COL = { sun: "#e9a623", moon: "#9fb3c8", artificial: "#c7653b" };
+function hexSVG(r, size = 64) {
+  const h = hexInfo(r), cx = size / 2, cy = size / 2, R = size * 0.42;
+  const pts = [...Array(6)].map((_, k) => { const a = Math.PI / 180 * (-120 + 60 * k); return [cx + R * Math.cos(a), cy + R * Math.sin(a)]; });
+  // flat-top hexagon: side k joins pts[k] -> pts[k+1]; side 0 is the top
+  let s = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">`;
+  const fill = LIGHT_COL[r.light] || "#888";
+  s += `<polygon points="${pts.map(p => p.join(",")).join(" ")}" fill="${hollow(r) ? "none" : fill}" stroke="${fill}" stroke-width="1.5" opacity="${hollow(r) ? 1 : .85}"/>`;
+  CLASSES.forEach((cl, k) => {
+    const [a, b] = [pts[k], pts[(k + 1) % 6]];
+    s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${h.lit.has(cl) ? "var(--fg)" : "var(--rule)"}" stroke-width="${h.lit.has(cl) ? 5 : 1.5}" stroke-linecap="round"/>`;
+  });
+  s += `<text x="${cx}" y="${cy + 5}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${size * 0.24}" fill="var(--fg)">${h.lit.size}</text>`;
+  if (h.novel) s += `<text x="${size - 2}" y="${size * .2}" text-anchor="end" font-size="${size * .24}" fill="var(--novel)">★</text>`;
+  else if (h.nfc || h.nfp) s += `<path d="M${size - 13} ${size * .06}v${size * .26}M${size - 13} ${size * .06}l9 4-9 4" stroke="var(--first)" stroke-width="1.6" fill="${h.nfc ? "var(--first)" : "none"}"/>`;
+  return s + "</svg>";
+}
+function creditLines() {
+  const fl = [...rec.novel.map(c => ["★ world first", c]), ...rec.nfc.map(c => ["national first", c]), ...rec.nfp.map(c => ["possible national first", c])];
+  return fl.map(([k, c]) => { const who = creditFor(c); return `<span>${esc(c)} ${k}: ${who.length ? esc(who.join(", ")) : '<span style="color:var(--danger)">no item shows it</span>'}</span>`; }).join("");
+}
+function renderPreview() {
+  const h = hexInfo(rec);
+  const lit = CLASSES.filter(c => h.lit.has(c));
+  const n = rec.halos.length, d = rec.doubtful.length;
+  $("preview").innerHTML = hexSVG(rec, 72) + `<div class="sum"><span class="lbl">${h.lit.size}${esc(h.marks)}${h.novel ? " ★" : ""}</span>
+    <span>${lit.length ? "Rare forms in: " + lit.join(", ") : "No rare oriented forms yet"}</span>
+    ${creditLines()}<span class="hint">${n} halo${n === 1 ? "" : "s"}${d ? `, ${d} doubtful` : ""}${h.nfc ? " · national first" : h.nfp ? " · possible national first" : ""}${!rec.lat ? " · fliphelion rule needs the latitude" : ""}</span></div>`;
+}
+
+// ---------- token fields ----------
+function haloTokens() {
+  const box = $("halos"), inp = $("halo-in");
+  box.querySelectorAll(".tok").forEach(t => t.remove());
+  for (const c of rec.halos) {
+    const t = document.createElement("span");
+    t.className = "tok halo" + (rec.doubtful.includes(c) ? " doubt" : "");
+    t.tabIndex = 0; t.title = (FORM[c]?.n || "unknown code") + " · click for options";
+    t.innerHTML = esc(c) + (rec.doubtful.includes(c) ? "?" : "") + (rec.novel.includes(c) ? '<span class="b nov">★</span>' : "") +
+      (rec.nfc.includes(c) ? '<span class="b nf">1st</span>' : rec.nfp.includes(c) ? '<span class="b nfp">1st?</span>' : "") +
+      `<button type="button" class="x" aria-label="Remove ${esc(c)}">×</button>`;
+    t.querySelector(".x").addEventListener("click", e => { e.stopPropagation(); toggleHalo(c, false); });
+    t.addEventListener("click", e => haloMenu(c, t));
+    t.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); haloMenu(c, t); } });
+    box.insertBefore(t, inp);
+  }
+}
+function toggleHalo(c, on) {
+  const has = rec.halos.includes(c);
+  if (on === undefined) on = !has;
+  if (on && !has) rec.halos.push(c);
+  if (!on && has) { rec.halos = rec.halos.filter(x => x !== c); for (const k of ["doubtful", "novel", "nfc", "nfp"]) rec[k] = rec[k].filter(x => x !== c);
+    rec.items.forEach(it => { if (it.shows) it.shows = it.shows.filter(x => x !== c); }); }
+  changed(); haloTokens(); syncPicker(); renderPreview(); renderItems();
+}
+function flag(key, c) {
+  const on = !rec[key].includes(c);
+  rec[key] = on ? [...rec[key], c] : rec[key].filter(x => x !== c);
+  if (on && key === "nfc") rec.nfp = rec.nfp.filter(x => x !== c);
+  if (on && key === "nfp") rec.nfc = rec.nfc.filter(x => x !== c);
+  changed(); haloTokens(); syncPicker(); renderPreview();
+}
+let menuEl = null;
+function closeMenu() { menuEl?.remove(); menuEl = null; }
+function haloMenu(c, anchor) {
+  closeMenu();
+  const m = document.createElement("div"); m.className = "menu"; m.setAttribute("role", "menu");
+  const item = (key, label) => `<button type="button" role="menuitemcheckbox" data-k="${key}" aria-checked="${rec[key].includes(c)}"><span class="chk">${rec[key].includes(c) ? "✓" : ""}</span>${label}</button>`;
+  m.innerHTML = `<div class="ttl">${esc(c)} · ${esc(FORM[c]?.n || "not in the list")}</div>` + item("doubtful", "Doubtful") + item("novel", "World first") +
+    item("nfc", "National first, confirmed") + item("nfp", "National first, possible") + `<button type="button" data-k="rm"><span class="chk">×</span>Remove</button>`;
+  m.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; closeMenu(); b.dataset.k === "rm" ? toggleHalo(c, false) : flag(b.dataset.k, c); });
+  document.body.appendChild(m);
+  const r = anchor.getBoundingClientRect();
+  m.style.left = Math.min(r.left + scrollX, scrollX + innerWidth - m.offsetWidth - 16) + "px"; m.style.top = (r.bottom + scrollY + 4) + "px";
+  menuEl = m; m.querySelector("button")?.focus();
+}
+document.addEventListener("click", e => { if (menuEl && !menuEl.contains(e.target) && !e.target.closest(".tok.halo")) closeMenu(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closeMenu(); hideSugg(); } });
+
+// suggestion lists (halo codes, observers, places, countries)
+let suggState = null;
+function hideSugg() { document.querySelectorAll(".sugg").forEach(s => s.hidden = true); suggState = null; }
+function showSugg(boxId, items, pick) {
+  const box = $(boxId);
+  if (!items.length) { box.hidden = true; suggState = null; return; }
+  box.innerHTML = items.map((it, i) => `<button type="button" data-i="${i}" class="${i === 0 ? "on" : ""}">${it.html}</button>`).join("");
+  box.hidden = false; suggState = { box, items, pick, sel: 0 };
+  box.querySelectorAll("button").forEach(b => b.addEventListener("mousedown", e => { e.preventDefault(); pick(items[+b.dataset.i]); }));
+}
+function suggKeys(e) {
+  if (!suggState) return false;
+  const { box, items, pick } = suggState;
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    e.preventDefault(); suggState.sel = (suggState.sel + (e.key === "ArrowDown" ? 1 : items.length - 1)) % items.length;
+    box.querySelectorAll("button").forEach((b, i) => b.classList.toggle("on", i === suggState.sel));
+    box.children[suggState.sel]?.scrollIntoView({ block: "nearest" }); return true;
+  }
+  if (e.key === "Enter" || e.key === "Tab") { if (e.key === "Tab" && !e.target.value) return false; e.preventDefault(); pick(items[suggState.sel]); return true; }
+  return false;
+}
+function haloMatches(q) {
+  q = q.trim().toLowerCase(); if (!q) return [];
+  const seen = new Set(), exact = [], start = [], name = [];
+  for (const f of Object.values(FORM)) {
+    if (seen.has(f.c)) continue; seen.add(f.c);
+    const c = f.c.toLowerCase();
+    if (c === q) exact.push(f); else if (c.startsWith(q)) start.push(f); else if (f.n.toLowerCase().includes(q)) name.push(f);
+  }
+  return [...exact, ...start, ...name].slice(0, 12);
+}
+$("halo-in").addEventListener("input", e => {
+  showSugg("halo-s", haloMatches(e.target.value).map(f => ({ v: f.c, html: `<code>${esc(f.c)}</code>${esc(f.n)}${rec.halos.includes(f.c) ? "<small>added</small>" : ""}` })),
+    it => { toggleHalo(it.v, true); $("halo-in").value = ""; hideSugg(); $("halo-in").focus(); });
+});
+$("halo-in").addEventListener("keydown", e => {
+  if (suggKeys(e)) return;
+  if (e.key === "Backspace" && !e.target.value && rec.halos.length) toggleHalo(rec.halos[rec.halos.length - 1], false);
+  if ((e.key === "Enter" || e.key === " " || e.key === ";" || e.key === ",") && e.target.value.trim()) {
+    e.preventDefault(); const code = e.target.value.trim().replace(/[;,]$/, "");
+    const f = Object.values(FORM).find(f => f.c.toLowerCase() === code.toLowerCase());
+    if (f) { toggleHalo(f.c, true); e.target.value = ""; hideSugg(); setStatus(""); } else setStatus(`"${code}" is not a halo code in the list.`, true);
+  }
+});
+$("halo-in").addEventListener("blur", () => setTimeout(hideSugg, 120));
+
+const known = key => { const m = new Map(); displays.forEach(d => [].concat(d[key] || []).forEach(v => v && m.set(v, (m.get(v) || 0) + 1))); return [...m.entries()].sort((a, b) => b[1] - a[1]).map(x => x[0]); };
+// place and country: suggest from earlier displays; picking a place fills country and coordinates
+$("place").addEventListener("input", e => {
+  const q = e.target.value.trim().toLowerCase(); const seen = new Set();
+  const list = q ? displays.filter(d => d.place && d.place.toLowerCase().includes(q) && !seen.has(d.place + d.country) && seen.add(d.place + d.country)).slice(0, 8) : [];
+  showSugg("place-s", list.map(d => ({ v: d, html: `${esc(d.place)}<small>${esc(d.country)} · ${esc(d.lat)}, ${esc(d.lon)}</small>` })), it => {
+    Object.assign(rec, { place: it.v.place, country: it.v.country, lat: it.v.lat, lon: it.v.lon }); fillForm(true); changed(); hideSugg();
+  });
+});
+$("country").addEventListener("input", e => {
+  const q = e.target.value.trim().toLowerCase();
+  const list = q ? known("country").filter(c => c.toLowerCase().startsWith(q)).slice(0, 8) : [];
+  showSugg("country-s", list.map(c => ({ v: c, html: esc(c) })), it => { rec.country = it.v; $("country").value = it.v; changed(); hideSugg(); });
+});
+["place", "country"].forEach(id => {
+  $(id).addEventListener("keydown", e => suggKeys(e));
+  $(id).addEventListener("blur", () => setTimeout(hideSugg, 120));
+});
+
+// plain fields
+const PLAIN = ["date", "enddate", "time", "place", "country", "lat", "lon", "notes"];
+PLAIN.forEach(id => $(id).addEventListener("input", () => { rec[id] = $(id).value; changed(); if (id === "lat") renderPreview(); }));
+$("lat").addEventListener("paste", e => {
+  const t = (e.clipboardData || window.clipboardData).getData("text");
+  const m = t.match(/(-?\d+(?:\.\d+)?)\s*[,;\s]\s*(-?\d+(?:\.\d+)?)/);
+  if (m) { e.preventDefault(); rec.lat = m[1]; rec.lon = m[2]; $("lat").value = m[1]; $("lon").value = m[2]; changed(); renderPreview(); }
+});
+document.querySelectorAll(".seg").forEach(seg => seg.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (seg.closest(".item")) return;
+  const key = { light: "light", cloud: "cloud" }[seg.id];
+  if (seg.hasAttribute("data-single")) rec[key] = rec[key] === b.dataset.v ? "" : b.dataset.v;
+  if (key === "light" && rec.light === "artificial") rec.cloud = ["Ice fog"];
+  else rec[key] = rec[key].includes(b.dataset.v) ? rec[key].filter(x => x !== b.dataset.v) : [...rec[key], b.dataset.v];
+  segs(); changed(); renderPreview();
+}));
+function segs() {
+  document.querySelectorAll("#light, #cloud").forEach(seg => {
+    const key = { light: "light", cloud: "cloud" }[seg.id];
+    seg.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", seg.hasAttribute("data-single") ? rec[key] === b.dataset.v : rec[key].includes(b.dataset.v)));
+  });
+}
+
+// ---------- documentation items ----------
+function renderItems() {
+  const box = $("items"); box.innerHTML = "";
+  rec.items.forEach((it, i) => {
+    const el = document.createElement("div"); el.className = "item";
+    const showsAll = it.shows === null;
+    el.innerHTML = `<div class="top"><span class="num">${i + 1}</span>
+        <div class="seg" data-single>${["photo", "video", "description"].map(v => `<button type="button" data-t="${v}" aria-pressed="${it.type === v}">${v[0].toUpperCase() + v.slice(1)}</button>`).join("")}</div>
+        <label class="oncard"><input type="checkbox" ${it.card ? "checked" : ""} data-k="card">Show on card</label>
+        <span class="acts"><button class="btn" type="button" data-a="dup">Duplicate</button><button class="btn danger" type="button" data-a="rm" ${rec.items.length < 2 ? "hidden" : ""}>Remove</button></span></div>
+      <div class="f"><span class="lab">By</span><div class="tokens">${it.by.map((b, j) => `<span class="tok">${esc(b)}<button type="button" class="x" data-rmby="${j}" aria-label="Remove ${esc(b)}">×</button></span>`).join("")}<input placeholder="name, Enter to add" data-k="by" aria-label="Item ${i + 1} made by"></div><div class="sugg" hidden></div></div>
+      <div class="row"><div class="f"><span class="lab">Link</span><input data-k="link" value="${esc(it.link)}" placeholder="address of the video, photo or report" aria-label="Item ${i + 1} link"></div>
+        <div class="f"><span class="lab">Image</span><input data-k="image" value="${esc(it.image)}" placeholder="image address or file name" aria-label="Item ${i + 1} image"></div></div>
+      <div class="top"><span class="lab">Image permission</span><div class="seg" data-single>${["yes", "asked", "no"].map(v => `<button type="button" data-p="${v}" aria-pressed="${it.perm === v}">${v[0].toUpperCase() + v.slice(1)}</button>`).join("")}</div></div>
+      <div class="f"><span class="lab">Shows</span><div class="shows"><button type="button" class="chip" data-all aria-pressed="${showsAll}"><span>All halos</span></button>${rec.halos.map(c =>
+        `<button type="button" class="chip" data-c="${esc(c)}" aria-pressed="${itemShows(it, c)}" title="${esc(FORM[c]?.n || "")}"><code>${esc(c)}</code></button>`).join("") || '<span class="hint">add the display\'s halos first</span>'}</div></div>`;
+    el.addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      if (b.dataset.t) it.type = b.dataset.t;
+      else if (b.dataset.p) it.perm = it.perm === b.dataset.p ? "" : b.dataset.p;
+      else if (b.hasAttribute("data-all")) it.shows = it.shows === null ? [] : null;
+      else if (b.dataset.c) { const c = b.dataset.c; const cur = it.shows === null ? rec.halos.slice() : it.shows; it.shows = cur.includes(c) ? cur.filter(x => x !== c) : [...cur, c]; if (rec.halos.every(x => it.shows.includes(x))) it.shows = null; }
+      else if (b.dataset.rmby !== undefined) it.by.splice(+b.dataset.rmby, 1);
+      else if (b.dataset.a === "dup") rec.items.splice(i + 1, 0, { ...structuredClone(it), card: false });
+      else if (b.dataset.a === "rm") rec.items.splice(i, 1);
+      else return;
+      changed(); renderItems(); renderPreview();
+    });
+    el.querySelectorAll("input[data-k=link], input[data-k=image]").forEach(inp => inp.addEventListener("input", () => { it[inp.dataset.k] = inp.value.trim(); changed(); }));
+    el.querySelector("input[data-k=card]").addEventListener("change", e => { it.card = e.target.checked; changed(); });
+    const byIn = el.querySelector("input[data-k=by]"), sg = el.querySelector(".sugg");
+    const addBy = name => { name.split(/[,;]/).map(s => s.trim()).filter(Boolean).forEach(n => { if (!it.by.includes(n)) it.by.push(n); }); changed(); renderItems(); renderPreview();
+      $("items").children[i]?.querySelector("input[data-k=by]")?.focus(); };
+    byIn.addEventListener("input", () => {
+      const q = byIn.value.trim().toLowerCase();
+      const pool = [...new Set([...observersOf(rec), ...known("observers")])];
+      const list = q ? pool.filter(o => o.toLowerCase().includes(q) && !it.by.includes(o)).slice(0, 10) : [];
+      sg.id = "by-s-" + i; showSugg(sg.id, list.map(o => ({ v: o, html: esc(o) })), x => addBy(x.v));
+    });
+    byIn.addEventListener("keydown", e => {
+      if (suggKeys(e)) return;
+      if ((e.key === "Enter" || e.key === ";") && byIn.value.trim()) { e.preventDefault(); addBy(byIn.value); }
+      if (e.key === "Backspace" && !byIn.value && it.by.length) { it.by.pop(); changed(); renderItems(); renderPreview(); $("items").children[i]?.querySelector("input[data-k=by]")?.focus(); }
+    });
+    byIn.addEventListener("blur", () => setTimeout(() => { if (byIn.isConnected && byIn.value.trim()) addBy(byIn.value); hideSugg(); }, 150));
+    box.appendChild(el);
+  });
+}
+$("additem").addEventListener("click", () => { rec.items.push(blankItem()); changed(); renderItems(); renderPreview(); });
+
+// ---------- picker ----------
+const groups = [];
+FORMS.forEach(([c, n, g, s]) => {
+  let G = groups.find(x => x.g === g); if (!G) { G = { g, subs: [] }; groups.push(G); }
+  let S = G.subs.find(x => x.s === s); if (!S) { S = { s, items: [] }; G.subs.push(S); }
+  S.items.push({ c, n });
+});
+let collapsed = new Set();
+try { collapsed = new Set(JSON.parse(localStorage.getItem("hdl-collapsed") || "[]")); } catch (e) {}
+function buildPicker() {
+  const q = $("pfilter").value.trim().toLowerCase();
+  $("picker").innerHTML = groups.map((G, gi) => {
+    const subs = G.subs.map(S => {
+      const items = S.items.filter(it => !q || it.c.toLowerCase().includes(q) || it.n.toLowerCase().includes(q));
+      if (!items.length) return "";
+      return (S.s ? `<div class="sub">${esc(S.s)}</div>` : "") + `<div class="chips">${items.map(it =>
+        `<button type="button" class="chip" data-c="${esc(it.c)}" aria-pressed="false" title="${esc(it.n)}"><code>${esc(it.c)}</code><span>${esc(it.n)}</span></button>`).join("")}</div>`;
+    }).join("");
+    if (!subs) return "";
+    const open = q || !collapsed.has(G.g);
+    return `<div class="grp" data-g="${gi}"><button type="button" class="gh" aria-expanded="${!!open}">${open ? "▾" : "▸"} ${esc(GROUP_NAMES[G.g] || G.g)}<span class="cnt"></span></button><div class="body" ${open ? "" : "hidden"}>${subs}</div></div>`;
+  }).join("") || `<p class="empty">No halo matches "${esc(q)}".</p>`;
+  syncPicker();
+}
+function syncPicker() {
+  $("picker").querySelectorAll(".chip").forEach(b => { const on = rec.halos.includes(b.dataset.c); b.setAttribute("aria-pressed", on); b.classList.toggle("doubt", rec.doubtful.includes(b.dataset.c)); });
+  $("picker").querySelectorAll(".grp").forEach(g => {
+    const codes = new Set(groups[+g.dataset.g].subs.flatMap(s => s.items.map(i => i.c)));
+    const n = rec.halos.filter(c => codes.has(c)).length; g.querySelector(".cnt").textContent = n ? n + " picked" : "";
+  });
+}
+$("picker").addEventListener("click", e => {
+  const chip = e.target.closest(".chip"); if (chip) { toggleHalo(chip.dataset.c); return; }
+  const gh = e.target.closest(".gh"); if (!gh) return;
+  const G = groups[+gh.parentElement.dataset.g].g; collapsed.has(G) ? collapsed.delete(G) : collapsed.add(G);
+  try { localStorage.setItem("hdl-collapsed", JSON.stringify([...collapsed])); } catch (err) {}
+  buildPicker();
+});
+$("pfilter").addEventListener("input", buildPicker);
+$("collapse").addEventListener("click", () => {
+  const all = collapsed.size < groups.length; collapsed = all ? new Set(groups.map(g => g.g)) : new Set();
+  $("collapse").textContent = all ? "Expand all" : "Collapse all";
+  try { localStorage.setItem("hdl-collapsed", JSON.stringify([...collapsed])); } catch (err) {}
+  buildPicker();
+});
+
+// ---------- record list and form ----------
+function nextId() { return String(displays.reduce((m, d) => Math.max(m, +d.id || 0), 0) + 1); }
+function renderList() {
+  const q = $("dfilter").value.trim().toLowerCase();
+  const list = displays.filter(d => !q || [d.id, d.place, d.country, d.date, ...(d.observers || []), ...(d.halos || [])].join(" ").toLowerCase().includes(q))
+    .sort((a, b) => (+b.id) - (+a.id));
+  $("dlist").innerHTML = list.map(d => `<li><button type="button" data-id="${esc(d.id)}" aria-current="${current === d.id}"><span class="id">${esc(d.id)}</span>
+    <span class="pl">${esc([d.place, d.country].filter(Boolean).join(", ") || "(no place)")}</span><span class="dt">${esc(d.date || "no date")} · ${(d.halos || []).length} halos</span></button></li>`).join("");
+  $("dempty").hidden = displays.length > 0;
+  $("dempty").textContent = displays.length ? "" : `No displays yet. The form is ready for display ${nextId()}: fill it in and press Save.`;
+}
+$("dlist").addEventListener("click", e => { const b = e.target.closest("button[data-id]"); if (b) openDisplay(b.dataset.id); });
+$("dfilter").addEventListener("input", renderList);
+function fillForm(keepFocus) {
+  PLAIN.forEach(id => { if (!(keepFocus && document.activeElement === $(id))) $(id).value = rec[id] ?? ""; });
+  segs(); haloTokens(); syncPicker(); renderPreview(); renderItems();
+}
+function openDisplay(id) {
+  if (dirty && !confirmLeave()) return;
+  const d = displays.find(x => x.id === id); if (!d) return;
+  rec = { ...blank(), ...migrate(structuredClone(d)) }; current = id; dirty = false;
+  $("ftitle").textContent = `Display ${id}`; $("fid").textContent = d.updated ? "saved " + d.updated.slice(0, 16).replace("T", " ") : "";
+  $("delbtn").hidden = !canWrite; $("delyes").hidden = true;
+  fillForm(); renderList(); setStatus("");
+}
+function startNew() {
+  if (dirty && !confirmLeave()) return;
+  rec = blank(); current = null; dirty = false;
+  $("ftitle").textContent = `New display ${nextId()}`; $("fid").textContent = ""; $("delbtn").hidden = true; $("delyes").hidden = true;
+  fillForm(); renderList(); setStatus(""); $("date").focus();
+}
+let leaveWarned = false;
+function confirmLeave() {    // the viewer has no confirm(): first click warns, a second click goes ahead
+  if (leaveWarned) { leaveWarned = false; return true; }
+  leaveWarned = true; setStatus("Unsaved changes. Save first, or click again to leave without saving.", true);
+  setTimeout(() => leaveWarned = false, 6000); return false;
+}
+$("newbtn").addEventListener("click", startNew);
+function changed() { dirty = true; leaveWarned = false; setStatus("Unsaved changes"); }
+function setStatus(t, err) { $("status").textContent = t; $("status").classList.toggle("err", !!err); }
+
+function normTime(s) {      // "2305" -> "23:05", "9" -> "09"; spans and a trailing Z kept; null if not a time
+  const m = s.trim().match(/^(\d{1,4}(?::\d{2})?)(?:\s*-\s*(\d{1,4}(?::\d{2})?))?\s*(z?)$/i);
+  if (!m) return null;
+  const one = x => {
+    if (x === undefined) return "";
+    let h, mi = null;
+    if (x.includes(":")) [h, mi] = x.split(":"); else if (x.length <= 2) h = x; else { h = x.slice(0, -2); mi = x.slice(-2); }
+    if (+h > 24 || (mi !== null && +mi > 59)) return null;
+    return h.padStart(2, "0") + (mi !== null ? ":" + mi : "");
+  };
+  const a = one(m[1]), b = one(m[2]);
+  if (a === null || b === null) return null;
+  return a + (b ? "-" + b : "") + (m[3] ? "Z" : "");
+}
+function validate() {
+  const p = [];
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(rec.date)) p.push("date as YYYY-MM-DD");
+  if (rec.enddate && !/^\d{4}-\d{2}-\d{2}$/.test(rec.enddate)) p.push("end date as YYYY-MM-DD");
+  if (rec.time.trim()) { const n = normTime(rec.time); if (n === null) p.push("time as 23:05, 2305 or 23, or a span like 10:30-14:15"); else rec.time = n; }
+  if (rec.lat !== "" && !(Math.abs(+rec.lat) <= 90)) p.push("latitude between -90 and 90");
+  if (rec.lon !== "" && !(Math.abs(+rec.lon) <= 180)) p.push("longitude between -180 and 180");
+  if (!rec.place && !rec.country) p.push("a place or at least a country");
+  if (!rec.items.some(it => it.by.length)) p.push("the maker of at least one documentation item");
+  return p;
+}
+$("savebtn").addEventListener("click", async () => {
+  if (!db) { setStatus("The log is not connected, so nothing can be saved here.", true); return; }
+  const p = validate(); if (p.length) { setStatus("Still needed: " + p.join(", ") + ".", true); return; }
+  const id = current || nextId();
+  rec.items.forEach(it => { if (it.shows && rec.halos.every(c => it.shows.includes(c))) it.shows = null; });
+  const body = { ...rec, id, observers: observersOf(rec), docu: docTypes(rec), lat: rec.lat === "" ? "" : +rec.lat, lon: rec.lon === "" ? "" : +rec.lon, updated: new Date().toISOString() };
+  $("savebtn").disabled = true; setStatus("Saving…");
+  try {
+    await db.collection("displays").doc(id).set(body);
+    current = id; dirty = false; rec = body;
+    $("ftitle").textContent = `Display ${id}`; $("delbtn").hidden = false; setStatus(`Saved display ${id}.`);
+  } catch (e) {
+    if (e.code === "invalid_argument") { canWrite = false; readOnly(); }
+    setStatus(e.code === "invalid_argument" ? "This log is read-only for you." : "Not saved: " + (e.message || e.code) + ". Try again.", true);
+  } finally { $("savebtn").disabled = false; }
+});
+$("delbtn").addEventListener("click", () => { $("delyes").hidden = false; $("delbtn").hidden = true; setStatus(`Delete display ${current}? This cannot be undone.`, true); });
+$("delyes").addEventListener("click", async () => {
+  const id = current;
+  try { await db.collection("displays").doc(id).delete(); dirty = false; setStatus(`Deleted display ${id}.`); startNew(); }
+  catch (e) { setStatus("Not deleted: " + (e.message || e.code), true); }
+});
+function readOnly() {
+  $("robanner").hidden = false; $("savebtn").hidden = true; $("delbtn").hidden = true; $("newbtn").hidden = true;
+  $("form").querySelectorAll("input,textarea,button").forEach(el => el.disabled = true);
+}
+
+// ---------- start ----------
+buildPicker(); startNew(); setStatus("Connecting to the log…");
+(async () => {
+  const timer = setTimeout(() => setStatus("The log can't be reached yet. Entries can't be saved until it connects.", true), 10000);
+  db = await claude.use("db");
+  if (!db) { clearTimeout(timer); setStatus("The log isn't available in this view. Open the page signed in to claude.ai to save displays.", true); return; }
+  const user = await claude.use("user");
+  if (user) { const w = await user.can("data.write"); if (w === false) { canWrite = false; readOnly(); } }
+  db.collection("displays").onSnapshot(snap => {
+    clearTimeout(timer);
+    displays = snap.docs.map(d => d.data()).filter(Boolean);
+    renderList();
+    if (!current && !dirty) $("ftitle").textContent = `New display ${nextId()}`;
+    if (!snap.metadata.fromCache && $("status").textContent.startsWith("Connecting")) setStatus(displays.length ? `${displays.length} displays in the log.` : "Connected. The log is empty.");
+  }, e => { clearTimeout(timer); setStatus("The log stopped answering (" + e.code + "). Reload the page to reconnect.", true); });
+})();
+</script>

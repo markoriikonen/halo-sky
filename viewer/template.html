@@ -153,6 +153,42 @@ ol.rank li { cursor: pointer; }
 ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--muted); float: right; font-variant-numeric: tabular-nums; }
 .note { font-size: 13px; color: var(--muted); margin: 0; max-width: 90ch; }
 #status { font-size: 13px; color: var(--muted); }
+.borders { fill: none; stroke: var(--coast); stroke-width: .55; vector-effect: non-scaling-stroke; pointer-events: none; opacity: .9; }
+.disp { cursor: pointer; }
+.disp .hx { vector-effect: non-scaling-stroke; }
+.disp:hover .hxo, .disp.on .hxo { stroke: var(--sel); stroke-width: 2.4; }
+.dseg { display: flex; flex-wrap: wrap; gap: 4px; }
+.dseg button { font: 13px var(--f-body); color: var(--fg); background: transparent; border: 1px solid var(--rule); border-radius: 4px; padding: 4px 8px; cursor: pointer; }
+.dseg button[aria-pressed="true"] { background: rgb(var(--ink)); color: var(--on-ink); border-color: rgb(var(--ink)); }
+.dfind { font: inherit; font-size: 14px; color: var(--fg); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 9px; width: min(300px, 100%); box-sizing: border-box; }
+.displegend { display: flex; flex-wrap: wrap; gap: 10px 26px; align-items: center; font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+.displegend .k { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; max-width: 100%; min-width: 0; }
+.displegend svg { overflow: visible; }
+.dcard { display: grid; gap: 10px; align-content: start; border: 1px solid var(--rule); border-radius: 6px; padding: 12px; background: var(--panel); }
+.dcard .dh { display: flex; gap: 12px; align-items: center; }
+.dcard .dh svg { flex: none; }
+.dcard .dt { display: grid; gap: 1px; min-width: 0; }
+.dcard .dname { font-weight: 600; font-size: 16px; }
+.dcard .dmeta { font-family: var(--f-data); font-size: 12px; color: var(--muted); }
+.dcard .dx { margin-left: auto; align-self: start; font: 18px/1 var(--f-body); background: none; border: 1px solid var(--rule); border-radius: 4px; width: 28px; height: 28px; cursor: pointer; color: var(--fg); }
+.dfirst { font-size: 13px; display: grid; gap: 2px; }
+.dfirst .wf { color: #b8325a; font-weight: 600; } .dfirst .nf { color: #2f7d4f; font-weight: 600; }
+:root[data-theme="dark"] .dfirst .wf { color: #ee7b9c; } :root[data-theme="dark"] .dfirst .nf { color: #6cc28f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .dfirst .wf { color: #ee7b9c; } :root:not([data-theme="light"]) .dfirst .nf { color: #6cc28f; } }
+.dhalos { display: flex; flex-wrap: wrap; gap: 3px; }
+.dhalos span { font: 500 11.5px var(--f-data); border: 1px solid var(--rule); border-radius: 3px; padding: 1px 5px; }
+.dhalos span.doubt { border-style: dashed; color: var(--muted); }
+.dthumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.dthumbs figure { margin: 0; display: grid; gap: 3px; }
+.dthumbs img { width: 100%; height: 120px; object-fit: cover; border-radius: 4px; border: 1px solid var(--rule); background: var(--bg); display: block; }
+.dthumbs figcaption { font-size: 11.5px; color: var(--muted); }
+.ddocs { font-size: 13px; display: grid; gap: 2px; }
+.ddocs a, .dthumbs a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 2px; }
+.dlist { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.dlist th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 4px 8px; border-bottom: 1px solid var(--rule); }
+.dlist td { padding: 5px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.dlist tr { cursor: pointer; } .dlist tbody tr:hover { background: var(--bg); }
+.dlist .num { font-family: var(--f-data); font-size: 12.5px; white-space: nowrap; }
 </style>
 
 <div class="wrap">
@@ -168,6 +204,7 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
         <button type="button" data-mode="halo" aria-pressed="true">High cloud</button>
         <button type="button" data-mode="layer" aria-pressed="false">Mid layer</button>
         <button type="button" data-mode="season" aria-pressed="false" disabled>Seasons</button>
+        <button type="button" data-mode="displays" aria-pressed="false">Displays</button>
       </div>
     </div>
     <label class="slider" id="srcwrap" for="src" hidden>Layer source
@@ -248,7 +285,15 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
         <input id="sday" type="range" min="10" max="90" step="5" value="50">
       </label>
     </div>
-    <label class="slider" for="light"><span>Hours counted</span>
+    <div class="controls" id="dispCtl" hidden>
+      <label class="slider" for="dq"><span>Find</span><input id="dq" class="dfind" type="search" placeholder="halo code or name, observer, place…" autocomplete="off"></label>
+      <label class="slider" for="dy0" style="min-width:0"><span>From year</span><select id="dy0"></select></label>
+      <label class="slider" for="dy1" style="min-width:0"><span>To year</span><select id="dy1"></select></label>
+      <div><h2>Light source</h2><div class="dseg" id="dlight"><button type="button" data-v="sun" aria-pressed="true">Sun</button><button type="button" data-v="moon" aria-pressed="true">Moon</button><button type="button" data-v="artificial" aria-pressed="true">Artificial</button></div></div>
+      <div><h2>Cloud</h2><div class="dseg" id="dcloud"><button type="button" data-v="High" aria-pressed="true">High</button><button type="button" data-v="Mid" aria-pressed="true">Mid</button><button type="button" data-v="Low" aria-pressed="true">Low</button><button type="button" data-v="Ice fog" aria-pressed="true">Ice fog</button></div></div>
+      <label class="tog" for="dfirsts"><input id="dfirsts" type="checkbox"> only world or national firsts</label>
+    </div>
+    <label class="slider" for="light" id="lightwrap"><span>Hours counted</span>
       <select id="light">
         <option value="day">Daylight (sun ≥ 0°)</option>
         <option value="twilight">With civil twilight (sun ≥ −6°)</option>
@@ -263,7 +308,8 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
     <div class="kgbar">
       <label class="tog" for="kgon"><input id="kgon" type="checkbox"> Köppen climate layer</label>
       <label class="tog" for="kgop" id="kgopwrap" hidden>opacity <input id="kgop" type="range" min="20" max="100" step="5" value="70"></label>
-      <label class="tog" for="kgfilter">Sites in climate
+      <label class="tog" for="bdon"><input id="bdon" type="checkbox" checked> Country borders</label>
+      <label class="tog" for="kgfilter" id="kgfwrap">Sites in climate
         <select id="kgfilter"><option value="all">all</option></select>
       </label>
     </div>
@@ -278,10 +324,11 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
     </div>
     <div class="legend"><span class="ends" id="lg0">0%</span><canvas id="lg" width="220" height="10"></canvas><span class="ends" id="lg1"></span><span id="lgnote">Click a dot to add its fingerprint below.</span><span>Zoom with Ctrl/⌘ + scroll, a double-click, pinch or the buttons; drag to move.</span></div>
     <div class="kglegend" id="kglegend" hidden></div>
+    <div class="displegend" id="displegend" hidden></div>
   </div>
 
   <div class="panel">
-    <h2>Fingerprints</h2>
+    <h2 id="fpPanelH">Fingerprints</h2>
     <div class="find">
       <input id="q" type="search" placeholder="Add a site, e.g. Siquijor" autocomplete="off">
       <div class="suggest" id="suggest"></div>
@@ -304,6 +351,11 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
     <div class="stripbox"><canvas id="strip"></canvas></div>
     <div class="axlab" style="padding-left:0;margin-top:4px"><span id="striptip">Hover the strip for values.</span></div>
     <div class="legend"><span class="ends">0%</span><canvas id="stripLg" width="220" height="10"></canvas><span class="ends">100%</span><span>share of the hours counted with the chosen measure, 30-day average; sites averaged in 2° latitude bands</span></div>
+  </div>
+
+  <div class="panel" id="displist" hidden>
+    <h2 id="displisth">Displays</h2>
+    <div style="overflow-x:auto"><table class="dlist"><thead><tr><th>Date</th><th>Place</th><th>Hexagon</th><th>Halos</th><th>Firsts</th><th>Observers</th></tr></thead><tbody id="dlistbody"></tbody></table></div>
   </div>
 
   <div class="ranks">
@@ -453,7 +505,17 @@ document.querySelectorAll("#modes button").forEach(b => b.addEventListener("clic
   document.getElementById("monthwrap").hidden = mode === "season";
   if (mode === "season") stopPlay();
   document.getElementById("strippanel").hidden = mode !== "season";
-  document.querySelector(".fptogs").hidden = mode === "season";
+  document.querySelector(".fptogs").hidden = mode === "season" || mode === "displays";
+  const dm = mode === "displays";
+  if (dm) { document.getElementById("monthwrap").hidden = true; stopPlay(); }
+  ["dispCtl", "displegend", "displist"].forEach(id => document.getElementById(id).hidden = !dm);
+  ["lightwrap", "kgfwrap"].forEach(id => document.getElementById(id).hidden = dm);
+  document.querySelector(".legend").hidden = dm;
+  document.querySelector(".ranks").hidden = dm;
+  document.querySelector(".find").hidden = dm;
+  document.getElementById("fphelp").parentElement.hidden = dm;
+  document.getElementById("fpPanelH").textContent = dm ? "Display cards" : "Fingerprints";
+  gDots.attr("hidden", dm ? true : null); gDisp.attr("hidden", dm ? null : true);
   if (mode !== "season") { document.getElementById("toph").textContent = "Most hours in the window"; document.getElementById("both").textContent = "Fewest hours in the window"; document.getElementById("lgnote").textContent = "Click a dot to add its fingerprint below."; }
   update();
 }));
@@ -514,7 +576,9 @@ const land50 = gZoom.append("path").datum(LAND50).attr("class", "land").attr("d"
 const land10 = gZoom.append("path").attr("class", "land").attr("hidden", true);
 const gLayer = gZoom.append("g").attr("class", "koppen");          // Köppen layer: above the land fill, below coastline and dots
 const coastTop = gZoom.append("path").datum(LAND50).attr("class", "coastline").attr("d", path).attr("hidden", true);
+const gBorders = gZoom.append("path").attr("class", "borders");
 const gDots = gZoom.append("g");
+const gDisp = gZoom.append("g").attr("hidden", true);
 // detailed (1:10 million) coastline, loaded the first time the map is zoomed in past DETAIL_ZOOM
 const DETAIL_ZOOM = 3.5;
 let land10State = "none", coastRes = false;
@@ -602,6 +666,7 @@ const zoom = d3.zoom().scaleExtent([1, 16]).translateExtent([[0, 0], [W, H]])
     gZoom.attr("transform", ev.transform);
     updateCoast(); kgUpdateTiles();
     if (dots) dots.attr("r", dotR());
+    if (mode === "displays") dispScale();
     tip.hidden = true;
   });
 svg.call(zoom);
@@ -764,6 +829,7 @@ function rankList(el, arr) {
 }
 
 function update() {
+  if (mode === "displays") { dispUpdate(); return; }
   if (!SITES.length) return;
   if (mode === "season") { if (seasonReady) seasonUpdate(); return; }
   labels();
@@ -1399,6 +1465,201 @@ const sLab = () => { document.getElementById("sthrv").textContent = sThr + "%"; 
 });
 sLab();
 
+// ===================== Country borders (Natural Earth 1:50 million via world-atlas) =====================
+let COUNTRIES = new Map();
+async function bordersLoad() {
+  try {
+    await loadScript("data/borders.js");
+    const T = window.FP_BORDERS; window.FP_BORDERS = null;
+    gBorders.datum(topojson.mesh(T, T.objects.countries, (a, b) => a !== b)).attr("d", path);
+    topojson.feature(T, T.objects.countries).features.forEach(f => COUNTRIES.set(f.properties.name.toLowerCase(), f));
+  } catch (e) { document.getElementById("bdon").parentElement.hidden = true; }
+}
+document.getElementById("bdon").addEventListener("change", e => gBorders.attr("hidden", e.target.checked ? null : true));
+
+// ===================== Displays mode: photographed halo displays from the Halo Display Log =====================
+const D_CLASSES = ["random", "plate", "column", "Parry", "Lowitz", "Tricker"];      // hexagon sides clockwise from the top
+const D_LIGHT = { sun: "#e9a623", moon: "#9fb3c8", artificial: "#c7653b" };
+const D_TROPIC = 20;
+const C_ALIAS = { "usa": "united states of america", "united states": "united states of america", "czech republic": "czechia", "uk": "united kingdom", "great britain": "united kingdom" };
+let DISP = null, DFORMS = {}, dispLoading = null, dispPicked = [], dispSel = [];
+const dState = { q: "", y0: null, y1: null, light: new Set(["sun", "moon", "artificial"]), cloud: new Set(["High", "Mid", "Low", "Ice fog"]), firsts: false };
+const dName = d => [d.place, d.country].filter(Boolean).join(", ") || "Unknown place";
+const dObs = d => [...new Set(d.items.flatMap(it => it.by))];
+const dShows = (it, c) => it.shows == null || it.shows.includes(c);
+const dCredit = (d, c) => [...new Set(d.items.filter(it => dShows(it, c)).flatMap(it => it.by))];
+const hName = c => (DFORMS[c] || [c])[0];
+function dInfo(d) {
+  const lat = Math.abs(+d.lat), lit = new Set(); let odd = 0, dodd = 0, ms = 0, R = 0, E = 0, B = 0;
+  d.halos.forEach(c => {
+    const f = DFORMS[c]; if (!f || d.doubtful.includes(c)) return;
+    const [, cls, rare, mark] = f;
+    if (cls && (rare === 1 || (rare === 2 && d.lat !== "" && lat < D_TROPIC))) lit.add(cls);
+    if (mark === "odd") odd = 1; if (mark === "dodd") dodd = 1; if (mark === "ms") ms = 1; if (mark === "R") R = 1; if (mark === "E") E = 1; if (mark === "B") B = 1;
+  });
+  return { lit, marks: (dodd ? "✚✚" : odd ? "✚" : "") + (ms ? "²" : "") + (R ? "R" : "") + (E ? "E" : "") + (B ? "B" : ""),
+    wf: d.novel.length > 0, nfc: d.nfc.length > 0, nfp: d.nfp.length > 0 };
+}
+function dPos(d) {
+  if (d.lat !== "" && d.lon !== "" && d.lat != null && !isNaN(+d.lat)) return { xy: proj([+d.lon, +d.lat]), approx: false };
+  const f = COUNTRIES.get(C_ALIAS[(d.country || "").toLowerCase()] || (d.country || "").toLowerCase());
+  if (!f) return null;
+  let g = f.geometry;                                     // largest polygon, so overseas parts do not pull the centre
+  if (g.type === "MultiPolygon") { let best = null, ba = -1; g.coordinates.forEach(c => { const a = d3.geoArea({ type: "Polygon", coordinates: c }); if (a > ba) { ba = a; best = c; } }); g = { type: "Polygon", coordinates: best }; }
+  return { xy: proj(d3.geoCentroid(g)), approx: true };
+}
+function hexSVG(d, R, opts = {}) {
+  const h = dInfo(d), docOnly = d.items.length > 0 && d.items.every(it => it.type === "description"), col = D_LIGHT[d.light] || "#999";
+  const pts = [...Array(6)].map((_, k) => { const a = Math.PI / 180 * (-120 + 60 * k); return [R * Math.cos(a), R * Math.sin(a)]; });
+  const ps = pts.map(p => p.map(v => v.toFixed(2)).join(",")).join(" ");
+  let s = `<polygon class="hx hxo" points="${ps}" fill="${docOnly ? "var(--panel)" : col}" stroke="${col}" stroke-width="${docOnly ? 1.6 : 1}" ${opts.approx ? 'stroke-dasharray="3 2"' : ""}/>`;
+  D_CLASSES.forEach((c, k) => { if (!h.lit.has(c)) return; const [a, b] = [pts[k], pts[(k + 1) % 6]];
+    s += `<line class="hx" x1="${a[0].toFixed(2)}" y1="${a[1].toFixed(2)}" x2="${b[0].toFixed(2)}" y2="${b[1].toFixed(2)}" stroke="rgb(var(--ink))" stroke-width="${opts.big ? 4.5 : 2.6}" stroke-linecap="round"/>`; });
+  s += `<text y="${R * 0.36}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * 1.0}" fill="${docOnly ? "rgb(var(--ink))" : "#1c2329"}">${h.lit.size}</text>`;
+  if (h.wf) s += `<text x="${R * 0.75}" y="${-R * 0.55}" font-size="${R * 1.05}" fill="#d0306a" stroke="var(--panel)" stroke-width="${R * 0.12}" paint-order="stroke">★</text>`;
+  else if (h.nfc || h.nfp) s += `<g transform="translate(${R * 0.9},${-R * 1.25})"><path d="M0 0v${R * 1.1}M0 0l${R * 0.75} ${R * 0.28}-${R * 0.75} ${R * 0.28}z" stroke="#2f7d4f" stroke-width="${R * 0.14}" fill="${h.nfc ? "#2f7d4f" : "var(--panel)"}"/></g>`;
+  if (h.marks && opts.marks) s += `<text x="${R * 1.15}" y="${R * 1.05}" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * 0.72}" fill="rgb(var(--ink))" stroke="var(--panel)" stroke-width="${R * 0.15}" paint-order="stroke">${h.marks}</text>`;
+  return s;
+}
+function dLabel(d) { const h = dInfo(d); return `${h.lit.size}${h.marks}${h.wf ? " ★" : ""}`; }
+function dYear(d) { return +String(d.date || "").slice(0, 4); }
+function dPass(d) {
+  const y = dYear(d);
+  if (dState.y0 && y < dState.y0) return false;
+  if (dState.y1 && y > dState.y1) return false;
+  if (!dState.light.has(d.light)) return false;
+  if (d.cloud.length && !d.cloud.some(c => dState.cloud.has(c))) return false;
+  if (dState.firsts && !(d.novel.length || d.nfc.length || d.nfp.length)) return false;
+  const q = dState.q.trim().toLowerCase();
+  if (q) {
+    const hay = [d.place, d.country, d.date, ...dObs(d), ...d.halos, ...d.halos.map(hName)].join(" | ").toLowerCase();
+    if (!q.split(/\s+/).every(w => hay.includes(w))) return false;
+  }
+  return true;
+}
+const dScale = () => 1 / Math.pow(zk, 0.7);
+function dispScale() { gDisp.selectAll("g.disp").attr("transform", d => `translate(${d._xy[0]},${d._xy[1]}) scale(${dScale()}) translate(${d._off[0]},${d._off[1]})`); }
+function dispDraw() {
+  const shown = dispSel.filter(d => d._pos);
+  const groups = d3.group(shown, d => `${Math.round(d._pos.xy[0] * 2)}_${Math.round(d._pos.xy[1] * 2)}`);
+  groups.forEach(list => list.forEach((d, i) => {           // displays at the same spot fan out around it
+    const n = list.length, a = -Math.PI / 2 + i * 2 * Math.PI / Math.max(n, 1), r = n > 1 ? 16 + 2 * n : 0;
+    d._xy = d._pos.xy; d._off = [r * Math.cos(a), r * Math.sin(a)];
+  }));
+  const sel = gDisp.selectAll("g.disp").data(shown, d => d.id).join("g").attr("class", "disp")
+    .html(d => hexSVG(d, 10, { approx: d._pos.approx, marks: true }))
+    .classed("on", d => dispPicked.includes(d.id))
+    .on("pointerenter pointermove", (ev, d) => dispTip(ev, d)).on("pointerleave", () => { tip.hidden = true; })
+    .on("click", (ev, d) => { ev.stopPropagation(); dPick(d.id); });
+  sel.sort((a, b) => (a.date < b.date ? -1 : 1));
+  dispScale();
+}
+function dispTip(ev, d) {
+  tip.innerHTML = `<div>${esc(dName(d))}${d._pos.approx ? " (country only)" : ""}</div><div class="c">${esc(d.date)}${d.time ? " " + esc(d.time) : ""} · ${esc(d.light)} · ${d.halos.length} halos · ${esc(dLabel(d))}</div>` +
+    (d.novel.length ? `<div class="c">world first: ${d.novel.map(esc).join(", ")}</div>` : "") + (d.nfc.length + d.nfp.length ? `<div class="c">national first: ${[...d.nfc, ...d.nfp.map(c => c + "?")].map(esc).join(", ")}</div>` : "");
+  tip.hidden = false;
+  const r = box.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top;
+  tip.style.left = Math.min(Math.max(4, x + 12), r.width - tip.offsetWidth - 4) + "px"; tip.style.top = Math.max(4, y - 70) + "px";
+}
+const esc = s => String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+function dPick(id) {
+  dispPicked = dispPicked.filter(x => x !== id); dispPicked.unshift(id); dispPicked = dispPicked.slice(0, 8);
+  dispCards(); gDisp.selectAll("g.disp").classed("on", d => dispPicked.includes(d.id));
+  document.getElementById("cards").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+function addDays(iso, k) { const t = new Date(iso + "T00:00:00Z"); t.setUTCDate(t.getUTCDate() + k); return t.toISOString().slice(0, 10); }
+function dGram(d) {
+  if (!d.date || d.date < "2017-01-01" || !d._pos || d._pos.approx) return "";
+  const type = d.date >= "2024-02-03" ? "height" : "lmh";
+  const q = new URLSearchParams({ name: dName(d), lat: d.lat, lon: d.lon, type, from: addDays(d.date, -2), to: addDays(d.enddate || d.date, 2) });
+  const m = String(d.time || "").match(/^(\d{1,2})(?::(\d{2}))?(?:-(\d{1,2})(?::(\d{2}))?)?(z?)$/i);
+  if (m) {
+    const z = m[5] ? "Z" : "", hm = (h, mi) => `${String(h).padStart(2, "0")}:${mi || "00"}`;
+    const a = `${d.date}T${hm(m[1], m[2])}`;
+    let endDay = d.enddate || d.date, b;
+    if (m[3] !== undefined) { if (!d.enddate && (+m[3] * 60 + +(m[4] || 0)) < (+m[1] * 60 + +(m[2] || 0))) endDay = addDays(d.date, 1); b = `${endDay}T${hm(m[3], m[4])}`; }
+    else { const t = new Date(a + ":00Z"); t.setUTCMinutes(t.getUTCMinutes() + (m[2] ? 30 : 60)); b = t.toISOString().slice(0, 16); }
+    q.set("mark", `${a}${z}/${b}${z}`);
+  }
+  return `<a href="${GRAM_URL}?${q}" target="_blank" rel="noopener">${type === "height" ? "cloud-by-height" : "low/mid/high"} gram for the display days</a>`;
+}
+function dCard(d) {
+  const el = document.createElement("div"); el.className = "dcard";
+  const h = dInfo(d);
+  const firsts = [...d.novel.map(c => ["wf", "World first", c]), ...d.nfc.map(c => ["nf", "National first", c]), ...d.nfp.map(c => ["nf", "Possible national first", c])];
+  const sc = it => (it.card ? 4 : 0) + ([...d.novel, ...d.nfc, ...d.nfp].some(c => dShows(it, c)) ? 2 : 0);
+  const thumbs = d.items.filter(it => it.thumb).sort((a, b) => sc(b) - sc(a)).slice(0, 3);
+  const T = { photo: "Photo", video: "Video", description: "Description" };
+  el.innerHTML = `<div class="dh"><svg width="64" height="64" viewBox="-32 -32 64 64" aria-hidden="true">${hexSVG(d, 22, { approx: d._pos && d._pos.approx, big: true })}</svg>
+      <div class="dt"><div class="dname">${esc(dName(d))}</div>
+        <div class="dmeta">${esc(d.date)}${d.enddate ? "–" + esc(d.enddate) : ""}${d.time ? " · " + esc(d.time) : ""} · ${esc(d.light)}${d.cloud.length ? " · " + d.cloud.map(esc).join(", ") : ""}</div>
+        <div class="dmeta">${esc(dLabel(d))} · ${h.lit.size ? "rare forms in " + D_CLASSES.filter(c => h.lit.has(c)).join(", ") : "no rare oriented forms"}${d._pos && d._pos.approx ? " · location: country only" : ""}</div></div>
+      <button type="button" class="dx" aria-label="Close this card">×</button></div>` +
+    (firsts.length ? `<div class="dfirst">${firsts.map(([k, lab, c]) => `<div><span class="${k}">${k === "wf" ? "★ " : ""}${lab}:</span> ${esc(c)} ${esc(hName(c))} — ${esc(dCredit(d, c).join(", ") || "no documentation shows it")}</div>`).join("")}</div>` : "") +
+    (thumbs.length ? `<div class="dthumbs">${thumbs.map(it => `<figure>${it.link ? `<a href="${esc(it.link)}" target="_blank" rel="noopener">` : ""}<img src="data/disp/${esc(it.thumb)}" alt="${esc(T[it.type] + " by " + it.by.join(", "))}" loading="lazy">${it.link ? "</a>" : ""}<figcaption>${T[it.type]} · ${esc(it.by.join(", "))}</figcaption></figure>`).join("")}</div>` : "") +
+    `<div class="dhalos">${d.halos.map(c => `<span class="${d.doubtful.includes(c) ? "doubt" : ""}" title="${esc(hName(c))}${d.doubtful.includes(c) ? " (doubtful)" : ""}">${esc(c)}${d.doubtful.includes(c) ? "?" : ""}</span>`).join("")}</div>` +
+    `<div class="ddocs">${d.items.map(it => `<div>${T[it.type]} · ${esc(it.by.join(", "))}${it.link ? ` · <a href="${esc(it.link)}" target="_blank" rel="noopener">source</a>` : ""}</div>`).join("")}</div>` +
+    `<div class="gramlinks">${dGram(d) || (d.date < "2017-01-01" ? "No gram: the model data starts in 2017." : d._pos && d._pos.approx ? "No gram: the exact place is not known." : "")}</div>` +
+    (d.notes ? `<div class="ddocs">${esc(d.notes)}</div>` : "");
+  el.querySelector(".dx").addEventListener("click", () => { dispPicked = dispPicked.filter(x => x !== d.id); dispCards(); gDisp.selectAll("g.disp").classed("on", x => dispPicked.includes(x.id)); });
+  return el;
+}
+function dispCards() {
+  const cards = document.getElementById("cards"); cards.innerHTML = "";
+  const list = dispPicked.map(id => DISP.find(d => d.id === id)).filter(Boolean);
+  if (!list.length) cards.innerHTML = `<p class="empty">Click a hexagon on the map, or a row in the list below, to see the display here.</p>`;
+  list.forEach(d => cards.appendChild(dCard(d)));
+}
+function dispLegend() {
+  const ex = { light: "sun", items: [{ type: "photo" }], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], lat: 60 };
+  const side = (k) => { const R = 15, a0 = Math.PI / 180 * (-120 + 60 * k), a1 = a0 + Math.PI / 3; return [(R + 9) * Math.cos((a0 + a1) / 2), (R + 9) * Math.sin((a0 + a1) / 2)]; };
+  const hex = `<svg width="120" height="76" viewBox="-60 -38 120 76" aria-hidden="true"><polygon points="${[...Array(6)].map((_, k) => { const a = Math.PI / 180 * (-120 + 60 * k); return (15 * Math.cos(a)).toFixed(1) + "," + (15 * Math.sin(a)).toFixed(1); }).join(" ")}" fill="var(--panel)" stroke="rgb(var(--ink))" stroke-width="1.2"/>` +
+    ["random", "plate", "column", "Parry", "Lowitz", "Tricker"].map((c, k) => { const [x, y] = side(k); return `<text x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="${x > 2 ? "start" : x < -2 ? "end" : "middle"}" font-size="9" fill="var(--muted)">${c}</text>`; }).join("") + `</svg>`;
+  const sw = (fill, stroke, dash) => `<svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><polygon points="${[...Array(6)].map((_, k) => { const a = Math.PI / 180 * (-120 + 60 * k); return (7 * Math.cos(a)).toFixed(1) + "," + (7 * Math.sin(a)).toFixed(1); }).join(" ")}" fill="${fill}" stroke="${stroke}" stroke-width="1.3" ${dash ? 'stroke-dasharray="2.5 1.5"' : ""}/></svg>`;
+  document.getElementById("displegend").innerHTML =
+    `<span class="k">${hex}<span>A side is drawn bold when the display has a rare halo of that crystal orientation; the number counts the bold sides.</span></span>` +
+    `<span class="k">${sw(D_LIGHT.sun, D_LIGHT.sun)} sun</span><span class="k">${sw(D_LIGHT.moon, D_LIGHT.moon)} moon</span><span class="k">${sw(D_LIGHT.artificial, D_LIGHT.artificial)} artificial light</span>` +
+    `<span class="k">${sw("var(--panel)", "var(--muted)")} description only</span><span class="k">${sw("var(--panel)", "var(--muted)", 1)} country only, place not known</span>` +
+    `<span class="k"><b style="color:#d0306a">★</b> world first</span><span class="k"><svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="#2f7d4f"/></svg> national first <svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="var(--panel)"/></svg> possible</span>` +
+    `<span class="k"><b>✚</b> odd radius <b>✚✚</b> double-odd radius <b>²</b> multiple scattering <b>R</b> surface reflection <b>E</b> elliptical <b>B</b> Bottlinger's ring</span>`;
+}
+function dispList() {
+  const body = document.getElementById("dlistbody");
+  const list = dispSel.slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  body.innerHTML = list.map(d => `<tr data-id="${esc(d.id)}"><td class="num">${esc(d.date)}</td><td>${esc(dName(d))}${d._pos ? "" : " <span class=\"dmeta\">(not on map)</span>"}</td><td class="num">${esc(dLabel(d))}</td><td class="num">${d.halos.length}</td>` +
+    `<td class="num">${[...d.novel.map(c => "★" + c), ...d.nfc, ...d.nfp.map(c => c + "?")].map(esc).join(" ")}</td><td>${esc(dObs(d).join(", "))}</td></tr>`).join("") ||
+    `<tr><td colspan="6" class="empty">No display matches these filters.</td></tr>`;
+  body.querySelectorAll("tr[data-id]").forEach(tr => tr.addEventListener("click", () => dPick(tr.dataset.id)));
+  document.getElementById("displisth").textContent = `Displays: ${list.length} of ${DISP.length}`;
+}
+async function dispUpdate() {
+  if (!DISP) {
+    document.getElementById("maptitle").textContent = "Loading the displays…";
+    if (!dispLoading) dispLoading = (async () => {
+      await loadScript("data/displays.js");
+      const D = window.FP_DISPLAYS; window.FP_DISPLAYS = null;
+      DFORMS = D.forms; DISP = D.displays;
+      const ys = DISP.map(dYear).filter(Boolean), yr = [Math.min(...ys), Math.max(...ys)];
+      ["dy0", "dy1"].forEach((id, k) => { const el = document.getElementById(id); el.innerHTML = `<option value="">${k ? "latest" : "earliest"}</option>` + d3.range(yr[0], yr[1] + 1).map(y => `<option>${y}</option>`).join(""); });
+      dispLegend();
+    })();
+    try { await dispLoading; } catch (e) { document.getElementById("maptitle").textContent = "The displays could not be loaded."; return; }
+  }
+  DISP.forEach(d => { d._pos = dPos(d); });
+  dispSel = DISP.filter(dPass);
+  const off = dispSel.filter(d => !d._pos).length;
+  document.getElementById("maptitle").textContent = `Photographed and recorded halo displays: ${dispSel.length} shown${off ? ` (${off} without a location)` : ""}`;
+  dispDraw(); dispList(); dispCards();
+}
+document.getElementById("dq").addEventListener("input", e => { dState.q = e.target.value; dispUpdate(); });
+["dy0", "dy1"].forEach((id, k) => document.getElementById(id).addEventListener("change", e => { dState[k ? "y1" : "y0"] = +e.target.value || null; dispUpdate(); }));
+[["dlight", "light"], ["dcloud", "cloud"]].forEach(([id, key]) => document.getElementById(id).addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const s = dState[key]; s.has(b.dataset.v) ? s.delete(b.dataset.v) : s.add(b.dataset.v);
+  b.setAttribute("aria-pressed", s.has(b.dataset.v)); dispUpdate();
+}));
+document.getElementById("dfirsts").addEventListener("change", e => { dState.firsts = e.target.checked; dispUpdate(); });
+
 function start() {
 load().catch(e => { document.getElementById('status').textContent = 'Could not load the data: ' + e.message; throw e; }).then(() => {
   const opts = [];
@@ -1426,6 +1687,7 @@ load().catch(e => { document.getElementById('status').textContent = 'Could not l
       (LSET.aloft_only ? "; a range that reaches the ground (surface air no warmer than its warm edge) counts as no layer. " : ". ") : "") +
     `Daylight: sun at least ${SETTINGS.sun_min_deg}° above the horizon.`;
   update();
+  bordersLoad().then(() => { if (mode === "displays") update(); });
   kgLoad().then(() => update());
   loadSeason().then(loadChecks);
 }).catch(e => { document.getElementById("status").textContent = "Could not load the data: " + e.message; });

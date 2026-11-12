@@ -53,6 +53,11 @@ land10 = here / "land10.json"
 if land10.exists():
     Path(out, "data", "land10.js").write_text("window.FP_LAND10=" + land10.read_text() + ";\n")
 
+# country borders (Natural Earth 1:50 million, from the world-atlas package)
+borders = here / "countries50.json"
+if borders.exists():
+    Path(out, "data", "borders.js").write_text("window.FP_BORDERS=" + borders.read_text() + ";\n")
+
 # Köppen-Geiger layer: legend, tile index and site classes in one small script; images copied as files
 kgdir = Path(sys.argv[5]) if len(sys.argv) > 5 else None
 if kgdir and kgdir.exists():

@@ -139,7 +139,10 @@ document.querySelectorAll("#type button").forEach(b => b.addEventListener("click
 }));
 
 // from the address: ?name=&lat=&lon=&type=height|lmh&year=&month=&months=&season=best|worst
+//   or a free range from the displays map: &from=YYYY-MM-DD&to=YYYY-MM-DD&mark=<start>/<end> (local time, Z = UTC)
 const P = new URLSearchParams(location.search);
+let RANGE = P.get("from") && P.get("to") ? { from: P.get("from"), to: P.get("to") } : null;
+const MARK = P.get("mark") || "";
 function styleUI() {
   document.querySelectorAll("#gstyle button").forEach(b => b.setAttribute("aria-pressed", b.dataset.s === gStyle));
   $("bhwrap").hidden = gStyle !== "blocks"; $("bh").value = blockH; $("bhv").textContent = blockH + "%";
@@ -158,6 +161,13 @@ fillYears(); availText();
 if (P.get("year")) $("year").value = Math.max(FIRST[gtype], Math.min(lastYear, +P.get("year")));
 $("month").value = P.get("month") || String(Math.max(1, today.getUTCMonth()));      // default: last full month
 $("months").value = P.get("months") || "1";
+if (RANGE) {
+  const d = new Date(RANGE.from + "T00:00:00Z");
+  $("year").value = Math.max(FIRST[gtype], Math.min(lastYear, d.getUTCFullYear())); $("month").value = String(d.getUTCMonth() + 1); $("months").value = "1";
+  $("seasonnote").hidden = false;
+  $("seasonnote").textContent = `Period set from the displays map: ${RANGE.from} to ${RANGE.to}${MARK ? ", the display time shaded" : ""}. Changing the year or month goes back to whole months.`;
+  ["year", "month", "months"].forEach(id => $(id).addEventListener("change", () => { RANGE = null; $("seasonnote").hidden = true; }));
+}
 if (P.get("season")) {
   $("seasonnote").hidden = false;
   $("seasonnote").textContent = `Period set from the Fingerprints viewer: the site's ${P.get("season") === "worst" ? "quiet" : "active"} high-cloud season${P.get("sdates") ? " (" + P.get("sdates") + ")" : ""}, rounded to whole months.`;
@@ -184,6 +194,11 @@ $("name").addEventListener("change", () => {
 
 // ---------- fetching
 function period() {
+  if (RANGE) {
+    const start = new Date(RANGE.from + "T00:00:00Z"), end = new Date(RANGE.to + "T00:00:00Z");
+    const yest = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - 1));
+    return { start, end: end > yest ? yest : end };
+  }
   const y = +$("year").value, m = +$("month").value, k = +$("months").value;
   const start = new Date(Date.UTC(y, m - 1, 1)), end = new Date(Date.UTC(y, m - 1 + k, 0));
   const yest = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - 1));
@@ -232,6 +247,7 @@ async function draw() {
     if (levErr) status(`The pressure levels did not come through (${levErr}), so only the low/mid/high gram is shown. Try the height gram again later.`, true);
     else status(`Drawn: ${lmh.hourly.time.length} hours. Hover the gram for values.`);
     const q = new URLSearchParams({ name: $("name").value.trim(), lat, lon, type: gtype, year: $("year").value, month: $("month").value, months: $("months").value });
+    if (RANGE) { q.set("from", RANGE.from); q.set("to", RANGE.to); if (MARK) q.set("mark", MARK); }
     history.replaceState(null, "", "?" + q.toString());
   } catch (e) { status("Could not draw the gram: " + e.message, true); }
   $("go").disabled = false;
@@ -331,6 +347,17 @@ function render(lmh, lev, site) {
     else if (first) { ctx.textAlign = "left"; ctx.fillText(`${MON[d.getUTCMonth()]}${d.getUTCMonth() === 0 ? " " + d.getUTCFullYear() : ""}`, x + 3, yBar - 5); ctx.textAlign = "center"; }
   }
   if (pxDay < 18 && new Date(tLocal[0]).getUTCDate() !== 1) { ctx.textAlign = "left"; ctx.fillText(MON[new Date(tLocal[0]).getUTCMonth()], mL + 3, yBar - 5); }
+  if (MARK && RANGE) {                          // the display's time, shaded across the gram
+    const [a, b] = MARK.split("/"), utc = /z$/i.test(a);
+    const toIdx = s => (Date.parse(s.replace(/z$/i, "") + ":00Z") + (utc ? (lmh.utc_offset_seconds || 0) * 1000 : 0) - tLocal[0]) / 3.6e6;
+    const i0 = toIdx(a), i1 = Math.max(toIdx(b || a), i0 + 0.5);
+    if (isFinite(i0) && i1 > 0 && i0 < n) {
+      const x0 = X(Math.max(0, i0)), x1 = X(Math.min(n, i1));
+      ctx.fillStyle = "rgba(220, 110, 30, .16)"; ctx.fillRect(x0, yBar, x1 - x0, bottom - yBar);
+      ctx.strokeStyle = "rgba(200, 90, 20, .9)"; ctx.lineWidth = 1.2; ctx.strokeRect(x0 + .5, yBar - 2.5, Math.max(1, x1 - x0 - 1), bottom - yBar + 3);
+      ctx.fillStyle = "rgba(170, 70, 10, 1)"; ctx.font = "600 10px IBM Plex Sans, sans-serif"; ctx.textAlign = "left"; ctx.fillText("display", x0 + 2, yBar - 15);
+    }
+  }
   ctx.textAlign = "left"; ctx.fillStyle = "#888"; ctx.font = "10px IBM Plex Sans, sans-serif";
   ctx.fillText(heightMode ? "ECMWF IFS 9 km low / mid / high cloud cover" : "ECMWF IFS 9 km cloud cover", mL, bottom + 14);
 
