@@ -15,6 +15,10 @@ so the viewer can show daylight only, daylight plus twilight, or all hours:
     fingerprints.json.gz            sun at least 0 deg (daylight)
     fingerprints_twilight.json.gz   sun between -6 and 0 deg (civil twilight)
     fingerprints_night.json.gz      sun below -6 deg
+
+and, in files of their own (the viewer loads them only when that view is opened),
+mid x high in 10 % steps for four classes of low cloud (none, 10-20 %, 30-40 %, more):
+    fingerprints_mh.json.gz, fingerprints_mh_twilight.json.gz, fingerprints_mh_night.json.gz
 """
 import json
 import gzip
@@ -47,8 +51,11 @@ def sun_elevation(lat, lon, utc):
                                 np.cos(la) * np.cos(dec) * np.cos(ha)))
 
 
+LOW_CLASS = np.array([0, 1, 1, 2, 2, 3, 3, 3, 3, 3, 3])   # low cloud 10 % bin -> none, <=20, <=40, more
+
+
 def fingerprint(rec, sun_lo, sun_hi):
-    """Return (counts[12, 11, 11], counts3[12, 6, 6, 6]).
+    """Return (counts[12, 11, 11], counts3[12, 6, 6, 6], countsMH[12, 4, 11, 11]).
     counts:  daylight hours per month by (high, low) in 10 % steps.
     counts3: daylight hours per month by (high, mid, low) in 20 % steps."""
     h = rec["hourly"]
@@ -80,7 +87,14 @@ def fingerprint(rec, sun_lo, sun_hi):
     h3 = np.clip(np.rint(high[ok3] / 20).astype(int), 0, 5)
     counts3 = np.zeros((12, 6, 6, 6), np.int32)
     np.add.at(counts3, (months[ok3], h3, m3, l3), 1)
-    return counts, counts3
+
+    # mid : high in 10 % steps, by low-cloud class
+    lc = LOW_CLASS[np.clip(np.rint(low0[ok3] / 10).astype(int), 0, 10)]
+    mb = np.clip(np.rint(mid0[ok3] / 10).astype(int), 0, 10)
+    hb3 = np.clip(np.rint(high[ok3] / 10).astype(int), 0, 10)
+    countsMH = np.zeros((12, 4, 11, 11), np.int32)
+    np.add.at(countsMH, (months[ok3], lc, mb, hb3), 1)
+    return counts, counts3, countsMH
 
 
 def main():
@@ -90,6 +104,9 @@ def main():
                                "obstruction": OBSTRUCTION, "bins": "0-100 step 10, rounded",
                                "bins3": "high, mid, low; 0-100 step 20, rounded; index (h*6+m)*6+l"},
                   "sites": []} for suf, (lo, hi) in LIGHT.items()}
+    outs_mh = {suf: {"settings": {"years": [YEAR_FROM, YEAR_TO], "sun_min_deg": lo, "sun_max_deg": hi, "light": suf.strip("_") or "day",
+                                  "bins": "low class (0: none, 1: 10-20 %, 2: 30-40 %, 3: more), mid 0-100 step 10, high 0-100 step 10; index (l*11+m)*11+h"},
+                     "sites": []} for suf, (lo, hi) in LIGHT.items()}
     for i, p in enumerate(files, 1):
         with gzip.open(p, "rt", encoding="utf-8") as fh:
             rec = json.load(fh)
@@ -97,7 +114,8 @@ def main():
         if el is None:
             el = rec.get("elev_m")
         for suf, (lo, hi) in LIGHT.items():
-            c, c3 = fingerprint(rec, lo, hi)
+            c, c3, cmh = fingerprint(rec, lo, hi)
+            outs_mh[suf]["sites"].append({"n": rec["name"], "c": cmh.reshape(12, -1).tolist()})
             outs[suf]["sites"].append({"n": rec["name"], "la": rec["lat"], "lo": rec["lon"],
                                        "el": None if el is None else round(float(el)),
                                        "c": c.reshape(12, -1).tolist(),
@@ -106,6 +124,11 @@ def main():
             print(f"  {i}/{len(files)}")
     for suf, out in outs.items():
         path = BASE / f"fingerprints{suf}.json.gz"
+        with gzip.open(path, "wt", encoding="utf-8") as fh:
+            json.dump(out, fh, separators=(",", ":"))
+        print(f"{len(files)} sites -> {path}")
+    for suf, out in outs_mh.items():
+        path = BASE / f"fingerprints_mh{suf}.json.gz"
         with gzip.open(path, "wt", encoding="utf-8") as fh:
             json.dump(out, fh, separators=(",", ":"))
         print(f"{len(files)} sites -> {path}")
