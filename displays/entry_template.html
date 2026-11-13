@@ -119,6 +119,10 @@ textarea { resize: vertical; min-height: 54px; }
 .bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 10px 12px; border-top: 1px solid var(--rule); }
 .status { font-size: 12.5px; color: var(--muted); margin-right: auto; }
 .status.err { color: var(--danger); }
+.status.ok { color: var(--on-ice); background: var(--first); font-weight: 600; font-size: 14px; padding: 6px 12px; border-radius: 5px; }
+@media (prefers-reduced-motion: no-preference) { .status.ok { animation: savedflash .9s ease-out; } }
+@keyframes savedflash { 0% { transform: scale(1.12); } 100% { transform: scale(1); } }
+.tok i, .preview i { font-style: italic; color: var(--muted); }
 .ro { background: var(--ice-soft); color: var(--ice-fg); padding: 8px 12px; font-size: 13px; }
 @media (prefers-reduced-motion: no-preference) { .chip, .tok, .btn { transition: background-color .12s, border-color .12s; } }
 </style>
@@ -162,7 +166,7 @@ textarea { resize: vertical; min-height: 54px; }
       <div class="f"><span class="lab">Documentation</span>
         <div id="items" class="items"></div>
         <div><button class="btn" id="additem" type="button">Add documentation</button></div>
-        <span class="hint">One item per photo, video or written report. The makers are the display's observers; credit for a world first or national first goes to the makers of the items that show it.</span></div>
+        <span class="hint">One item per photo, video or written report. Credit for a world first or national first goes to the observers of the items that show it.</span></div>
       <div class="f"><label for="notes">Notes</label><textarea id="notes"></textarea></div>
     </form></div>
     <div class="bar">
@@ -245,7 +249,7 @@ function hexSVG(r, size = 64) {
 }
 function creditLines() {
   const fl = [...rec.novel.map(c => ["★ world first", c]), ...rec.nfc.map(c => ["national first", c]), ...rec.nfp.map(c => ["possible national first", c])];
-  return fl.map(([k, c]) => { const who = creditFor(c); return `<span>${esc(c)} ${k}: ${who.length ? esc(who.join(", ")) : '<span style="color:var(--danger)">no item shows it</span>'}</span>`; }).join("");
+  return fl.map(([k, c]) => { const who = creditFor(c); return `<span>${esc(c)} ${k}: ${who.length ? who.map(obsHTML).join(", ") : '<span style="color:var(--danger)">no item shows it</span>'}</span>`; }).join("");
 }
 function renderPreview() {
   const h = hexInfo(rec);
@@ -404,7 +408,7 @@ function renderItems() {
         <div class="seg" data-single>${["photo", "video", "description"].map(v => `<button type="button" data-t="${v}" aria-pressed="${it.type === v}">${v[0].toUpperCase() + v.slice(1)}</button>`).join("")}</div>
         <label class="oncard"><input type="checkbox" ${it.card ? "checked" : ""} data-k="card">Show on card</label>
         <span class="acts"><button class="btn" type="button" data-a="dup">Duplicate</button><button class="btn danger" type="button" data-a="rm" ${rec.items.length < 2 ? "hidden" : ""}>Remove</button></span></div>
-      <div class="f"><span class="lab">By</span><div class="tokens">${it.by.map((b, j) => `<span class="tok">${esc(b)}<button type="button" class="x" data-rmby="${j}" aria-label="Remove ${esc(b)}">×</button></span>`).join("")}<input placeholder="name, Enter to add" data-k="by" aria-label="Item ${i + 1} made by"></div><div class="sugg" hidden></div></div>
+      <div class="f"><span class="lab">Observer</span><div class="tokens">${it.by.map((b, j) => `<span class="tok">${obsHTML(b)}<button type="button" class="x" data-rmby="${j}" aria-label="Remove ${esc(b)}">×</button></span>`).join("")}<input placeholder="name, Enter to add" data-k="by" aria-label="Item ${i + 1} observer"></div><div class="sugg" hidden></div></div>
       <div class="row"><div class="f"><span class="lab">Link</span><input data-k="link" value="${esc(it.link)}" placeholder="address of the video, photo or report" aria-label="Item ${i + 1} link"></div>
         <div class="f"><span class="lab">Image</span><input data-k="image" value="${esc(it.image)}" placeholder="image address or file name" aria-label="Item ${i + 1} image"></div></div>
       <div class="top"><span class="lab">Image permission</span><div class="seg" data-single>${["yes", "asked", "no"].map(v => `<button type="button" data-p="${v}" aria-pressed="${it.perm === v}">${v[0].toUpperCase() + v.slice(1)}</button>`).join("")}</div></div>
@@ -529,7 +533,13 @@ function confirmLeave() {    // the viewer has no confirm(): first click warns, 
 }
 $("newbtn").addEventListener("click", startNew);
 function changed() { dirty = true; leaveWarned = false; setStatus("Unsaved changes"); }
-function setStatus(t, err) { $("status").textContent = t; $("status").classList.toggle("err", !!err); }
+let okTimer = null;
+function setStatus(t, err, ok) {
+  const s = $("status"); s.textContent = t; s.classList.toggle("err", !!err);
+  s.classList.remove("ok"); clearTimeout(okTimer);
+  if (ok) { void s.offsetWidth; s.classList.add("ok"); okTimer = setTimeout(() => s.classList.remove("ok"), 5000); }
+}
+const obsHTML = n => /^unknown$/i.test(String(n).trim()) ? "<i>unknown</i>" : esc(n);
 
 function normTime(s) {      // "2305" -> "23:05", "9" -> "09"; spans and a trailing Z kept; null if not a time
   const m = s.trim().match(/^(\d{1,4}(?::\d{2})?)(?:\s*-\s*(\d{1,4}(?::\d{2})?))?\s*(z?)$/i);
@@ -554,7 +564,7 @@ function validate() {
   if (rec.lat !== "" && !(Math.abs(+rec.lat) <= 90)) p.push("latitude between -90 and 90");
   if (rec.lon !== "" && !(Math.abs(+rec.lon) <= 180)) p.push("longitude between -180 and 180");
   if (!rec.place && !rec.country) p.push("a place or at least a country");
-  if (!rec.items.some(it => it.by.length)) p.push("the maker of at least one documentation item");
+  if (!rec.items.some(it => it.by.length)) p.push("the observer of at least one documentation item");
   return p;
 }
 $("savebtn").addEventListener("click", async () => {
@@ -567,7 +577,7 @@ $("savebtn").addEventListener("click", async () => {
   try {
     await db.collection("displays").doc(id).set(body);
     current = id; dirty = false; rec = body;
-    $("ftitle").textContent = `Display ${id}`; $("delbtn").hidden = false; setStatus(`Saved display ${id}.`);
+    $("ftitle").textContent = `Display ${id}`; $("delbtn").hidden = false; setStatus(`✓ Saved display ${id}`, false, true);
   } catch (e) {
     if (e.code === "invalid_argument") { canWrite = false; readOnly(); }
     setStatus(e.code === "invalid_argument" ? "This log is read-only for you." : "Not saved: " + (e.message || e.code) + ". Try again.", true);

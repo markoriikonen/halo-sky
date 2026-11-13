@@ -1567,6 +1567,8 @@ const C_ALIAS = { "usa": "united states of america", "united states": "united st
 let DISP = null, DFORMS = {}, dispLoading = null, dispPicked = [], dispSel = [], dispLoc = null, dScope = "recent", dLatest = null, dLiveNote = "";
 const dState = { q: "", y0: null, y1: null, light: new Set(["sun", "moon", "artificial"]), cloud: new Set(["High", "Mid", "Low", "Ice fog"]), firsts: false };
 const esc = s => String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+const obsH = n => /^unknown$/i.test(String(n).trim()) ? "<i>unknown</i>" : esc(n);
+const obsList = a => a.map(obsH).join(", ");
 const dName = d => [d.place, d.country].filter(Boolean).join(", ") || "Unknown place";
 const dObs = d => [...new Set(d.items.flatMap(it => it.by))];
 const dShows = (it, c) => it.shows == null || it.shows.includes(c);
@@ -1758,12 +1760,12 @@ function dCard(d) {
         <div class="dmeta">${esc(d.date)}${d.enddate ? "–" + esc(d.enddate) : ""}${d.time ? " · " + esc(d.time) : ""} · ${esc(d.light)}${d.cloud.length ? " · " + d.cloud.map(esc).join(", ") : ""}</div>
         <div class="dmeta">${esc(dLabel(d))}${d.maxsim ? ` · at most ${esc(d.maxsim)} at the same time` : ""} · ${f.lit.size ? "rare forms in " + D_CLASSES.filter(c => f.lit.has(c)).join(", ") : "no rare oriented forms"}${d._pos && d._pos.approx ? " · location: country only" : ""}</div></div>
       <button type="button" class="dx" aria-label="Close this card">×</button></div>` +
-    (firsts.length ? `<div class="dfirst">${firsts.map(([k, lab, c]) => `<div><span class="${k}">${k === "wf" ? "★ " : ""}${lab}:</span> ${esc(hName(c))} — ${esc(dCredit(d, c).join(", ") || "no documentation shows it")}</div>`).join("")}</div>` : "") +
+    (firsts.length ? `<div class="dfirst">${firsts.map(([k, lab, c]) => `<div><span class="${k}">${k === "wf" ? "★ " : ""}${lab}:</span> ${esc(hName(c))} — ${dCredit(d, c).length ? obsList(dCredit(d, c)) : "no documentation shows it"}</div>`).join("")}</div>` : "") +
     `<div class="dhalos">${d.halos.map(c => `<span class="${d.doubtful.includes(c) ? "doubt" : ""}" title="${esc(c)}">${esc(hName(c))}${d.doubtful.includes(c) ? " (doubtful)" : ""}</span>`).join("")}</div>` +
-    `<div class="ddocs">${d.items.map(it => `<div>${T[it.type]} · ${esc(it.by.join(", "))}${it.link ? ` · <a href="${esc(it.link)}" target="_blank" rel="noopener">source</a>` : ""}</div>`).join("")}</div>` +
+    `<div class="ddocs">${d.items.map(it => `<div>${T[it.type]} · ${obsList(it.by)}${it.link ? ` · <a href="${esc(it.link)}" target="_blank" rel="noopener">source</a>` : ""}</div>`).join("")}</div>` +
     `<div class="gramlinks">${dGram(d) || (d.date < "2017-01-01" ? "No gram: the model data starts in 2017." : d._pos && d._pos.approx ? "No gram: the exact place is not known." : "")}</div>` +
     (d.notes ? `<div class="ddocs">${esc(d.notes)}</div>` : "") +
-    (thumbs.length ? `<div class="dthumbs">${thumbs.map(it => `<figure>${it.link ? `<a href="${esc(it.link)}" target="_blank" rel="noopener">` : ""}<img src="data/disp/${esc(it.thumb)}" alt="${esc(T[it.type] + " by " + it.by.join(", "))}" loading="lazy">${it.link ? "</a>" : ""}<figcaption>${T[it.type]} · ${esc(it.by.join(", "))}</figcaption></figure>`).join("")}</div>` : "");
+    (thumbs.length ? `<div class="dthumbs">${thumbs.map(it => `<figure>${it.link ? `<a href="${esc(it.link)}" target="_blank" rel="noopener">` : ""}<img src="data/disp/${esc(it.thumb)}" alt="${esc(T[it.type] + " by " + it.by.join(", "))}" loading="lazy">${it.link ? "</a>" : ""}<figcaption>${T[it.type]} · ${obsList(it.by)}</figcaption></figure>`).join("")}</div>` : "");
   el.querySelector(".dx").addEventListener("click", () => { dispPicked = dispPicked.filter(x => x !== d.id); dispCards(); dispList(); });
   return el;
 }
@@ -1805,7 +1807,7 @@ function dispList() {
   if (dispLoc) list = dispLoc.ids.map(id => DISP.find(d => d.id === id)).filter(Boolean);
   list.sort((a, b) => dKey(b).localeCompare(dKey(a)));
   body.innerHTML = list.map(d => `<tr data-id="${esc(d.id)}" class="${dispPicked.includes(d.id) ? "on" : ""}"><td class="num">${esc(d.date)}</td><td>${esc(dName(d))}${d._pos ? "" : ' <span class="dmeta">(not on map)</span>'}</td><td class="num">${hCount(d)}${esc(markStr(dFlags(d)))}</td>` +
-    `<td>${[...d.novel.map(c => "★ " + hName(c)), ...d.nfc.map(hName), ...d.nfp.map(c => hName(c) + " (possible)")].map(esc).join("; ")}</td><td>${esc(dObs(d).join(", "))}</td></tr>`).join("") ||
+    `<td>${[...d.novel.map(c => "★ " + hName(c)), ...d.nfc.map(hName), ...d.nfp.map(c => hName(c) + " (possible)")].map(esc).join("; ")}</td><td>${obsList(dObs(d))}</td></tr>`).join("") ||
     `<tr><td colspan="5" class="empty">No display matches.</td></tr>`;
   body.querySelectorAll("tr[data-id]").forEach(tr => tr.addEventListener("click", () => dPick(tr.dataset.id)));
   document.getElementById("displisth").innerHTML = dispLoc ? `Displays at ${esc(dispLoc.title)}: ${list.length} <button type="button" class="linkbtn" id="dlistall">show the whole list</button>` : `Displays: ${list.length}${dScope === "recent" ? " recent" : ` of ${DISP.length}`}`;
