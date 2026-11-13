@@ -259,8 +259,11 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
       <label class="slider" for="ymin"><span><span id="ylab">Mid cloud</span> at least <b id="yminv"></b></span>
         <input id="ymin" type="range" min="0" max="100" step="20" value="40">
       </label>
-      <label class="slider" for="bmax"><span><span id="blab">Low cloud</span> at most <b id="bmaxv"></b></span>
+      <label class="slider" for="bmax" id="bmaxw"><span><span id="blab">Low cloud</span> at most <b id="bmaxv"></b></span>
         <input id="bmax" type="range" min="0" max="100" step="20" value="20">
+      </label>
+      <label class="slider" for="lowcls" id="lowclsw" hidden><span>Low cloud</span>
+        <select id="lowcls"><option value="0">none (under 5 %)</option><option value="1" selected>at most 20 %</option><option value="2">at most 40 %</option><option value="3">any amount</option></select>
       </label>
       <label class="slider" for="amax"><span><span id="alab">High cloud</span> at most <b id="amaxv"></b></span>
         <input id="amax" type="range" min="0" max="100" step="20" value="20">
@@ -397,7 +400,9 @@ const MONTHS = ["Year","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oc
 let SITES = [], SETTINGS = {}, LSET = null, LWIN = [];
 let mode = "halo", src = "mid", month = 0;
 let hBy = "cover", pThr = 10, pView = "hnl";
-let hmin = 50, lmax = 40, ymin = 40, bmax = 20, amax = 20, incHigh = false;
+let hmin = 50, lmax = 40, ymin = 40, bmax = 20, amax = 20, incHigh = false, lowCls = 1;
+const LOWCLS_LAB = ["no low cloud", "low ≤ 20%", "low ≤ 40%", "any low cloud"];
+const mhLoaded = {};
 let picked = ["Siquijor", "Riyadh", "Nukus"];
 
 function loadScript(url) {
@@ -427,6 +432,17 @@ async function load() {
     const byName = new Map(SITES.map(s => [s.n, s]));
     LORDER = L.sites.map(r => byName.get(r.n) || null);
   }
+}
+async function ensureMH() {                  // mid x high counts, loaded on first use for each light class
+  for (const cls of LIGHT_SETS[light]) {
+    if (mhLoaded[cls]) continue;
+    const suf = cls === "day" ? "" : "_" + cls;
+    const d = await fetchJSON(`data/fingerprints_mh${suf}.js`, "FP_MH" + suf.toUpperCase());
+    const byName = new Map(SITES.map(s => [s.n, s]));
+    d.sites.forEach(r => { const s = byName.get(r.n); if (s) (s.mhc = s.mhc || {})[cls] = addYear(r.c); });
+    mhLoaded[cls] = true;
+  }
+  SITES.forEach(s => { s.mh = s.mhc ? sumArr(LIGHT_SETS[light].map(c => s.mhc[c]).filter(Boolean)) : null; });
 }
 function ensureWin(k) {                       // load one temperature window on first use, for the hours counted
   const sk = wKey(k);
@@ -466,7 +482,18 @@ function shareHalo(s, mo) {
 }
 function arr3(s, mo) { return src === "mid" ? (s.m3 ? s.m3[mo] : null) : (s.L[wKey(src)] ? s.L[wKey(src)][mo] : null); }
 // 216-vector index (a*6+y)*6+b ; a = above/high, y = layer/mid, b = below/low ; bins 0..5 = 0..100 %
+// mid x high in 10 % steps by low-cloud class: index (l*11+m)*11+h, l = 0 none, 1 <=20, 2 <=40, 3 more
+function shareMH(s, mo) {
+  const c = s.mh ? s.mh[mo] : null; if (!c) return NaN;
+  let tot = 0, win = 0;
+  for (let l = 0; l < 4; l++) for (let m = 0; m < 11; m++) for (let h = 0; h < 11; h++) {
+    const v = c[(l * 11 + m) * 11 + h]; tot += v;
+    if (l <= lowCls && m * 10 >= ymin && h * 10 <= amax) win += v;
+  }
+  return tot ? win / tot : NaN;
+}
 function shareLayer(s, mo) {
+  if (src === "mh") return shareMH(s, mo);
   const c = arr3(s, mo); if (!c) return NaN;
   let tot = 0, win = 0;
   for (let a = 0; a < 6; a++) for (let y = 0; y < 6; y++) for (let b = 0; b < 6; b++) {
@@ -475,7 +502,7 @@ function shareLayer(s, mo) {
   }
   return tot ? win / tot : NaN;
 }
-const excluded = s => mode === "layer" && src === "mid" && !incHigh && s.el != null && s.el > 1500;
+const excluded = s => mode === "layer" && (src === "mid" || src === "mh") && !incHigh && s.el != null && s.el > 1500;
 const share = (s, mo) => mode === "halo" ? shareHalo(s, mo) : shareLayer(s, mo);
 const pct = v => isNaN(v) ? "–" : (v * 100 >= 10 ? (v * 100).toFixed(0) : (v * 100).toFixed(1)) + "%";
 const fmtLat = v => `${Math.abs(v).toFixed(2)}°${v >= 0 ? "N" : "S"}`;
@@ -543,6 +570,12 @@ function fillCold() {
 async function setSrc() {
   document.getElementById("tempwrap").hidden = mode !== "layer" || srcKind !== "temp";
   if (srcKind === "mid") { src = "mid"; labels(); update(); return; }
+  if (srcKind === "mh") {
+    const st = document.getElementById("status"); st.textContent = "Loading mid × high…";
+    try { await ensureMH(); } catch (e) { st.textContent = "Could not load mid × high"; return; }
+    if (srcKind !== "mh") return;
+    src = "mh"; st.textContent = `${SITES.length} sites`; labels(); update(); return;
+  }
   const k = `${wWarm}..${wCold}`, st = document.getElementById("status");
   st.textContent = `Loading ${winLabel(k)}…`;
   try { await ensureWin(k); } catch (e) { st.textContent = "Could not load " + winLabel(k); return; }
@@ -564,12 +597,17 @@ document.querySelectorAll("#hby button").forEach(b => b.addEventListener("click"
 document.getElementById("pthr").addEventListener("change", e => { pThr = +e.target.value; update(); });
 document.getElementById("pview").addEventListener("change", e => { pView = e.target.value; update(); });
 bind("ymin", v => ymin = v); bind("bmax", v => bmax = v); bind("amax", v => amax = v);
+document.getElementById("lowcls").addEventListener("change", e => { lowCls = +e.target.value; update(); });
 document.getElementById("hiel").addEventListener("change", e => { incHigh = e.target.checked; update(); });
 document.getElementById("showwin").addEventListener("change", e => document.getElementById("cards").classList.toggle("nowin", !e.target.checked));
 document.getElementById("shownum").addEventListener("change", e => document.getElementById("cards").classList.toggle("nonum", !e.target.checked));
 function labels() {
+  const mh = src === "mh", step = mh ? 10 : 20;
+  ["ymin", "amax"].forEach(id => { const el = document.getElementById(id); if (+el.step !== step) { el.step = step; } });
+  if (!mh) { ymin = Math.round(ymin / 20) * 20; amax = Math.round(amax / 20) * 20; document.getElementById("ymin").value = ymin; document.getElementById("amax").value = amax; }
+  document.getElementById("bmaxw").hidden = mh; document.getElementById("lowclsw").hidden = !mh;
   [["hminv", hmin], ["lmaxv", lmax], ["yminv", ymin], ["bmaxv", bmax], ["amaxv", amax]].forEach(([id, v]) => document.getElementById(id).textContent = v + "%");
-  const t = src !== "mid";
+  const t = src !== "mid" && !mh;
   document.getElementById("ylab").textContent = t ? `Cloud at ${winLabel(src)}` : "Mid cloud";
   document.getElementById("blab").textContent = t ? "Warmer cloud (below)" : "Low cloud";
   document.getElementById("alab").textContent = t ? "Colder cloud (above)" : "High cloud";
@@ -772,7 +810,29 @@ function gridHalo(s) {
   axisRow(g, 11, 10);
   return { g, tot, extra: `clear (0:0): ${pct(frac[0])}` };
 }
+function gridMH(s) {
+  // mid (up) vs high (across), only hours in the chosen low-cloud classes
+  const c = s.mh ? s.mh[month] : null; if (!c) return null;
+  const tot = c.reduce((a, b) => a + b, 0);
+  const m = new Array(121).fill(0);
+  for (let l = 0; l <= lowCls; l++) for (let i = 0; i < 121; i++) m[i] += c[l * 121 + i];
+  const frac = m.map(v => tot ? v / tot : 0), mx = Math.max(...frac);
+  const g = document.createElement("div"); g.className = "fp";
+  for (let row = 0; row < 11; row++) {
+    const mb = 10 - row;
+    const ax = document.createElement("div"); ax.className = "ax"; ax.textContent = mb * 10; g.appendChild(ax);
+    for (let col = 0; col < 11; col++) {
+      const hb = 10 - col, f = frac[mb * 11 + hb];
+      g.appendChild(cell(f, mx ? Math.sqrt(f / mx) : 0, `high ${hb * 10}% · mid ${mb * 10}%: ${(f * 100).toFixed(2)}%`,
+        edgesOf((r, cc) => (10 - r) * 10 >= ymin && (10 - cc) * 10 <= amax, row, col, 11)));
+    }
+  }
+  axisRow(g, 11, 10);
+  const shown = frac.reduce((a, b) => a + b, 0);
+  return { g, tot, extra: `hours with ${LOWCLS_LAB[lowCls]}: ${pct(shown)}` };
+}
 function gridLayer(s) {
+  if (src === "mh") return gridMH(s);
   // layer (up) vs below (across), only hours with above <= amax
   const c = arr3(s, month); if (!c) return null;
   const tot = c.reduce((a, b) => a + b, 0);
@@ -803,8 +863,8 @@ function fpCard(s) {
   card.querySelector("button").addEventListener("click", () => { picked = picked.filter(n => n !== s.n); update(); });
   if (r) {
     const pr = mode === "halo" && hBy === "pres";
-    const xName = pr ? `low cloud ≥ ${pThr}%` : mode === "halo" ? "low cloud %" : src === "mid" ? "low cloud %" : "warmer cloud %";
-    const yName = pr ? `high cloud ≥ ${pThr}%` : mode === "halo" ? "high cloud %" : src === "mid" ? "mid cloud %" : `cloud at ${winLabel(src).replace(" °C", "")} °C %`;
+    const xName = pr ? `low cloud ≥ ${pThr}%` : mode === "halo" ? "low cloud %" : src === "mh" ? "high cloud %" : src === "mid" ? "low cloud %" : "warmer cloud %";
+    const yName = pr ? `high cloud ≥ ${pThr}%` : mode === "halo" ? "high cloud %" : src === "mh" || src === "mid" ? "mid cloud %" : `cloud at ${winLabel(src).replace(" °C", "")} °C %`;
     const wrap = document.createElement("div"); wrap.className = "fpwrap";
     const vl = document.createElement("div"); vl.className = "vlab";
     vl.innerHTML = pr ? `<span>← no</span><span>${yName}</span><span>yes →</span>` : `<span>← less</span><span>${yName}</span><span>more →</span>`;
@@ -858,6 +918,7 @@ function update() {
   const presT = pView === "cv" ? `Clear view: share of high-cloud ${LIGHT_LAB[light]} with no low cloud (present = ≥ ${pThr}%)`
     : `Share of ${LIGHT_LAB[light]} with high cloud and no low cloud (present = ≥ ${pThr}%)`;
   const title = mode === "halo" ? `high cloud ≥ ${hmin}%, low cloud ≤ ${lmax}%`
+    : src === "mh" ? `mid cloud ≥ ${ymin}%, high ≤ ${amax}%, ${LOWCLS_LAB[lowCls]} (ECMWF 9 km, 10 % steps, ${SETTINGS.years[0]}–${SETTINGS.years[1]})`
     : src === "mid" ? `mid cloud ≥ ${ymin}%, low ≤ ${bmax}%, high ≤ ${amax}% (ECMWF 9 km, ${SETTINGS.years[0]}–${SETTINGS.years[1]})`
     : `cloud at ${winLabel(src)} ≥ ${ymin}%, warmer cloud ≤ ${bmax}%, colder cloud ≤ ${amax}% (ECMWF 25 km, from ${LSET.start.slice(0, 4)})`;
   document.getElementById("maptitle").textContent = mode === "halo" && hBy === "pres" ? presT : `Share of ${LIGHT_LAB[light]} inside the window: ${title}`;
@@ -865,6 +926,7 @@ function update() {
     ? `Presence only: % of the hours counted with high and low cloud present (≥ ${pThr}%) or absent, cover not counted. The model's cover is rounded to 10 % steps, so "≥ 10%" means about 5 % or more.${pView === "hnl" ? " Outlined: the window." : ""}`
     : mode === "halo"
     ? "Each cell: % of the hours counted with that low (across) and high (up) cloud cover, 10 % steps. Outlined: the window."
+    : src === "mh" ? `Each cell: % of the hours counted with that mid (up) and high (across) cloud cover, 10 % steps, counting only hours with ${LOWCLS_LAB[lowCls]}. Outlined: the window.`
     : `Each cell: % of the hours counted with that ${src === "mid" ? "mid" : "layer"} (up) and ${src === "mid" ? "low" : "warmer"} (across) cloud cover, 20 % steps, counting only hours with ${src === "mid" ? "high" : "colder"} cloud at most ${amax}%. Outlined: the window.`;
   const cards = document.getElementById("cards"); cards.innerHTML = "";
   const chosen = picked.map(n => SITES.find(s => s.n === n)).filter(Boolean);
@@ -949,7 +1011,8 @@ document.getElementById("light").addEventListener("change", async e => {
   try {
     for (const c of LIGHT_SETS[v]) await ensureLight(c);
     light = v;
-    if (mode === "layer" && src !== "mid") await ensureWin(src);
+    if (mode === "layer" && src === "mh") await ensureMH();
+    else if (mode === "layer" && src !== "mid") await ensureWin(src);
   } catch (err) { light = prev; st.textContent = "Could not load those hours"; e.target.value = light; return; }
   applyLight(); st.textContent = `${SITES.length} sites`; update();
 });
@@ -1796,6 +1859,7 @@ function start() {
 load().catch(e => { document.getElementById('status').textContent = 'Could not load the data: ' + e.message; throw e; }).then(() => {
   const opts = [];
   if (SITES.some(s => s.m3)) opts.push(["mid", `ECMWF mid-cloud band · 9 km · ${SETTINGS.years[0]}–${SETTINGS.years[1]}`]);
+  if (SITES.some(s => s.m3)) opts.push(["mh", `ECMWF mid × high, 10 % steps · 9 km · ${SETTINGS.years[0]}–${SETTINGS.years[1]}`]);
   if (LWIN.length) opts.push(["temp", `Temperature range · 25 km · ${LSET.start.slice(0, 4)}–`]);
   opts.forEach(([v, l]) => { const o = document.createElement("option"); o.value = v; o.textContent = l; srcEl.appendChild(o); });
   if (!opts.length) document.querySelector('#modes [data-mode="layer"]').disabled = true;

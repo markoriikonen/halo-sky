@@ -38,6 +38,11 @@ for base, var in ((fp, "FP_DATA"), (season, "FP_SEASON")):
         extra = Path(str(base).replace(".json.gz", f"_{cls}.json.gz"))
         if extra.exists():
             js(extra, Path(base).name.replace(".json.gz", f"_{cls}.js"), f"{var}_{cls.upper()}")
+# mid x high in 10 % steps by low-cloud class (loaded only when that source is chosen)
+for cls in ("", "_twilight", "_night"):
+    mh = Path(str(fp).replace(".json.gz", f"_mh{cls}.json.gz"))
+    if mh.exists():
+        js(mh, f"fingerprints_mh{cls}.js", "FP_MH" + cls.upper())
 # season tests (openmeteo_season_checks.py), next to the season file
 chk = Path(season).parent / "season_checks.json.gz"
 if chk.exists():
