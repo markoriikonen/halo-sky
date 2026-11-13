@@ -222,7 +222,7 @@ function hexInfo(r) {
   for (const c of r.halos) {
     const f = FORM[c]; if (!f || r.doubtful.includes(c)) continue;
     const rare = f.rare === 1 || (f.rare === 2 && lat < TROPIC);
-    if (f.cls && rare) lit.add(f.cls);
+    if (f.cls && rare) f.cls.split(";").forEach(c => lit.add(c));
     if (f.mark === "odd") odd = true; if (f.mark === "dodd") dodd = true; if (f.mark === "ms") ms = true;
     if (f.mark === "R") refl = true; if (f.mark === "E") E = true; if (f.mark === "B") B = true;
   }

@@ -1581,7 +1581,7 @@ function dFlags(d) {
   d.halos.forEach(c => {
     const F = DFORMS[c]; if (!F || d.doubtful.includes(c)) return;
     const [, cls, rare, mark] = F;
-    if (cls && (rare === 1 || (rare === 2 && d.lat !== "" && lat < D_TROPIC))) f.lit.add(cls);
+    if (cls && (rare === 1 || (rare === 2 && d.lat !== "" && lat < D_TROPIC))) cls.split(";").forEach(c => f.lit.add(c));
     if (mark === "odd") f.odd = 1; if (mark === "dodd") f.dodd = 1; if (mark === "ms") f.ms = 1; if (mark === "R") f.R = 1; if (mark === "E") f.E = 1; if (mark === "B") f.B = 1;
   });
   return f;
