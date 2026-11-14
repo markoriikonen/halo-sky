@@ -197,7 +197,11 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 .dthumbs img { width: 100%; height: auto; border-radius: 4px; border: 1px solid var(--rule); background: var(--bg); display: block; }
 .dthumbs figcaption { font-size: 11.5px; color: var(--muted); }
 .ddocs { font-size: 13px; display: grid; gap: 2px; }
-.dnotes { border-top: 1px solid var(--rule); padding-top: 9px; font: italic 15px/1.5 var(--f-display); white-space: pre-line; }
+.dnotes { font-size: 13px; }
+.dnotes[tabindex] { cursor: help; }
+.dnotes .lab { color: var(--muted); }
+.notepop { position: fixed; z-index: 60; max-width: min(380px, calc(100vw - 32px)); background: var(--panel); color: var(--fg); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 8px 10px; font-size: 13px; line-height: 1.5; white-space: pre-line; box-shadow: 0 4px 14px rgb(0 0 0 / .14); pointer-events: none; }
 .ddocs a, .dthumbs a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 2px; }
 .dlist { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .dlist th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 4px 8px; border-bottom: 1px solid var(--rule); }
@@ -1800,6 +1804,30 @@ function dGram(d) {
   }
   return `<a href="${GRAM_URL}?${q}" target="_blank" rel="noopener">${type === "height" ? "cloud-by-height" : "low/mid/high"} gram for the display days</a>`;
 }
+// notes: the first words in the card, the whole text in a pop-up on hover (tap on a phone)
+const NOTE_WORDS = 8;
+function noteHTML(n) {
+  const w = String(n).trim().split(/\s+/);
+  if (w.length <= NOTE_WORDS) return `<div class="dnotes"><span class="lab">Notes:</span> ${esc(n)}</div>`;
+  return `<div class="dnotes" tabindex="0" data-full="${esc(n)}"><span class="lab">Notes:</span> ${esc(w.slice(0, NOTE_WORDS).join(" "))} …</div>`;
+}
+const notePop = Object.assign(document.createElement("div"), { className: "notepop", hidden: true });
+document.body.appendChild(notePop);
+function placeNote(x, y) {
+  const w = notePop.offsetWidth, h = notePop.offsetHeight;
+  notePop.style.left = Math.max(8, Math.min(x + 14, innerWidth - w - 8)) + "px";
+  notePop.style.top = (y + 16 + h > innerHeight - 8 ? Math.max(8, y - h - 12) : y + 16) + "px";
+}
+function wireNote(el) {
+  const n = el.querySelector(".dnotes[data-full]"); if (!n) return;
+  const show = (x, y) => { notePop.textContent = n.dataset.full; notePop.hidden = false; placeNote(x, y); };
+  n.addEventListener("pointerenter", e => show(e.clientX, e.clientY));
+  n.addEventListener("pointermove", e => placeNote(e.clientX, e.clientY));
+  n.addEventListener("pointerleave", () => { notePop.hidden = true; });
+  n.addEventListener("focus", () => { const r = n.getBoundingClientRect(); show(r.left, r.bottom - 10); });
+  n.addEventListener("blur", () => { notePop.hidden = true; });
+}
+addEventListener("scroll", () => { notePop.hidden = true; }, { passive: true });
 function dCard(d) {
   const el = document.createElement("div"); el.className = "dcard";
   const f = dFlags(d);
@@ -1816,9 +1844,10 @@ function dCard(d) {
     `<div class="dhalos">${d.halos.map(c => `<span class="${d.doubtful.includes(c) ? "doubt" : ""}" title="${esc(c)}">${esc(hName(c))}${d.doubtful.includes(c) ? " (doubtful)" : ""}</span>`).join("")}</div>` +
     `<div class="ddocs">${d.items.map(it => `<div>${T[it.type]} · ${obsList(it.by)}${it.link ? ` · <a href="${esc(it.link)}" target="_blank" rel="noopener">source</a>` : ""}</div>`).join("")}</div>` +
     `<div class="gramlinks">${dGram(d) || (d.date < "2017-01-01" ? "No gram: the model data starts in 2017." : d._pos && d._pos.approx ? "No gram: the exact place is not known." : "")}</div>` +
-    (d.notes ? `<div class="dnotes">${esc(d.notes)}</div>` : "") +
+    (d.notes ? noteHTML(d.notes) : "") +
     (thumbs.length ? `<div class="dthumbs">${thumbs.map(it => `<figure>${it.link ? `<a href="${esc(it.link)}" target="_blank" rel="noopener">` : ""}<img src="data/disp/${esc(it.thumb)}" alt="${esc(T[it.type] + " by " + it.by.join(", "))}" loading="lazy">${it.link ? "</a>" : ""}<figcaption>${T[it.type]} · ${obsList(it.by)}</figcaption></figure>`).join("")}</div>` : "");
   el.querySelector(".dx").addEventListener("click", () => { dispPicked = dispPicked.filter(x => x !== d.id); dispCards(); dispList(); });
+  wireNote(el);
   return el;
 }
 function locCard() {
