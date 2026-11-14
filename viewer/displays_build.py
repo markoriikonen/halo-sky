@@ -45,7 +45,7 @@ for f in sorted(ddir.glob("*.json"), key=lambda p: int(re.sub(r"\D", "", p.stem)
             if src.lower().startswith("http"):
                 cands = sorted(imgdir.glob(f"web-{d['id']}-{k}.*"))
             else:
-                cands = [imgdir / src] if (imgdir / src).exists() else []
+                cands = [imgdir / src] if (imgdir / src).exists() else sorted(imgdir.glob(glob.escape(src) + ".*"))   # extension left out
             if cands:
                 im = Image.open(cands[0]); im.thumbnail((THUMB, THUMB))
                 if im.mode not in ("RGB", "L"):
