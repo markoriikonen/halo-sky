@@ -1616,7 +1616,7 @@ function badges(f, R) {          // star or pennant top right, marks bottom righ
 }
 const hexPts = R => [...Array(6)].map((_, k) => { const a = Math.PI / 180 * (-120 + 60 * k); return [R * Math.cos(a), R * Math.sin(a)]; });
 function hexSVG(d, R, opts = {}) {
-  const f = dFlags(d), docOnly = d.items.length > 0 && d.items.every(it => it.type === "description"), col = D_LIGHT[d.light] || D_MIXED;
+  const f = dFlags(d), docOnly = false, col = D_LIGHT[d.light] || D_MIXED;
   const pts = hexPts(R), n = hCount(d);
   let s = `<polygon class="hx" points="${pts.map(p => p.map(v => v.toFixed(2)).join(",")).join(" ")}" fill="${docOnly ? "var(--panel)" : col}" ${docOnly ? `stroke="${col}" stroke-width="1.6"` : ""}/>`;
   D_CLASSES.forEach((c, k) => { if (!f.lit.has(c)) return; const [a, b] = [pts[k], pts[(k + 1) % 6]];
@@ -1811,7 +1811,7 @@ function dispLegend() {
     `<span class="k">${hex}<span>One display. The number is how many halos it had. A side is drawn bold when it had a rare halo of that crystal orientation.</span></span>` +
     `<span class="k"><svg width="22" height="22" viewBox="-11 -11 22 22" aria-hidden="true"><circle r="10" fill="${D_MIXED}"/><text y="3.5" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" font-weight="600" fill="#1c2329">4</text></svg> several nearby displays; zoom in to separate the locations. Grey when their light sources differ.</span>` +
     `<span class="k"><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><circle r="11" fill="none" stroke="rgb(var(--ink))" stroke-width="1.2" opacity=".7"/>${hexSVG({ light: "sun", items: [{ type: "photo" }], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], lat: 60 }, 7, { nobadge: true }).replace(/>0</, "><")}</svg> the latest display</span>` +
-    `<span class="k">${sw(D_LIGHT.sun)} sun</span><span class="k">${sw(D_LIGHT.moon)} moon</span><span class="k">${sw(D_LIGHT.artificial)} artificial light</span><span class="k">${sw("var(--panel)", "var(--muted)")} description only</span>` +
+    `<span class="k">${sw(D_LIGHT.sun)} sun</span><span class="k">${sw(D_LIGHT.moon)} moon</span><span class="k">${sw(D_LIGHT.artificial)} artificial light</span>` +
     `<span class="k"><b style="color:#d0306a">★</b> world first</span><span class="k"><svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="#2f7d4f"/></svg> national first <svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="var(--panel)"/></svg> possible</span>` +
     `<span class="k">${markIcon(1, 0)} odd radius ${markIcon(0, 1)} double-odd radius <b>M</b> multiple scattering <b>R</b> surface reflection <b>E</b> elliptical <b>B</b> Bottlinger's ring</span>`;
 }

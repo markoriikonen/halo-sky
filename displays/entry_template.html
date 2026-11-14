@@ -186,7 +186,7 @@ textarea { resize: vertical; min-height: 54px; }
 
 <script>
 const FORMS = /*FORMS*/[];
-const GROUP_NAMES = {"ORIENTATION UNDETERMINABLE":"Orientation undeterminable","RANDOM ORIENTATION":"Random orientation","PLATE ORIENTATION":"Plate orientation","COLUMN ORIENTATION":"Column orientation","PARRY ORIENTATION":"Parry orientation","LOWITZ ORIENTATION":"Lowitz orientation","TRICKER ORIENTATION (experimental)":"Tricker orientation (experimental)","MULTI-SCATTERING":"Multiple scattering","DIFFUSED SOURCE":"Diffused source","SURFACE REFLECTION":"Surface reflection","ODD RADIUS CIRCULAR HALOS":"Odd radius circular halos","ODD RADIUS PLATE ARCS":"Odd radius plate arcs","ODD RADIUS COLUMN ARCS":"Odd radius column arcs","EXOTICS":"Exotics"};
+const GROUP_NAMES = {"ORIENTATION UNDETERMINABLE":"Orientation undeterminable","MIXED/UNCERTAIN ORIENTATION":"Mixed/uncertain orientation","SURFACE REFLECTION SOURCE":"Surface reflection source","RANDOM ORIENTATION":"Random orientation","PLATE ORIENTATION":"Plate orientation","COLUMN ORIENTATION":"Column orientation","PARRY ORIENTATION":"Parry orientation","LOWITZ ORIENTATION":"Lowitz orientation","TRICKER ORIENTATION (experimental)":"Tricker orientation (experimental)","MULTI-SCATTERING":"Multiple scattering","DIFFUSED SOURCE":"Diffused source","SURFACE REFLECTION":"Surface reflection","ODD RADIUS CIRCULAR HALOS":"Odd radius circular halos","ODD RADIUS PLATE ARCS":"Odd radius plate arcs","ODD RADIUS COLUMN ARCS":"Odd radius column arcs","EXOTICS":"Exotics"};
 const CLASSES = ["random", "plate", "column", "Parry", "Lowitz", "Tricker"];   // hexagon sides clockwise from the top
 const TROPIC = 20;                                                            // fliphelion counts as rare within this latitude
 const FORM = {};                                                              // code -> first entry
@@ -229,7 +229,7 @@ function hexInfo(r) {
   const marks = (dodd ? "⊕" : odd ? "O" : "") + (ms ? "M" : "") + (refl ? "R" : "") + (E ? "E" : "") + (B ? "B" : "");
   return { lit, marks, novel: r.novel.length > 0, nfc: r.nfc.length > 0, nfp: r.nfp.length > 0 };
 }
-const hollow = r => (r.items || []).length > 0 && r.items.every(it => it.type === "description");
+const hollow = r => false;      // every display is filled with its light-source colour, description-only ones too
 const LIGHT_COL = { sun: "#e9a623", moon: "#9fb3c8", artificial: "#c7653b" };
 function hexSVG(r, size = 64) {
   const h = hexInfo(r), cx = size / 2, cy = size / 2, R = size * 0.42;
