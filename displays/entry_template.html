@@ -226,7 +226,7 @@ function hexInfo(r) {
     if (f.mark === "odd") odd = true; if (f.mark === "dodd") dodd = true; if (f.mark === "ms") ms = true;
     if (f.mark === "R") refl = true; if (f.mark === "E") E = true; if (f.mark === "B") B = true;
   }
-  const marks = (dodd ? "⊕" : odd ? "O" : "") + (ms ? "M" : "") + (refl ? "R" : "") + (E ? "E" : "") + (B ? "B" : "");
+  const marks = (refl ? "R" : "") + (dodd ? "⊕" : odd ? "O" : "") + (ms ? "M" : "") + (E ? "E" : "") + (B ? "B" : "");
   return { lit, marks, novel: r.novel.length > 0, nfc: r.nfc.length > 0, nfp: r.nfp.length > 0 };
 }
 const hollow = r => false;      // every display is filled with its light-source colour, description-only ones too

@@ -1605,19 +1605,21 @@ function aggFlags(list) {
   list.forEach(d => { const f = dFlags(d); f.lit.forEach(c => a.lit.add(c)); ["odd", "dodd", "ms", "R", "E", "B"].forEach(k => a[k] = a[k] || f[k]); ["wf", "nfc", "nfp"].forEach(k => a[k] = a[k] || f[k]); });
   return a;
 }
-const markStr = f => (f.dodd ? "⊕" : f.odd ? "O" : "") + (f.ms ? "M" : "") + (f.R ? "R" : "") + (f.E ? "E" : "") + (f.B ? "B" : "");
+const markStr = f => (f.R ? "R" : "") + (f.dodd ? "⊕" : f.odd ? "O" : "") + (f.ms ? "M" : "") + (f.E ? "E" : "") + (f.B ? "B" : "");
 // the marks as drawn glyphs: O for odd radius, the same O with a plus inside for double-odd radius, then letters
 function markSVG(f, x, y, size) {
   const halo = `stroke="var(--panel)" stroke-width="${(size * 0.2).toFixed(2)}"`, ink = `stroke="rgb(var(--ink))" stroke-width="${(size * 0.11).toFixed(2)}"`;
   let s = "", cx = x;
+  const txt = (str, at) => `<text x="${at}" y="${y}" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${size}" fill="rgb(var(--ink))" stroke="var(--panel)" stroke-width="${size * 0.21}" paint-order="stroke">${str}</text>`;
+  if (f.R) { s += txt("R", cx); cx += size * 0.64; }       // R first, so R with O never reads as "OR"
   if (f.odd || f.dodd) {
     const r = size * 0.32, ox = cx + size * 0.36, oy = y - size * 0.34;
     const plus = f.dodd ? `<path d="M${ox - r * 0.62} ${oy}h${r * 1.24}M${ox} ${oy - r * 0.62}v${r * 1.24}" fill="none" STROKE/>` : "";
     s += `<circle cx="${ox}" cy="${oy}" r="${r}" fill="none" ${halo}/>` + plus.replace("STROKE", halo) + `<circle cx="${ox}" cy="${oy}" r="${r}" fill="none" ${ink}/>` + plus.replace("STROKE", ink);
     cx += size * 0.78;
   }
-  const letters = (f.ms ? "M" : "") + (f.R ? "R" : "") + (f.E ? "E" : "") + (f.B ? "B" : "");
-  if (letters) s += `<text x="${cx}" y="${y}" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${size}" fill="rgb(var(--ink))" stroke="var(--panel)" stroke-width="${size * 0.21}" paint-order="stroke">${letters}</text>`;
+  const letters = (f.ms ? "M" : "") + (f.E ? "E" : "") + (f.B ? "B" : "");
+  if (letters) s += txt(letters, cx);
   return s;
 }
 const markIcon = (odd, dodd) => `<svg width="14" height="14" viewBox="0 -14 14 14" aria-hidden="true" style="vertical-align:-2px">${markSVG({ odd, dodd }, -1, 0, 16)}</svg>`;
@@ -1880,7 +1882,7 @@ function dispLegend() {
     `<span class="k"><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><circle r="11" fill="none" stroke="rgb(var(--ink))" stroke-width="1.2" opacity=".7"/>${hexSVG({ light: "sun", items: [{ type: "photo" }], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], lat: 60 }, 7, { nobadge: true }).replace(/>0</, "><")}</svg> the latest display</span>` +
     `<span class="k">${sw(D_LIGHT.sun)} sun</span><span class="k">${sw(D_LIGHT.moon)} moon</span><span class="k">${sw(D_LIGHT.artificial)} artificial light</span>` +
     `<span class="k"><b style="color:#d0306a">★</b> world first</span><span class="k"><svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="#2f7d4f"/></svg> national first <svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="var(--panel)"/></svg> possible</span>` +
-    `<span class="k">${markIcon(1, 0)} odd radius ${markIcon(0, 1)} double-odd radius <b>M</b> multiple scattering <b>R</b> surface reflection <b>E</b> elliptical <b>B</b> Bottlinger's ring</span>`;
+    `<span class="k"><b>R</b> surface reflection ${markIcon(1, 0)} odd radius ${markIcon(0, 1)} double-odd radius <b>M</b> multiple scattering <b>E</b> elliptical <b>B</b> Bottlinger's ring</span>`;
 }
 function dispList() {
   const body = document.getElementById("dlistbody");
