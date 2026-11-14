@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halo Sky Gram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap">
+<style>
+:root {
+  --bg: #f4f6f7; --fg: #1c2329; --muted: #5d6973; --panel: #ffffff; --rule: #d8dfe4; --accent: #c4402f;
+  --f-display: "Newsreader", Georgia, serif; --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #11171c; --fg: #e3e8ec; --muted: #94a2ad; --panel: #182129; --rule: #2a3843; --accent: #ff8a73; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #11171c; --fg: #e3e8ec; --muted: #94a2ad; --panel: #182129; --rule: #2a3843; --accent: #ff8a73; color-scheme: dark; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 var(--f-body); padding: 24px 16px 40px; }
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 16px; }
+h1 { font: 500 clamp(26px, 3vw, 34px)/1.15 var(--f-display); margin: 0; }
+.lede { margin: 4px 0 0; color: var(--muted); max-width: 75ch; }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: end; }
+label.f { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+label.f input, label.f select { font: inherit; font-size: 14px; color: var(--fg); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 8px; }
+label.f input.n { width: 92px; }
+label.f input.w { width: 220px; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+.seg button { font: 13px var(--f-data); padding: 7px 10px; border: 0; background: var(--bg); color: var(--fg); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--panel); }
+.stylebar { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin: 0 0 10px; }
+.stylebar label.f { display: flex; align-items: center; gap: 8px; }
+.stylebar input[type=range] { width: 140px; accent-color: var(--accent); }
+button.go { font: 500 14px var(--f-body); padding: 8px 16px; border-radius: 4px; border: 1px solid var(--fg); background: var(--fg); color: var(--panel); cursor: pointer; }
+button.go:disabled { opacity: .5; cursor: default; }
+.hint { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+#status { font-family: var(--f-data); font-size: 13px; color: var(--muted); }
+#status.err { color: var(--accent); }
+.gramhead { font-family: var(--f-data); font-size: 13px; margin-bottom: 8px; }
+.scroll { overflow-x: auto; position: relative; }
+canvas#gram { display: block; background: #fff; border-radius: 3px; }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 5px 8px; font: 12px var(--f-data); white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+.note a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Halo Sky Gram</h1>
+    <p class="lede">Cloud by height and time for any place, from ECMWF model data via Open-Meteo, in local time. The height gram shades cloud cover on 13 pressure levels with the 0, −15 and −40 °C isotherms; the low/mid/high gram shows ECMWF's own three cloud bands.</p>
+  </header>
+
+  <div class="panel">
+    <div class="controls">
+      <label class="f">Place <input id="name" class="w" type="text" placeholder="type a site, or any name" list="sites" autocomplete="off"></label>
+      <datalist id="sites"></datalist>
+      <label class="f">Latitude <input id="lat" class="n" type="number" step="0.01" min="-90" max="90"></label>
+      <label class="f">Longitude <input id="lon" class="n" type="number" step="0.01" min="-180" max="180"></label>
+      <div class="f" style="display:grid;gap:4px;font-size:13px;color:var(--muted)">Gram
+        <div class="seg" id="type" role="group" aria-label="Gram type">
+          <button type="button" data-t="height" aria-pressed="true">Height</button>
+          <button type="button" data-t="lmh" aria-pressed="false">Low / mid / high</button>
+        </div>
+      </div>
+      <label class="f">Year <select id="year"></select></label>
+      <label class="f">From <select id="month"></select></label>
+      <label class="f">Months <select id="months"></select></label>
+      <button class="go" id="go" type="button">Draw gram</button>
+    </div>
+    <p class="hint" id="avail"></p>
+    <p class="hint">Pick one of the 2,000 Fingerprints sites from the Place list to fill in its coordinates, or type any place with its own latitude and longitude.</p>
+    <p class="hint" id="seasonnote" hidden></p>
+  </div>
+
+  <div class="panel">
+    <div class="gramhead" id="gramhead"></div>
+    <div class="stylebar" id="stylebar">
+      <div class="seg" id="gstyle" role="group" aria-label="Height gram style">
+        <button type="button" data-s="smooth" aria-pressed="true">Smooth</button>
+        <button type="button" data-s="blocks" aria-pressed="false">Pressure-level blocks</button>
+      </div>
+      <label class="f" for="bh" id="bhwrap" hidden>Block height <b id="bhv"></b>
+        <input id="bh" type="range" min="10" max="100" step="5" value="70">
+      </label>
+    </div>
+    <div class="scroll" id="scroll">
+      <canvas id="gram" width="10" height="10"></canvas>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+    <div id="status">Choose a place and period, then Draw gram.</div>
+  </div>
+
+  <p class="note">Data: ECMWF IFS via <a href="https://open-meteo.com/">Open-Meteo</a>, licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Height gram: IFS 0.25° (about 25 km) temperature and cloud cover on 13 pressure levels, with heights worked out from temperature and surface pressure, available from January 2024; cloud cover on pressure levels is derived from relative humidity. Low/mid/high: IFS HRES 9 km, from January 2017; ECMWF splits the bands at 0.8 and 0.45 of surface pressure (dashed lines in the height gram). Each gram is fetched directly from Open-Meteo's free, non-commercial API by your browser; no key is used.</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+const API = "https://historical-forecast-api.open-meteo.com/v1/forecast";
+const LEVELS = [1000, 925, 850, 700, 600, 500, 400, 300, 250, 200, 150, 100, 50];
+const FIRST = { height: 2024, lmh: 2017 };
+const Z_TOP = 18000, DZ = 50, EDGE_FADE = 600, GAMMA = 0.8;
+const ISOTHERMS = [0, -15, -40], SIGMA = [0.8, 0.45];
+const C_CLOUD = [60, 60, 60], C_BG = [255, 255, 255], C_GROUND = [217, 203, 180];
+const SUN = { day: "#f2cf6b", twi: "#a9b4c9", night: "#3d4559" };
+const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+let gtype = "height";
+// height-gram style: smooth shading between levels, or one block per pressure level and hour
+const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+const Q0 = new URLSearchParams(location.search);
+let gStyle = Q0.get("style") || store.get("hsg-style") || "smooth";
+let blockH = +(Q0.get("bh") || store.get("hsg-bh") || 70);
+let lastDraw = null;
+const $ = id => document.getElementById(id);
+
+// ---------- controls
+const today = new Date(), lastYear = today.getUTCFullYear();
+function fillYears() {
+  const y = $("year"), cur = +y.value || lastYear;
+  y.innerHTML = "";
+  for (let k = lastYear; k >= FIRST[gtype]; k--) y.insertAdjacentHTML("beforeend", `<option value="${k}">${k}</option>`);
+  y.value = Math.max(FIRST[gtype], Math.min(lastYear, cur));
+}
+MON.forEach((m, i) => $("month").insertAdjacentHTML("beforeend", `<option value="${i + 1}">${m}</option>`));
+[1, 2, 3, 4, 5, 6, 9, 12].forEach(k => $("months").insertAdjacentHTML("beforeend", `<option value="${k}">${k}</option>`));
+function availText() {
+  $("avail").textContent = gtype === "height"
+    ? "Height gram: from January 2024 (IFS 0.25°). For earlier years choose Low / mid / high (from January 2017, IFS 9 km)."
+    : "Low / mid / high: from January 2017 (IFS 9 km). The height gram is available from January 2024.";
+}
+document.querySelectorAll("#type button").forEach(b => b.addEventListener("click", () => {
+  gtype = b.dataset.t;
+  document.querySelectorAll("#type button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  fillYears(); availText(); styleUI();
+}));
+
+// from the address: ?name=&lat=&lon=&type=height|lmh&year=&month=&months=&season=best|worst
+//   or a free range from the displays map: &from=YYYY-MM-DD&to=YYYY-MM-DD&mark=<start>/<end> (local time, Z = UTC)
+const P = new URLSearchParams(location.search);
+let RANGE = P.get("from") && P.get("to") ? { from: P.get("from"), to: P.get("to") } : null;
+const MARK = P.get("mark") || "";
+function styleUI() {
+  document.querySelectorAll("#gstyle button").forEach(b => b.setAttribute("aria-pressed", b.dataset.s === gStyle));
+  $("bhwrap").hidden = gStyle !== "blocks"; $("bh").value = blockH; $("bhv").textContent = blockH + "%";
+  $("stylebar").hidden = gtype !== "height";
+}
+document.querySelectorAll("#gstyle button").forEach(b => b.addEventListener("click", () => {
+  gStyle = b.dataset.s; store.set("hsg-style", gStyle); styleUI(); if (lastDraw) render(...lastDraw);
+}));
+$("bh").addEventListener("input", () => { blockH = +$("bh").value; store.set("hsg-bh", blockH); styleUI(); if (lastDraw && gStyle === "blocks") render(...lastDraw); });
+$("name").value = P.get("name") || "";
+$("lat").value = P.get("lat") || "";
+$("lon").value = P.get("lon") || "";
+if (P.get("type") === "lmh") gtype = "lmh";
+document.querySelectorAll("#type button").forEach(x => x.setAttribute("aria-pressed", x.dataset.t === gtype));
+fillYears(); availText();
+if (P.get("year")) $("year").value = Math.max(FIRST[gtype], Math.min(lastYear, +P.get("year")));
+$("month").value = P.get("month") || String(Math.max(1, today.getUTCMonth()));      // default: last full month
+$("months").value = P.get("months") || "1";
+if (RANGE) {
+  const d = new Date(RANGE.from + "T00:00:00Z");
+  $("year").value = Math.max(FIRST[gtype], Math.min(lastYear, d.getUTCFullYear())); $("month").value = String(d.getUTCMonth() + 1); $("months").value = "1";
+  $("seasonnote").hidden = false;
+  $("seasonnote").textContent = `Period set from the displays map: ${RANGE.from} to ${RANGE.to}${MARK ? ", the display time shaded" : ""}. Changing the year or month goes back to whole months.`;
+  ["year", "month", "months"].forEach(id => $(id).addEventListener("change", () => { RANGE = null; $("seasonnote").hidden = true; }));
+}
+if (P.get("season")) {
+  $("seasonnote").hidden = false;
+  $("seasonnote").textContent = `Period set from the Fingerprints viewer: the site's ${P.get("season") === "worst" ? "quiet" : "active"} high-cloud season${P.get("sdates") ? " (" + P.get("sdates") + ")" : ""}, rounded to whole months.`;
+}
+
+// ---------- site list (the Fingerprints sites, from this repository)
+const SITES = new Map();
+Promise.all(["locations_current", "locations_new", "locations_admin_100km", "locations_extra", "locations_handpicked"].map(f =>
+  fetch(`../locations/${f}.csv`).then(r => r.ok ? r.text() : "").catch(() => ""))).then(texts => {
+  texts.forEach(txt => {
+    const rows = txt.trim().split(/\r?\n/); if (rows.length < 2) return;
+    const head = rows[0].split(","), iN = head.indexOf("name"), iA = head.indexOf("lat"), iO = head.indexOf("lon");
+    rows.slice(1).forEach(line => {
+      const c = line.match(/("([^"]|"")*"|[^,]*)(,|$)/g).map(x => x.replace(/,$/, "").replace(/^"|"$/g, "").replace(/""/g, '"'));
+      if (c[iN] && !isNaN(+c[iA]) && !isNaN(+c[iO])) SITES.set(c[iN], [+c[iA], +c[iO]]);
+    });
+  });
+  $("sites").innerHTML = [...SITES.keys()].sort((a, b) => a.localeCompare(b)).map(n => `<option value="${n.replace(/"/g, "&quot;")}">`).join("");
+});
+$("name").addEventListener("change", () => {
+  const s = SITES.get($("name").value.trim());
+  if (s) { $("lat").value = s[0].toFixed(2); $("lon").value = s[1].toFixed(2); }
+});
+
+// ---------- fetching
+function period() {
+  if (RANGE) {
+    const start = new Date(RANGE.from + "T00:00:00Z"), end = new Date(RANGE.to + "T00:00:00Z");
+    const yest = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - 1));
+    return { start, end: end > yest ? yest : end };
+  }
+  const y = +$("year").value, m = +$("month").value, k = +$("months").value;
+  const start = new Date(Date.UTC(y, m - 1, 1)), end = new Date(Date.UTC(y, m - 1 + k, 0));
+  const yest = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - 1));
+  return { start, end: end > yest ? yest : end };
+}
+const iso = d => d.toISOString().slice(0, 10);
+let tick = null;
+async function getJSON(url, what, limitMs = 180000) {
+  const ctl = new AbortController(), t0 = Date.now();
+  const timer = setTimeout(() => ctl.abort(), limitMs);
+  clearInterval(tick);
+  tick = setInterval(() => status(`Fetching ${what} from Open-Meteo… ${Math.round((Date.now() - t0) / 1000)} s`), 1000);
+  try {
+    const r = await fetch(url, { signal: ctl.signal });
+    const j = await r.json().catch(() => null);
+    if (!r.ok || !j) throw new Error(j && j.reason ? j.reason : `HTTP ${r.status}`);
+    if (j.error) throw new Error(j.reason || "error");
+    return j;
+  } catch (e) {
+    throw new Error(e.name === "AbortError" ? `Open-Meteo did not answer within ${Math.round(limitMs / 60000 * 10) / 10} min` :
+      /concurrent/i.test(e.message) ? "Open-Meteo is busy with earlier requests from this connection; wait a minute and try again" : e.message);
+  } finally { clearTimeout(timer); clearInterval(tick); }
+}
+function status(t, err) { const s = $("status"); s.textContent = t; s.classList.toggle("err", !!err); }
+
+$("go").addEventListener("click", draw);
+async function draw() {
+  const lat = +$("lat").value, lon = +$("lon").value;
+  if (!$("lat").value || !$("lon").value || Math.abs(lat) > 90 || Math.abs(lon) > 180) { status("Give the latitude and longitude.", true); return; }
+  const { start, end } = period();
+  if (end < start) { status("That period is not available yet.", true); return; }
+  if (start.getUTCFullYear() < FIRST[gtype]) { status(`The ${gtype === "height" ? "height gram starts in 2024" : "low/mid/high data starts in 2017"}.`, true); return; }
+  $("go").disabled = true;
+  const base = `${API}?latitude=${lat}&longitude=${lon}&start_date=${iso(start)}&end_date=${iso(end)}&timezone=auto`;
+  try {
+    const lmh = await getJSON(`${base}&hourly=cloud_cover_low,cloud_cover_mid,cloud_cover_high&models=ecmwf_ifs`, "low/mid/high cloud");
+    let lev = null, levErr = null;
+    if (gtype === "height") {
+      const vars = ["surface_pressure", ...["temperature", "cloud_cover"].flatMap(v => LEVELS.map(L => `${v}_${L}hPa`))];
+      try { lev = await getJSON(`${base}&hourly=${vars.join(",")}&models=ecmwf_ifs025`, "pressure levels", 90000); }
+      catch (e) { levErr = e.message; }
+    }
+    lastDraw = [lmh, lev, { name: $("name").value.trim(), lat, lon, start, end }];
+    styleUI();
+    render(...lastDraw);
+    if (levErr) status(`The pressure levels did not come through (${levErr}), so only the low/mid/high gram is shown. Try the height gram again later.`, true);
+    else status(`Drawn: ${lmh.hourly.time.length} hours. Hover the gram for values.`);
+    const q = new URLSearchParams({ name: $("name").value.trim(), lat, lon, type: gtype, year: $("year").value, month: $("month").value, months: $("months").value });
+    if (RANGE) { q.set("from", RANGE.from); q.set("to", RANGE.to); if (MARK) q.set("mark", MARK); }
+    history.replaceState(null, "", "?" + q.toString());
+  } catch (e) { status("Could not draw the gram: " + e.message, true); }
+  $("go").disabled = false;
+}
+
+// ---------- science helpers
+function sunElev(lat, lon, utcMs) {
+  const t = (utcMs - Date.UTC(2000, 0, 1, 12)) / 864e5, rad = Math.PI / 180;
+  const g = ((357.529 + 0.98560028 * t) % 360) * rad, q = (280.459 + 0.98564736 * t) % 360;
+  const L = ((q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) % 360) * rad, e = (23.439 - 0.00000036 * t) * rad;
+  const ra = Math.atan2(Math.cos(e) * Math.sin(L), Math.cos(L)), dec = Math.asin(Math.sin(e) * Math.sin(L));
+  const gmst = (18.697374558 + 24.06570982441908 * t) % 24, ha = (gmst * 15 + lon) * rad - ra, la = lat * rad;
+  return Math.asin(Math.sin(la) * Math.sin(dec) + Math.cos(la) * Math.cos(dec) * Math.cos(ha)) / rad;
+}
+function interp(x, xs, ys) {                     // xs ascending
+  if (x <= xs[0]) return ys[0];
+  if (x >= xs[xs.length - 1]) return ys[ys.length - 1];
+  let k = 1; while (xs[k] < x) k++;
+  const f = (x - xs[k - 1]) / (xs[k] - xs[k - 1]); return ys[k - 1] + f * (ys[k] - ys[k - 1]);
+}
+function cloudProfile(zg, zl, cl) {              // same rule as openmeteo_gram.py: lone levels fade within EDGE_FADE
+  const H = EDGE_FADE, Z = [zl[0] - 10 * H, ...zl, zl[zl.length - 1] + 10 * H], C = [0, ...cl, 0];
+  const out = new Float32Array(zg.length);
+  let k = 0;
+  for (let i = 0; i < zg.length; i++) {
+    const z = zg[i];
+    while (k < Z.length - 2 && z >= Z[k + 1]) k++;
+    const za = Z[k], zb = Z[k + 1], ca = C[k], cb = C[k + 1];
+    if (z < za || z >= zb) continue;
+    if (ca > 0 && cb > 0) out[i] = ca + (cb - ca) * (z - za) / (zb - za);
+    else out[i] = Math.max(ca * Math.max(0, Math.min(1, 1 - (z - za) / H)), cb * Math.max(0, Math.min(1, 1 - (zb - z) / H)));
+  }
+  return out;
+}
+const mix = (a, b, t) => a + (b - a) * t;
+
+// ---------- drawing
+function render(lmh, lev, site) {
+  const h9 = lmh.hourly, n = h9.time.length;
+  const off = (lmh.utc_offset_seconds || 0) * 1000;
+  const tLocal = h9.time.map(s => Date.parse(s + ":00Z"));     // local wall time as if UTC
+  const days = n / 24, pxDay = Math.max(6, Math.min(60, Math.floor(1700 / days)));
+  const pxH = pxDay / 24;
+  const mL = 38, mR = 10, mT = 34, barH = 9, gap = 6;
+  const plotW = Math.ceil(n * pxH);
+  const heightMode = !!lev;
+  const plotH = heightMode ? Z_TOP / DZ : 0;
+  const stripRowH = heightMode ? 12 : 34, stripH = 3 * stripRowH;
+  const W = mL + plotW + mR;
+  const yBar = mT, yPlot = yBar + barH + gap, yStrip = yPlot + plotH + (heightMode ? 14 : 0), Ht = yStrip + stripH + 26;
+  const cv = $("gram"), dpr = window.devicePixelRatio || 1;
+  cv.width = W * dpr; cv.height = Ht * dpr; cv.style.width = W + "px"; cv.style.height = Ht + "px";
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, Ht);
+  const X = i => mL + i * pxH;                   // hour index -> x
+
+  // daylight bar, every 10 minutes
+  for (let m = 0; m < n * 60; m += 10) {
+    const e = sunElev(site.lat, site.lon, tLocal[0] - off + m * 6e4);
+    ctx.fillStyle = e > 0 ? SUN.day : e > -6 ? SUN.twi : SUN.night;
+    ctx.fillRect(X(m / 60), yBar, Math.max(pxH / 6, 0.5) + 0.3, barH);
+  }
+
+  let grid = null;
+  if (heightMode) grid = drawHeight(ctx, lev, n, X, yPlot, plotW, plotH, pxH, mL);
+
+  // low / mid / high strip
+  const strip = document.createElement("canvas"); strip.width = n; strip.height = 3;
+  const sx = strip.getContext("2d"), img = sx.createImageData(n, 3);
+  ["cloud_cover_high", "cloud_cover_mid", "cloud_cover_low"].forEach((k, r) => {
+    for (let i = 0; i < n; i++) {
+      const v = h9[k][i], a = v == null ? 0 : Math.pow(Math.min(1, v / 100), GAMMA), p = (r * n + i) * 4;
+      img.data[p] = mix(C_BG[0], C_CLOUD[0], a); img.data[p + 1] = mix(C_BG[1], C_CLOUD[1], a); img.data[p + 2] = mix(C_BG[2], C_CLOUD[2], a); img.data[p + 3] = 255;
+    }
+  });
+  sx.putImageData(img, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(strip, mL, yStrip, plotW, stripH);
+  ctx.strokeStyle = "#ccc"; ctx.lineWidth = 1; ctx.strokeRect(mL + .5, yStrip + .5, plotW - 1, stripH - 1);
+  ctx.fillStyle = "#555"; ctx.font = "10px IBM Plex Mono, monospace"; ctx.textAlign = "right"; ctx.textBaseline = "middle";
+  ["high", "mid", "low"].forEach((t, r) => ctx.fillText(t, mL - 4, yStrip + (r + 0.5) * stripRowH));
+
+  // day and month lines, labels
+  ctx.textBaseline = "alphabetic"; ctx.textAlign = "center";
+  const bottom = yStrip + stripH;
+  for (let i = 0; i < n; i++) {
+    const d = new Date(tLocal[i]);
+    if (d.getUTCHours() !== 0) continue;
+    const x = Math.round(X(i)) + .5, first = d.getUTCDate() === 1;
+    if (first || pxDay >= 10) {
+      ctx.strokeStyle = first ? "rgba(90,90,90,.75)" : "rgba(150,150,150,.55)"; ctx.lineWidth = first && pxDay < 10 ? 1 : .6;
+      ctx.beginPath(); ctx.moveTo(x, yPlot); ctx.lineTo(x, heightMode ? yPlot + plotH : yPlot); ctx.moveTo(x, yStrip); ctx.lineTo(x, bottom); ctx.stroke();
+      ctx.strokeStyle = "#fff"; ctx.beginPath(); ctx.moveTo(x, yBar); ctx.lineTo(x, yBar + barH); ctx.stroke();
+    }
+    ctx.fillStyle = "#333"; ctx.font = "10px IBM Plex Mono, monospace";
+    if (pxDay >= 18) ctx.fillText(first ? `${MON[d.getUTCMonth()]} 1` : String(d.getUTCDate()), x + pxDay / 2, yBar - 5);
+    else if (first) { ctx.textAlign = "left"; ctx.fillText(`${MON[d.getUTCMonth()]}${d.getUTCMonth() === 0 ? " " + d.getUTCFullYear() : ""}`, x + 3, yBar - 5); ctx.textAlign = "center"; }
+  }
+  if (pxDay < 18 && new Date(tLocal[0]).getUTCDate() !== 1) { ctx.textAlign = "left"; ctx.fillText(MON[new Date(tLocal[0]).getUTCMonth()], mL + 3, yBar - 5); }
+  if (MARK && RANGE) {                          // the display's time, shaded across the gram
+    const [a, b] = MARK.split("/"), utc = /z$/i.test(a);
+    const toIdx = s => (Date.parse(s.replace(/z$/i, "") + ":00Z") + (utc ? (lmh.utc_offset_seconds || 0) * 1000 : 0) - tLocal[0]) / 3.6e6;
+    const i0 = toIdx(a), i1 = Math.max(toIdx(b || a), i0 + 0.5);
+    if (isFinite(i0) && i1 > 0 && i0 < n) {
+      const x0 = X(Math.max(0, i0)), x1 = X(Math.min(n, i1));
+      ctx.fillStyle = "rgba(220, 110, 30, .16)"; ctx.fillRect(x0, yBar, x1 - x0, bottom - yBar);
+      ctx.strokeStyle = "rgba(200, 90, 20, .9)"; ctx.lineWidth = 1.2; ctx.strokeRect(x0 + .5, yBar - 2.5, Math.max(1, x1 - x0 - 1), bottom - yBar + 3);
+      ctx.fillStyle = "rgba(170, 70, 10, 1)"; ctx.font = "600 10px IBM Plex Sans, sans-serif"; ctx.textAlign = "left"; ctx.fillText("display", x0 + 2, yBar - 15);
+    }
+  }
+  ctx.textAlign = "left"; ctx.fillStyle = "#888"; ctx.font = "10px IBM Plex Sans, sans-serif";
+  ctx.fillText(heightMode ? "ECMWF IFS 9 km low / mid / high cloud cover" : "ECMWF IFS 9 km cloud cover", mL, bottom + 14);
+
+  const tz = (lmh.utc_offset_seconds || 0) / 3600, tzs = `UTC${tz >= 0 ? "+" : "−"}${Math.abs(tz)}`;
+  const elev = lev ? lev.elevation : lmh.elevation;
+  const fmt = d => `${d.getUTCDate()} ${MON[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+  $("gramhead").textContent = `${site.name || "Unnamed place"} · ${site.lat.toFixed(2)}, ${site.lon.toFixed(2)} · model ground ${Math.round(elev)} m · ` +
+    `${heightMode ? "IFS 0.25° levels + 9 km bands" : "IFS 9 km"} · ${fmt(site.start)} – ${fmt(site.end)} · local time (${tzs})`;
+
+  // hover
+  const tip = $("tip"), box = $("scroll");
+  cv.onmousemove = ev => {
+    const r = cv.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top;
+    const i = Math.floor((x - mL) / pxH);
+    if (i < 0 || i >= n || y < yBar) { tip.hidden = true; return; }
+    const d = new Date(tLocal[i]);
+    let t = `${d.getUTCDate()} ${MON[d.getUTCMonth()]} ${String(d.getUTCHours()).padStart(2, "0")}:00 · low ${h9.cloud_cover_low[i] ?? "–"} · mid ${h9.cloud_cover_mid[i] ?? "–"} · high ${h9.cloud_cover_high[i] ?? "–"} %`;
+    if (grid && y >= yPlot && y < yPlot + plotH) {
+      const row = Math.floor(y - yPlot), z = Z_TOP - row * DZ, T = grid.T[row * n + i], c = grid.C[row * n + i];
+      t += ` · ${(z / 1000).toFixed(1)} km: ${isNaN(T) ? "–" : T.toFixed(0).replace("-", "−") + " °C"}, cloud ${Math.round(c)} %`;
+    }
+    tip.textContent = t; tip.hidden = false;
+    const br = box.getBoundingClientRect();
+    tip.style.left = Math.min(ev.clientX - br.left + box.scrollLeft + 12, box.scrollLeft + br.width - tip.offsetWidth - 4) + "px";
+    tip.style.top = (ev.clientY - br.top + 14) + "px";
+  };
+  cv.onmouseleave = () => { tip.hidden = true; };
+}
+
+// Heights of the pressure levels above the model ground, from the hypsometric equation:
+// dz = (R T / g) ln(p_lower / p_upper), integrated upward from the surface pressure.
+// (Fetching geopotential height instead would make the request a third larger.)
+function levelHeights(h, i, ground) {
+  const Rd = 287.05, g = 9.80665, out = [];
+  const ps = h.surface_pressure ? h.surface_pressure[i] : null;
+  const lv = LEVELS.map(p => ({ p, t: h[`temperature_${p}hPa`][i], c: h[`cloud_cover_${p}hPa`][i] }))
+    .filter(o => o.t != null).sort((a, b) => b.p - a.p);                    // surface upward
+  if (lv.length < 2) return out;
+  let p0 = ps != null ? ps : 1013.25 * Math.pow(1 - 2.25577e-5 * ground, 5.25588), z0 = ground;
+  const above = lv.filter(o => o.p < p0);
+  if (!above.length) return out;
+  let t0 = above[0].t;                                                     // surface temperature ~ lowest level above ground
+  above.forEach(o => {
+    const tm = (t0 + o.t) / 2 + 273.15;
+    z0 += Rd * tm / g * Math.log(p0 / o.p);
+    out.push({ p: o.p, z: z0, t: o.t, c: o.c == null ? 0 : o.c });
+    p0 = o.p; t0 = o.t;
+  });
+  if (above.length < lv.length) {                                          // levels underground: below the model ground
+    lv.filter(o => o.p >= (ps || 1e9)).forEach(o => out.push({ p: o.p, z: ground - 50 * (o.p - (ps || o.p)) / 5, t: o.t, c: 0 }));
+  }
+  return out;
+}
+
+function drawHeight(ctx, lev, n, X, yPlot, plotW, plotH, pxH, mL) {
+  const h = lev.hourly, rows = plotH, ground = lev.elevation;
+  const zg = Array.from({ length: rows }, (_, r) => Z_TOP - (r + 0.5) * DZ);     // row 0 at the top
+  const zAsc = zg.slice().reverse();
+  const T = new Float32Array(rows * n).fill(NaN), C = new Float32Array(rows * n);
+  const bounds = SIGMA.map(() => new Array(n).fill(NaN));
+  const img = new ImageData(n, rows);
+  for (let i = 0; i < n; i++) {
+    const L = levelHeights(h, i, ground);
+    if (L.length >= 2) {
+      L.sort((a, b) => a.z - b.z);
+      const zl = L.map(o => o.z), tl = L.map(o => o.t), cl = L.map(o => o.c);
+      const cp = cloudProfile(zAsc, zl, cl);
+      for (let r = 0; r < rows; r++) {
+        const z = zg[r], k = r * n + i;
+        T[k] = interp(z, zl, tl);
+        C[k] = cp[rows - 1 - r];
+      }
+      const ps = h.surface_pressure ? h.surface_pressure[i] : null;
+      const lp = L.map(o => Math.log(o.p));                       // falls with height
+      const lps = ps != null ? Math.log(ps) : interp(ground, zl, lp);
+      SIGMA.forEach((s, j) => {
+        const target = lps + Math.log(s);
+        bounds[j][i] = interp(target, lp.slice().reverse(), zl.slice().reverse());
+      });
+    }
+    for (let r = 0; r < rows; r++) {
+      const k = r * n + i, p = (r * n + i) * 4, below = zg[r] < ground;
+      let col = below ? C_GROUND : C_BG;
+      const a = below ? 0 : Math.pow(Math.min(1, Math.max(0, C[k] / 100)), GAMMA);
+      img.data[p] = mix(col[0], C_CLOUD[0], a); img.data[p + 1] = mix(col[1], C_CLOUD[1], a); img.data[p + 2] = mix(col[2], C_CLOUD[2], a); img.data[p + 3] = 255;
+    }
+  }
+  const off = document.createElement("canvas"); off.width = n; off.height = rows;
+  off.getContext("2d").putImageData(img, 0, 0);
+  ctx.imageSmoothingEnabled = true;
+  if (gStyle !== "blocks") ctx.drawImage(off, mL, yPlot, plotW, plotH);
+  else {
+    // One block per pressure level and hour. The level's band reaches halfway to the levels below and above;
+    // the block fills blockH % of it, centred on the level's own height (clipped to the band), so at small
+    // heights each level shrinks to a line at exactly the height where the model gives a value.
+    const yOf = z => yPlot + (Z_TOP - z) / DZ, f = blockH / 100;
+    for (let i = 0; i < n; i++) {
+      const L = levelHeights(h, i, ground).filter(o => o.z >= ground).sort((a, b) => a.z - b.z);
+      const x0 = Math.round(X(i)), cw = Math.max(1, Math.round(X(i + 1)) - x0), w = cw - (pxH >= 4 && f < 1 ? 1 : 0);
+      L.forEach((o, k) => {
+        const lo = k === 0 ? ground : (L[k - 1].z + o.z) / 2, hi = k === L.length - 1 ? o.z + (o.z - lo) : (o.z + L[k + 1].z) / 2;
+        if (lo >= Z_TOP) return;
+        const a = Math.pow(Math.min(1, Math.max(0, o.c / 100)), GAMMA);
+        if (a < 0.02) return;
+        const half = f * (hi - lo) / 2, b0 = Math.max(lo, o.z - half), b1 = Math.min(hi, o.z + half, Z_TOP);
+        const g = Math.round(mix(255, C_CLOUD[0], a));
+        ctx.fillStyle = `rgb(${g},${g},${g})`;
+        const top = Math.round(yOf(b1)), bot = Math.max(top + 1, Math.round(yOf(b0)));
+        ctx.fillRect(x0, top, w, bot - top);
+      });
+      ctx.fillStyle = `rgb(${C_GROUND.join(",")})`;
+      ctx.fillRect(x0, Math.round(yOf(ground)), cw, Math.round(yPlot + plotH - yOf(ground)));
+    }
+  }
+
+  ctx.save();
+  ctx.beginPath(); ctx.rect(mL, yPlot, plotW, plotH); ctx.clip();
+  // ECMWF band boundaries, dashed
+  ctx.strokeStyle = "#8a8a8a"; ctx.lineWidth = .8; ctx.setLineDash([4, 3]);
+  bounds.forEach(b => {
+    ctx.beginPath(); let pen = false;
+    b.forEach((z, i) => { if (isNaN(z)) { pen = false; return; } const x = X(i + .5), y = yPlot + (Z_TOP - z) / DZ; pen ? ctx.lineTo(x, y) : ctx.moveTo(x, y); pen = true; });
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
+  // isotherms by contouring a padded grid (the padding keeps the grid edge out of the drawing)
+  const gw = n + 2, gh = rows + 2, G = new Float64Array(gw * gh);
+  for (let r = 0; r < gh; r++) for (let c = 0; c < gw; c++) {
+    const rr = Math.min(rows - 1, Math.max(0, r - 1)), cc = Math.min(n - 1, Math.max(0, c - 1));
+    let v = T[rr * n + cc];
+    if (isNaN(v)) v = -999;
+    G[r * gw + c] = v;
+  }
+  const sx = pxH, sy = 1, path = ctx => (ring) => { ring.forEach((pt, j) => { const x = mL + (pt[0] - 1) * sx, y = yPlot + (pt[1] - 1) * sy; j ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); };
+  ctx.strokeStyle = "rgba(43,43,43,.8)"; ctx.lineWidth = .9;
+  const cont = d3.contours().size([gw, gh]).thresholds(ISOTHERMS.slice().sort((a, b) => a - b))(Array.from(G));
+  cont.forEach(c => {
+    ctx.beginPath();
+    c.coordinates.forEach(poly => poly.forEach(path(ctx)));
+    ctx.stroke();
+  });
+  ctx.restore();
+  // isotherm labels at the right edge
+  ctx.fillStyle = "#333"; ctx.font = "10px IBM Plex Mono, monospace"; ctx.textAlign = "right";
+  ISOTHERMS.forEach(iso => {
+    const i = n - 1; let best = null;
+    for (let r = rows - 1; r > 0; r--) { const a = T[r * n + i], b = T[(r - 1) * n + i]; if ((a - iso) * (b - iso) <= 0 && zg[r] >= ground) { best = r; break; } }
+    if (best != null) ctx.fillText(`${iso}°`.replace("-", "−"), mL + plotW - 3, yPlot + best - 3);
+  });
+  ctx.fillStyle = "#777"; ctx.font = "9px IBM Plex Sans, sans-serif";
+  bounds.forEach((b, j) => { const z = b[n - 1]; if (!isNaN(z)) ctx.fillText(j ? "mid | high" : "low | mid", mL + plotW - 40, yPlot + (Z_TOP - z) / DZ - 3); });
+  // height axis
+  ctx.strokeStyle = "#bbb"; ctx.lineWidth = 1; ctx.strokeRect(mL + .5, yPlot + .5, plotW - 1, plotH - 1);
+  ctx.fillStyle = "#555"; ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.font = "10px IBM Plex Mono, monospace";
+  for (let km = 0; km <= Z_TOP / 1000; km += 2) ctx.fillText(String(km), mL - 5, yPlot + (Z_TOP - km * 1000) / DZ);
+  ctx.save(); ctx.translate(10, yPlot + plotH / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = "center"; ctx.fillText("km", 0, 0); ctx.restore();
+  ctx.textBaseline = "alphabetic";
+  return { T, C };
+}
+
+if (P.get("lat") && P.get("lon") && P.get("auto") !== "0") draw();
+</script>
+</body>
+</html>

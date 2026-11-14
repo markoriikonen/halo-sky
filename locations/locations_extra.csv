@@ -1,0 +1,1103 @@
+name,lat,lon,elev_m,country,population
+"Farah, Afghanistan",32.3745,62.1164,,Afghanistan,43561
+"Herat, Afghanistan",34.348,62.2,,Afghanistan,272806
+"Khandūd, Afghanistan",36.9513,72.318,,Afghanistan,5521
+"Lashkar Gah, Afghanistan",31.594,64.372,,Afghanistan,43934
+"Maymana, Afghanistan",35.921,64.784,,Afghanistan,75900
+"Mazār-e Sharīf, Afghanistan",36.709,67.1109,,Afghanistan,303282
+"Taloqan, Afghanistan",36.736,69.5345,,Afghanistan,64256
+"Tarinkot, Afghanistan",32.63,65.878,,Afghanistan,10000
+"Āsmār, Afghanistan",35.0333,71.3581,,Afghanistan,15708
+"Albany, Australia",-35.0269,117.8837,,Australia,33650
+"Albury, Australia",-36.0748,146.924,,Australia,5323
+"Ballarat, Australia",-37.5662,143.8496,,Australia,97937
+"Ballina, Australia",-28.8641,153.5654,,Australia,8911
+"Barcaldine, Australia",-23.5535,145.2854,,Australia,1638
+"Birdsville, Australia",-25.899,139.352,,Australia,0
+"Borroloola, Australia",-16.07,136.307,,Australia,0
+"Bourke, Australia",-30.0901,145.9365,,Australia,2029
+"Broken Hill, Australia",-31.9652,141.4512,,Australia,18027
+"Broome, Australia",-17.9554,122.2392,,Australia,5314
+"Bunbury, Australia",-33.3271,115.6414,,Australia,68248
+"Bundaberg, Australia",-24.8662,152.3479,,Australia,70826
+"Cairns, Australia",-16.9237,145.7661,,Australia,153075
+"Camooweal, Australia",-19.921,138.119,,Australia,0
+"Carnarvon, Australia",-24.8826,113.6571,,Australia,7392
+"Ceduna, Australia",-32.1266,133.6727,,Australia,2091
+"Charleville, Australia",-26.4054,146.2427,,Australia,3515
+"Cloncurry, Australia",-20.7072,140.513,,Australia,3810
+"Cobar, Australia",-31.4967,145.8344,,Australia,4173
+"Coffs Harbour, Australia",-30.2963,153.1135,,Australia,26672
+"Cooktown, Australia",-15.4657,145.2498,,Australia,3173
+"Daly Waters, Australia",-16.254,133.369,,Australia,0
+"Dubbo, Australia",-32.243,148.6048,,Australia,39863
+"Emerald, Australia",-23.523,148.1578,,Australia,14536
+"Esperance, Australia",-33.8592,121.8916,,Australia,2263
+"Eucla, Australia",-31.677,128.882,,Australia,0
+"Exmouth, Australia",-21.9306,114.1209,,Australia,3692
+"Fitzroy Crossing, Australia",-18.1971,125.5666,,Australia,1783
+"Geraldton, Australia",-28.779,114.6146,,Australia,26872
+"Giles, Australia",-25.034,128.301,,Australia,0
+"Griffith, Australia",-34.2885,146.0509,,Australia,18154
+"Halls Creek, Australia",-18.2248,127.6665,,Australia,1734
+"Hay, Australia",-34.509,144.8431,,Australia,2369
+"Hughenden, Australia",-20.844,144.2003,,Australia,1253
+"Innamincka, Australia",-27.746,140.742,,Australia,0
+"Kalbarri, Australia",-27.7105,114.165,,Australia,2602
+"Kalgoorlie, Australia",-30.7461,121.4742,,Australia,4189
+"Kalumburu, Australia",-14.296,126.64,,Australia,0
+"Karratha, Australia",-20.7376,116.8463,,Australia,11728
+"Katherine, Australia",-14.4652,132.2635,,Australia,2187
+"Kingscote, Australia",-35.6559,137.6393,,Australia,1816
+"Kintore, Australia",-23.267,129.385,,Australia,0
+"Kununurra, Australia",-15.7782,128.7421,,Australia,6836
+"Launceston, Australia",-41.4388,147.1347,,Australia,106153
+"Leonora, Australia",-28.8851,121.3307,,Australia,1267
+"Lightning Ridge, Australia",-29.4274,147.9786,,Australia,2636
+"Longreach, Australia",-23.4421,144.2492,,Australia,3690
+"Mackay, Australia",-21.1534,149.1655,,Australia,74219
+"Marree, Australia",-29.648,138.064,,Australia,0
+"Meekatharra, Australia",-26.594,118.496,,Australia,0
+"Mildura, Australia",-34.1855,142.1625,,Australia,32936
+"Moree, Australia",-29.4628,149.8416,,Australia,9779
+"Mount Gambier, Australia",-37.8318,140.7792,,Australia,25030
+"Mount Magnet, Australia",-28.063,117.846,,Australia,0
+"Newcastle, Australia",-32.9295,151.7801,,Australia,308308
+"Newman, Australia",-23.3564,119.7355,,Australia,12316
+"Nhulunbuy, Australia",-12.1816,136.7784,,Australia,3397
+"Normanton, Australia",-17.6718,141.0772,,Australia,1555
+"Norseman, Australia",-32.197,121.779,,Australia,0
+"Nowra, Australia",-34.8842,150.6004,,Australia,9598
+"Onslow, Australia",-21.6376,115.1122,,Australia,1157
+"Oodnadatta, Australia",-27.547,135.447,,Australia,0
+"Orange, Australia",-33.284,149.1002,,Australia,38408
+"Port Augusta, Australia",-32.496,137.7728,,Australia,6469
+"Port Lincoln, Australia",-34.7263,135.8744,,Australia,13810
+"Port Macquarie, Australia",-31.4308,152.9089,,Australia,45692
+"Quilpie, Australia",-26.613,144.267,,Australia,0
+"Rockhampton, Australia",-23.3803,150.506,,Australia,61724
+"Roma, Australia",-26.5674,148.7875,,Australia,7105
+"Shepparton, Australia",-36.3805,145.3987,,Australia,31148
+"Smithton, Australia",-40.8459,145.125,,Australia,3815
+"Southern Cross, Australia",-31.231,119.327,,Australia,0
+"St George, Australia",-27.9476,148.6099,,Australia,3124
+"Tamworth, Australia",-31.0905,150.929,,Australia,47597
+"Tennant Creek, Australia",-19.6497,134.1915,,Australia,3166
+"Thargomindah, Australia",-27.993,143.821,,Australia,0
+"Tom Price, Australia",-22.6939,117.7931,,Australia,3313
+"Toowoomba, Australia",-27.5606,151.9539,,Australia,131258
+"Traralgon, Australia",-38.1953,146.5415,,Australia,24605
+"Wagga Wagga, Australia",-35.1258,147.3537,,Australia,7690
+"Warrnambool, Australia",-38.3818,142.488,,Australia,29176
+"Weipa, Australia",-12.6235,141.8788,,Australia,2830
+"Wilcannia, Australia",-31.558,143.379,,Australia,0
+"Wiluna, Australia",-26.5921,120.224,,Australia,1432
+"Windorah, Australia",-25.421,142.656,,Australia,0
+"Winton, Australia",-22.3819,143.0424,,Australia,1238
+"Woomera, Australia",-31.198,136.825,,Australia,0
+"Yuendumu, Australia",-22.255,131.795,,Australia,0
+"Yulara, Australia",-25.2406,130.9889,,Australia,2244
+"Linz, Austria",48.3064,14.2861,,Austria,204846
+"Buynichy, Belarus",53.8536,30.2671,,Belarus,4000
+"Haradok, Belarus",55.4624,29.9845,,Belarus,13380
+"Homyel', Belarus",52.4345,30.9754,,Belarus,480951
+"Pinsk, Belarus",52.1229,26.0951,,Belarus,130777
+"Djougou, Benin",9.7085,1.666,,Benin,237040
+"Kandi, Benin",11.1342,2.9386,,Benin,109701
+"Alta Floresta, Brazil",-9.8756,-56.0861,,Brazil,0
+"Altamira, Brazil",-3.2033,-52.2064,,Brazil,70888
+"Araguaína, Brazil",-7.1911,-48.2072,,Brazil,105019
+"Barra do Garças, Brazil",-15.89,-52.2567,,Brazil,52398
+"Barreiras, Brazil",-12.1528,-44.99,,Brazil,158292
+"Bom Jesus da Lapa, Brazil",-13.255,-43.4181,,Brazil,40691
+"Coari, Brazil",-4.085,-63.1414,,Brazil,50490
+"Corumbá, Brazil",-19.0092,-57.6533,,Brazil,96520
+"Cruzeiro do Sul, Brazil",-7.6276,-72.6776,,Brazil,79819
+"Cáceres, Brazil",-16.071,-57.679,,Brazil,0
+"Eirunepé, Brazil",-6.6603,-69.8736,,Brazil,17175
+"Floriano, Brazil",-6.7669,-43.0225,,Brazil,48587
+"Humaitá, Brazil",-7.5165,-63.0311,,Brazil,31206
+"Imperatriz, Brazil",-5.5264,-47.4917,,Brazil,218106
+"Itaituba, Brazil",-4.2761,-55.9836,,Brazil,64756
+"Jacareacanga, Brazil",-6.2222,-57.7528,,Brazil,1402
+"Lábrea, Brazil",-7.259,-64.799,,Brazil,0
+"Marabá, Brazil",-5.3815,-49.1323,,Brazil,145860
+"Montes Claros, Brazil",-16.735,-43.8617,,Brazil,332379
+"Parintins, Brazil",-2.6283,-56.7358,,Brazil,64428
+"Picos, Brazil",-7.0769,-41.4669,,Brazil,57495
+"Rio Verde, Brazil",-17.7981,-50.9281,,Brazil,229651
+"Santarém, Brazil",-2.4431,-54.7083,,Brazil,189047
+"Sinop, Brazil",-11.8642,-55.5025,,Brazil,116013
+"São Félix do Xingu, Brazil",-6.6447,-51.995,,Brazil,16477
+"Tefé, Brazil",-3.3684,-64.7205,,Brazil,44942
+"Uberlândia, Brazil",-18.9186,-48.2772,,Brazil,563536
+"Vilhena, Brazil",-12.7406,-60.1458,,Brazil,63231
+"Stara Zagora, Bulgaria",42.4328,25.6419,,Bulgaria,143431
+"Varna, Bulgaria",43.2167,27.9167,,Bulgaria,312770
+"Battambang, Cambodia",13.1027,103.1982,,Cambodia,150444
+"Kampong Thom, Cambodia",12.7111,104.8887,,Cambodia,19951
+"Koh Kong, Cambodia",11.6153,102.9838,,Cambodia,33134
+"Sihanoukville, Cambodia",10.6093,103.5296,,Cambodia,156691
+"Stung Treng, Cambodia",13.5259,105.9683,,Cambodia,25000
+"Bamenda, Cameroon",5.9597,10.146,,Cameroon,393835
+"Banyo, Cameroon",6.75,11.8167,,Cameroon,40798
+"Bertoua, Cameroon",4.5773,13.6846,,Cameroon,218111
+"Ngaoundéré, Cameroon",7.3277,13.5847,,Cameroon,231357
+"Yaoundé, Cameroon",3.8667,11.5167,,Cameroon,1299369
+"Attawapiskat, Canada",52.9277,-82.4167,,Canada,1501
+"Bathurst, Canada",47.6181,-65.6511,,Canada,12714
+"Belleville, Canada",44.1668,-77.3828,,Canada,49454
+"Brandon, Canada",49.8469,-99.9531,,Canada,26234
+"Burns Lake, Canada",54.2297,-125.7608,,Canada,2635
+"Calgary, Canada",51.0501,-114.0853,,Canada,1019942
+"Carlyle, Canada",49.6333,-102.2677,,Canada,1177
+"Channel-Port aux Basques, Canada",47.5729,-59.1381,,Canada,4220
+"Chibougamau, Canada",49.9168,-74.3659,,Canada,7563
+"Corner Brook, Canada",48.95,-57.952,,Canada,18693
+"Cranbrook, Canada",49.4999,-115.7688,,Canada,18610
+"Deep River, Canada",46.1001,-77.4995,,Canada,4296
+"Fort Frances, Canada",48.6167,-93.4003,,Canada,7931
+"Fort McMurray, Canada",56.7268,-111.381,,Canada,76000
+"Fort Nelson, Canada",58.8053,-122.7002,,Canada,4514
+"Fort St. John, Canada",56.2499,-120.8529,,Canada,17402
+"Gaspé, Canada",48.8334,-64.4819,,Canada,14819
+"Godefroy, Canada",51.7501,-68.0821,,Canada,1410
+"Grand Falls-Windsor, Canada",48.9332,-55.6649,,Canada,12076
+"Grande Prairie, Canada",55.1667,-118.8027,,Canada,41462
+"Greater Sudbury, Canada",46.49,-80.99,,Canada,157857
+"Greenstone, Canada",49.7334,-87.1667,,Canada,4200
+"Hanna, Canada",51.6334,-111.9018,,Canada,3140
+"Happy Valley-Goose Bay, Canada",53.3038,-60.3258,,Canada,7572
+"Havre-Saint-Pierre, Canada",50.2434,-63.6026,,Canada,2966
+"Hearst, Canada",49.6835,-83.6665,,Canada,4746
+"High Level, Canada",58.5169,-117.136,,Canada,3621
+"Hinton, Canada",53.4001,-117.5857,,Canada,9889
+"Huntsville, Canada",45.3334,-79.2163,,Canada,19579
+"Kelowna, Canada",49.8831,-119.4857,,Canada,125109
+"Kenora, Canada",49.7674,-94.4899,,Canada,15096
+"Kindersley, Canada",51.4668,-109.1682,,Canada,4249
+"La Ronge, Canada",55.1001,-105.2842,,Canada,5671
+"Labrador City, Canada",52.9463,-66.9114,,Canada,10313
+"Lac La Biche, Canada",54.7669,-111.9686,,Canada,2919
+"Leamington, Canada",42.0501,-82.5998,,Canada,32991
+"Lethbridge, Canada",49.7,-112.8186,,Canada,70617
+"Lillooet, Canada",50.6856,-121.942,,Canada,2324
+"Lloydminster, Canada",53.2724,-110.0226,,Canada,31400
+"London, Canada",42.9834,-81.233,,Canada,346765
+"Mackenzie, Canada",55.3364,-123.0937,,Canada,3262
+"Manawan, Canada",47.2203,-74.3861,,Canada,1648
+"Matagami, Canada",49.7502,-77.6328,,Canada,1966
+"Medicine Hat, Canada",50.0393,-110.6766,,Canada,63138
+"Melfort, Canada",52.8667,-104.6177,,Canada,5778
+"Montréal, Canada",45.5088,-73.5878,,Canada,1600000
+"Owen Sound, Canada",44.5672,-80.9435,,Canada,22625
+"Peace River, Canada",56.2371,-117.2918,,Canada,5340
+"Prince George, Canada",53.9166,-122.753,,Canada,65558
+"Red Lake, Canada",51.0668,-93.7337,,Canada,1177
+"Revelstoke, Canada",50.9971,-118.1953,,Canada,7533
+"Rimouski, Canada",48.4488,-68.524,,Canada,42240
+"Rocky Mountain House, Canada",52.3668,-114.9188,,Canada,6527
+"Saguenay, Canada",48.4168,-71.0657,,Canada,143692
+"Saint-Augustin, Canada",51.226,-58.6502,,Canada,3961
+"Sault Ste. Marie, Canada",46.5168,-84.3333,,Canada,66313
+"Sept-Îles, Canada",50.2001,-66.3821,,Canada,22582
+"Sioux Lookout, Canada",50.0668,-91.9836,,Canada,2941
+"St. Anthony, Canada",51.3704,-55.5974,,Canada,2049
+"Swift Current, Canada",50.2834,-107.8013,,Canada,14703
+"Sydney, Canada",46.1351,-60.1831,,Canada,105968
+"Terrace, Canada",54.5163,-128.6035,,Canada,19443
+"The Pas, Canada",53.8251,-101.2541,,Canada,6055
+"Thompson, Canada",55.7435,-97.8558,,Canada,12467
+"Thunder Bay, Canada",48.382,-89.2502,,Canada,99334
+"Timmins, Canada",48.4669,-81.3331,,Canada,42997
+"Val-d'Or, Canada",48.0974,-77.7974,,Canada,25541
+"Vernon, Canada",50.0261,-126.3616,,Canada,48073
+"Waskaganish, Canada",51.4833,-78.75,,Canada,1839
+"Wawa, Canada",47.9888,-84.7741,,Canada,2610
+"Whitecourt, Canada",54.1501,-115.6855,,Canada,8763
+"Williams Lake, Canada",52.1415,-122.1445,,Canada,14168
+"Yarmouth, Canada",43.8334,-66.1156,,Canada,7500
+"Yorkton, Canada",51.2167,-102.4677,,Canada,15669
+"Aksu, China",41.1842,80.2792,,China,340020
+"Ankang, China",32.68,109.0172,,China,132654
+"Anqing, China",30.5136,117.0472,,China,358661
+"Aral, China",40.5418,81.2657,,China,260000
+"Baicheng, China",45.6075,122.8208,,China,316970
+"Baihe, China",22.1343,107.232,,China,63629
+"Baise City, China",23.8997,106.6133,,China,90603
+"Baluntaicun, China",42.6684,86.3242,,China,5300
+"Baoding, China",38.8511,115.4903,,China,995652
+"Bayan Nur, China",40.7414,107.386,,China,1760000
+"Beihai, China",21.4833,109.1,,China,289568
+"Bei’an, China",48.2667,126.6,,China,436444
+"Bengbu, China",32.9408,117.3608,,China,576648
+"Bianzhuang, China",34.8486,118.0447,,China,65381
+"Binzhou, China",37.3667,118.0167,,China,115893
+"Burang, China",30.2956,81.1751,,China,5026
+"Changde, China",29.0321,111.6984,,China,517780
+"Changling, China",44.2653,124.0005,,China,55841
+"Chengde, China",40.9519,117.9588,,China,449325
+"Chengyang, China",35.5794,118.8328,,China,66588
+"Chenzhou, China",25.8,113.0333,,China,179038
+"Chifeng, China",42.2683,118.9636,,China,346654
+"Dadonghai, China",18.2206,109.5103,,China,2000000
+"Dadukou, China",26.5479,101.7054,,China,461513
+"Dali, China",25.5847,100.2123,,China,134040
+"Dalian, China",38.9122,121.6022,,China,4087733
+"Dandong, China",40.1292,124.3947,,China,631973
+"Daqing, China",46.5833,125,,China,203488
+"Datong, China",40.0936,113.2914,,China,1052678
+"Dazuocun, China",24.8882,118.9672,,China,9580
+"Dongfeng, China",42.6403,125.5118,,China,67820
+"Donghai, China",22.9459,115.642,,China,188602
+"Dongning, China",44.0622,131.1207,,China,61440
+"Dundong, China",26.0119,109.141,,China,1722
+"Dunhua, China",43.3725,128.2425,,China,148844
+"Enshi, China",30.3,109.4833,,China,95227
+"Erenhot, China",43.6475,111.9767,,China,16427
+"Fenghuang, China",27.9356,109.5996,,China,370000
+"Fuxin, China",42.0156,121.6589,,China,689050
+"Fuyang, China",32.9,115.8167,,China,170023
+"Fuyu, China",45.1833,124.8167,,China,138704
+"Fu’an, China",27.0637,119.6528,,China,71053
+"Gantang, China",26.7156,109.7689,,China,24000
+"Genhe, China",50.7833,121.5167,,China,73631
+"Guandu, China",28.5683,106.1025,,China,2064
+"Guangyuan, China",32.442,105.823,,China,213365
+"Guilin, China",25.2819,110.2864,,China,649352
+"Guli, China",28.8816,120.0331,,China,536000
+"Guozhen, China",34.3659,107.359,,China,85415
+"Hailar, China",49.2,119.7,,China,211066
+"Hami, China",42.8339,93.506,,China,137072
+"Hancheng, China",35.4603,110.4292,,China,58049
+"Handan, China",36.6006,114.4678,,China,1358318
+"Hanzhong, China",33.0751,107.0221,,China,145986
+"Hegang, China",47.3512,130.3001,,China,743307
+"Hengshui, China",37.7322,115.7011,,China,456356
+"Hengyang, China",26.8895,112.6189,,China,759602
+"Heyuan, China",23.7333,114.6833,,China,93718
+"Hoxtolgay, China",46.5187,86.0021,,China,22000
+"Huadian, China",42.9633,126.7478,,China,139047
+"Huai'an, China",33.5886,119.0192,,China,555230
+"Huayin, China",34.5653,110.0664,,China,242488
+"Huocheng, China",44.053,80.8717,,China,360000
+"Jalai Nur, China",49.45,117.7,,China,107828
+"Jiagedaqi, China",50.4167,124.1167,,China,135760
+"Jianshui, China",24.2774,101.224,,China,490000
+"Jiayuguan, China",39.8112,98.2862,,China,122396
+"Jiexiu, China",37.0244,111.9125,,China,77178
+"Jingdezhen, China",29.2947,117.2079,,China,310565
+"Jinghong, China",21.991,100.7341,,China,62105
+"Jining, China",35.405,116.5814,,China,450327
+"Jining, China (2)",41.0275,113.1058,,China,258757
+"Jinzhou, China",41.1078,121.1417,,China,604269
+"Jiujiang, China",29.7048,116.0021,,China,258807
+"Jixi, China",45.3011,130.9572,,China,403759
+"Ji’an, China",27.1172,114.9793,,China,245000
+"Juegang, China",32.3174,121.1855,,China,73317
+"Kaiyuan, China",23.6977,103.3037,,China,198423
+"Kangding, China",30.0022,101.9569,,China,100000
+"Karamay, China",45.5847,84.8872,,China,260000
+"Korla, China",41.7606,86.1523,,China,179465
+"Kuqa, China",41.7171,82.9306,,China,68105
+"Lengshuitan, China",26.4111,111.5956,,China,88935
+"Leshan, China",29.5623,103.7639,,China,154477
+"Lianzhou, China",24.7819,112.3712,,China,92827
+"Lijiang, China",26.8688,100.2207,,China,1137600
+"Linfen, China",36.0889,111.5189,,China,232566
+"Lingyuan, China",41.24,119.4011,,China,91418
+"Linhai, China",28.8554,121.1447,,China,152937
+"Liupanshui, China",26.5944,104.8333,,China,251900
+"Loudi, China",27.7344,111.9944,,China,150684
+"Luorong, China",24.4058,109.6086,,China,67593
+"Luoyang, China",34.6836,112.4536,,China,1390581
+"Meizhou, China",24.2886,116.1177,,China,144212
+"Mianyang, China",31.4678,104.6817,,China,264136
+"Mudanjiang, China",44.5833,129.6,,China,665915
+"Nagqu, China",31.4768,92.0573,,China,30000
+"Nanchong, China",30.7951,106.0847,,China,7150000
+"Nanyang, China",32.9947,112.5328,,China,251532
+"Nehe, China",48.4833,124.8333,,China,108253
+"Ningbo, China",29.8782,121.5494,,China,3491597
+"Ordos, China",39.6086,109.7816,,China,1940653
+"Pingdingshan, China",33.7385,113.3012,,China,889675
+"Pingliang, China",35.5392,106.6861,,China,108156
+"Pingnan, China",23.5422,110.3895,,China,62483
+"Pingxiang, China",27.6167,113.8535,,China,372123
+"Puyang Chengguanzhen, China",35.7051,115.0141,,China,666322
+"Qamdo, China",31.1304,97.1798,,China,86280
+"Qingdao, China",36.0649,120.3804,,China,3718835
+"Qinhuangdao, China",39.9317,119.5883,,China,759718
+"Qiqihar, China",47.3409,123.9604,,China,882364
+"Qujing, China",25.4833,103.7833,,China,146015
+"Quzhou, China",28.9594,118.8686,,China,82216
+"Rikaze, China",29.25,88.8833,,China,80000
+"Saga, China",29.3237,85.226,,China,3765
+"Sanming, China",26.2486,117.6186,,China,209444
+"Shache, China",38.4167,77.2406,,China,82509
+"Shangqiu, China",34.45,115.65,,China,181218
+"Shangrao, China",28.4518,117.9429,,China,318769
+"Shangri-La, China",27.8251,99.7078,,China,130000
+"Shangzhi, China",45.2141,127.9743,,China,82419
+"Shantou, China",23.3681,116.7148,,China,5329024
+"Shaoguan, China",24.8,113.5833,,China,628749
+"Shaowu, China",27.3409,117.4831,,China,112585
+"Shashi, China",30.3072,112.2447,,China,498780
+"Shihezi, China",44.3023,86.0369,,China,572772
+"Shijiang, China",27.0819,110.7933,,China,9330
+"Shiqian, China",27.5225,108.2281,,China,9571
+"Shiyan, China",32.6475,110.7781,,China,3460000
+"Shuangyashan, China",46.6361,131.1539,,China,600000
+"Siping, China",43.1614,124.3778,,China,555609
+"Songjianghe, China",42.1859,127.4789,,China,67672
+"Suihua, China",46.6395,126.9951,,China,252245
+"Tahe, China",52.3333,124.7333,,China,60874
+"Tangshan, China",39.6333,118.1833,,China,3372102
+"Tianshui, China",34.5795,105.7424,,China,3500000
+"Tonghua, China",41.7197,125.9264,,China,510000
+"Tongliao, China",43.6125,122.2653,,China,261110
+"Tongshan, China",34.1805,117.1571,,China,1199193
+"Turpan, China",42.9477,89.1789,,China,254900
+"Wanning, China",18.7993,110.3841,,China,64954
+"Wanxian, China",30.8154,108.3709,,China,188980
+"Weifang, China",36.71,119.1019,,China,394732
+"Wenshan City, China",23.3631,104.2505,,China,450000
+"Wenzhou, China",27.9994,120.6668,,China,865672
+"Wuhai, China",39.6844,106.8158,,China,218427
+"Wuwei, China",37.9267,102.632,,China,493092
+"Wuxi, China",31.5689,120.2886,,China,3543719
+"Xiamen, China",24.4798,118.0819,,China,3531347
+"Xiangyang, China",32.0422,112.1448,,China,462956
+"Xichang, China",27.8964,102.2634,,China,126787
+"Xinpu, China",34.5997,119.1594,,China,392444
+"Xintai, China",35.9006,117.7519,,China,222459
+"Xinyang, China",32.1228,114.0656,,China,1590668
+"Xinyuan, China",43.4265,83.2496,,China,300000
+"Xuanzhou, China",30.9525,118.7553,,China,127758
+"Yancheng, China",33.3575,120.1573,,China,628441
+"Yangjiang, China",21.8556,111.9627,,China,399735
+"Yanji, China",42.9075,129.5078,,China,326957
+"Yantai, China",37.4765,121.4408,,China,719332
+"Yichang, China",30.7144,111.2847,,China,476725
+"Yichun, China",47.7214,128.8753,,China,155762
+"Yilan, China",46.3162,129.5546,,China,71180
+"Yingkou, China",40.6648,122.2283,,China,591159
+"Yueyang, China",29.3745,113.0948,,China,1200000
+"Yulin, China",22.6333,110.15,,China,148485
+"Yulinshi, China",38.2918,109.7375,,China,90870
+"Yunfu, China",22.9283,112.0395,,China,2612800
+"Yushan, China",26.9086,118.5671,,China,2640
+"Yushu, China",44.8,126.5333,,China,124736
+"Zangguy, China",37.2833,78.7667,,China,13027
+"Zhalantun, China",48.0095,122.7365,,China,132224
+"Zhangjiajie, China",29.1294,110.4783,,China,86083
+"Zhangjiakou, China",40.81,114.8794,,China,692602
+"Zhangye, China",38.9342,100.4517,,China,100000
+"Zhaotong, China",27.3167,103.7167,,China,109400
+"Zhongshan, China",21.3199,110.5723,,China,3121275
+"Zhongshu, China",24.5167,103.7667,,China,91750
+"Zhongxiang, China",31.1661,112.5831,,China,108883
+"Zhoukou, China",33.6333,114.6333,,China,377061
+"Zhuanghe, China",39.7008,122.9911,,China,80384
+"Zigong, China",29.3416,104.7769,,China,689961
+"Zunyi, China",27.6867,106.9072,,China,466292
+"Mali Lošinj, Croatia",44.5306,14.4686,,Croatia,3400
+"Split, Croatia",43.5089,16.4392,,Croatia,176314
+"Olomouc, Czechia",49.5955,17.2518,,Czechia,101268
+"Bouaké, Côte d'Ivoire",7.6939,-5.0303,,Côte d'Ivoire,567481
+"Bouna, Côte d'Ivoire",9.2693,-2.9951,,Côte d'Ivoire,23570
+"Korhogo, Côte d'Ivoire",9.458,-5.6296,,Côte d'Ivoire,167359
+"Man, Côte d'Ivoire",7.4125,-7.5538,,Côte d'Ivoire,139341
+"Odienné, Côte d'Ivoire",9.5051,-7.5643,,Côte d'Ivoire,49857
+"San-Pédro, Côte d'Ivoire",4.7485,-6.6363,,Côte d'Ivoire,196751
+"Århus, Denmark",56.1567,10.2108,,Denmark,237551
+"Abu Simbel, Egypt",22.3457,31.6162,,Egypt,5000
+"East Uweinat, Egypt",22.45,28.65,,Egypt,0
+"Mut (Dakhla Oasis), Egypt",25.495,28.979,,Egypt,0
+"Qaşr al Farāfirah, Egypt",27.0568,27.9698,,Egypt,5000
+"Siwa Oasis, Egypt",29.2032,25.5196,,Egypt,7000
+"San Antonio de Palé, Equatorial Guinea",-1.4068,5.6318,,Equatorial Guinea,4433
+"Assab, Eritrea",13.0092,42.7394,,Eritrea,21300
+"Massawa, Eritrea",15.6081,39.4746,,Eritrea,23100
+"Karksi-Nuia, Estonia",58.1033,25.5628,,Estonia,1986
+"Kuressaare, Estonia",58.2481,22.5039,,Estonia,14921
+"Gode, Ethiopia",5.952,43.552,,Ethiopia,0
+"Kebri Dahar, Ethiopia",6.736,44.276,,Ethiopia,0
+"Joensuu, Finland",62.6012,29.7632,,Finland,53388
+"Jyväskylä, Finland",62.2415,25.7209,,Finland,85026
+"Kokkola, Finland",63.8385,23.1307,,Finland,35586
+"Kotka, Finland",60.4664,26.9458,,Finland,54616
+"Kristinestad, Finland",62.2743,21.376,,Finland,7712
+"Kuusamo, Finland",65.9667,29.1833,,Finland,17400
+"Muonio, Finland",67.95,23.7,,Finland,2412
+"Oulu, Finland",65.0124,25.4682,,Finland,128618
+"Sotkamo, Finland",64.1333,28.4167,,Finland,10368
+"Tampere, Finland",61.4991,23.7871,,Finland,202687
+"Utsjoki, Finland",69.9086,27.0284,,Finland,1401
+"Bordeaux, France",44.8404,-0.5805,,France,231844
+"Bourges, France",47.0833,2.4,,France,67987
+"Brest, France",48.3903,-4.4863,,France,144899
+"Béziers, France",43.3412,3.214,,France,74081
+"Calais, France",50.9519,1.8563,,France,74433
+"Corte, France",42.3096,9.1492,,France,7217
+"Dijon, France",47.3167,5.0167,,France,149782
+"Frignicourt, France",48.6997,4.5915,,France,1778
+"Le Havre, France",49.4938,0.1077,,France,185972
+"Le Mans, France",48.0004,0.2047,,France,144515
+"Limoges, France",45.8336,1.2476,,France,141176
+"Lyon, France",45.7485,4.8467,,France,472317
+"Marseille, France",43.297,5.3811,,France,794811
+"Montauban, France",44.0182,1.3643,,France,52434
+"Nantes, France",47.2172,-1.5534,,France,277269
+"Pau, France",43.3112,-0.3558,,France,82697
+"Saint-Dié-des-Vosges, France",48.2843,6.9492,,France,24628
+"Saint-Flour, France",45.0337,3.093,,France,7499
+"Franceville, Gabon",-1.6333,13.5836,,Gabon,42967
+"Mouila, Gabon",-1.8685,11.0559,,Gabon,22469
+"Oyem, Gabon",1.5995,11.5793,,Gabon,30870
+"Bielefeld, Germany",52.0333,8.5333,,Germany,331906
+"Emden, Germany",53.3674,7.2078,,Germany,51526
+"Frankfurt am Main, Germany",50.1155,8.6842,,Germany,650000
+"Halle (Saale), Germany",51.4816,11.9795,,Germany,234107
+"Hamburg, Germany",53.5507,9.993,,Germany,1739117
+"Köln, Germany",50.9333,6.95,,Germany,963395
+"Munich, Germany",48.1374,11.5755,,Germany,1260391
+"Nürnberg, Germany",49.4542,11.0775,,Germany,499237
+"Rostock, Germany",54.0887,12.1405,,Germany,198293
+"Stuttgart, Germany",48.7823,9.177,,Germany,589793
+"Westerland, Germany",54.9079,8.3033,,Germany,8967
+"Axim, Ghana",4.8664,-2.2418,,Ghana,24500
+"Kumasi, Ghana",6.6885,-1.6244,,Ghana,1468609
+"Tamale, Ghana",9.4008,-0.8393,,Ghana,360579
+"Alexandroupoli, Greece",40.8499,25.8764,,Greece,52979
+"Gýtheio, Greece",36.755,22.5642,,Greece,4279
+"Ioánnina, Greece",39.6649,20.8519,,Greece,65574
+"Irákleion, Greece",35.3279,25.1434,,Greece,137154
+"Mytilene, Greece",39.1077,26.5553,,Greece,28322
+"Mytilinioí, Greece",37.7272,26.9075,,Greece,1982
+"Náxos, Greece",37.1056,25.3764,,Greece,7070
+"Pátra, Greece",38.2444,21.7344,,Greece,168034
+"Ródos, Greece",36.4356,28.222,,Greece,56128
+"Thessaloníki, Greece",40.6436,22.9309,,Greece,354290
+"Kankan, Guinea",10.3854,-9.3057,,Guinea,114009
+"Labé, Guinea",11.3182,-12.2833,,Guinea,58649
+"Pécs, Hungary",46.0725,18.2308,,Hungary,156649
+"Akot, India",21.0963,77.0588,,India,86917
+"Ambikāpur, India",23.1189,83.1954,,India,72821
+"Aurangabad, India",19.8776,75.3423,,India,1016441
+"Bareilly, India",28.3668,79.4317,,India,745435
+"Bellampalli, India",19.0558,79.493,,India,66660
+"Bellary, India",15.142,76.924,,India,336681
+"Bhīlwāra, India",25.3471,74.6408,,India,326431
+"Bānsi, India",27.1775,82.9344,,India,39926
+"Chamba, India",32.5553,76.1265,,India,21502
+"Chandla, India",25.0715,80.1929,,India,11195
+"Cuddapah, India",14.48,78.8235,,India,127010
+"Dayapar, India",23.6337,68.9019,,India,12000
+"Gwalior, India",26.2298,78.1734,,India,882458
+"Jabalpur, India",23.167,79.9501,,India,1030168
+"Jaisalmer, India",26.918,70.904,,India,67604
+"Jalor, India",25.3456,72.6156,,India,49682
+"Jūnāgarh, India",19.8599,82.9339,,India,16856
+"Koynanagar, India",17.4,73.7667,,India,28091
+"Mankāchar, India",25.5335,89.8637,,India,31091
+"Nagaur, India",27.202,73.734,,India,96847
+"Nagpur, India",21.1463,79.0849,,India,2228018
+"Nanded, India",19.1602,77.315,,India,550564
+"Purnia, India",25.7789,87.4742,,India,198453
+"Ratlām, India",23.3303,75.0403,,India,236843
+"Rājkot, India",22.2916,70.7932,,India,1177362
+"Sambalpur, India",21.4653,83.9757,,India,162887
+"Shāhāda, India",21.5454,74.4711,,India,58402
+"Sirsa, India",29.5349,75.029,,India,181639
+"Solāpur, India",17.6715,75.9104,,India,997281
+"Thrissur, India",10.5167,76.2167,,India,325110
+"Varanasi, India",25.3167,83.0104,,India,1164404
+"Vijayawada, India",16.5074,80.6466,,India,874587
+"Agats, Indonesia",-5.545,138.135,,Indonesia,0
+"Kepi, Indonesia",-6.525,139.322,,Indonesia,0
+"Merauke, Indonesia",-8.493,140.401,,Indonesia,0
+"Nabire, Indonesia",-3.36,135.501,,Indonesia,0
+"Sarmi, Indonesia",-1.853,138.751,,Indonesia,0
+"Wamena, Indonesia",-4.095,138.945,,Indonesia,0
+"Konarak, Iran",25.3604,60.3995,,Iran,0
+"Cork, Ireland",51.898,-8.4706,,Ireland,190384
+"Gaillimh, Ireland",53.2724,-9.051,,Ireland,70686
+"Bari, Italy",41.1207,16.8698,,Italy,277387
+"Brunico, Italy",46.7994,11.9343,,Italy,12282
+"Cagliari, Italy",39.2305,9.1192,,Italy,149257
+"Catania, Italy",37.4922,15.0704,,Italy,290927
+"Catanzaro, Italy",38.8825,16.6009,,Italy,78970
+"Galatina, Italy",40.1742,18.1703,,Italy,19569
+"Lampedusa, Italy",35.5014,12.6096,,Italy,4065
+"Livorno, Italy",43.5443,10.3262,,Italy,153773
+"Milan, Italy",45.4643,9.1895,,Italy,1236837
+"Naples, Italy",40.8522,14.2681,,Italy,959470
+"Padova, Italy",45.408,11.8859,,Italy,203725
+"Palermo, Italy",38.132,13.3356,,Italy,648260
+"Pantelleria, Italy",36.8284,11.9461,,Italy,3455
+"Pescara, Italy",42.4584,14.2028,,Italy,116596
+"Sassari, Italy",40.7259,8.5555,,Italy,91895
+"Susa, Italy",45.1368,7.0581,,Italy,5596
+"Akita, Japan",39.7167,140.1167,,Japan,320069
+"Aomori, Japan",40.8167,140.7333,,Japan,298394
+"Fukuoka, Japan",33.6,130.4167,,Japan,1392289
+"Hakodate, Japan",41.7758,140.7367,,Japan,275730
+"Hasaki, Japan",35.7333,140.8333,,Japan,39209
+"Hirara, Japan",24.8038,125.3022,,Japan,34354
+"Hiroshima, Japan",34.4,132.45,,Japan,1143841
+"Imaichi, Japan",36.7167,139.6833,,Japan,64323
+"Ishigaki, Japan",24.3448,124.1572,,Japan,44802
+"Iwaki, Japan",37.05,140.8833,,Japan,357309
+"Kagoshima, Japan",31.5667,130.55,,Japan,555352
+"Kanazawa, Japan",36.6,136.6167,,Japan,458937
+"Kitami, Japan",43.8031,143.8908,,Japan,113137
+"Kochi, Japan",33.55,133.5333,,Japan,335570
+"Kushiro, Japan",42.975,144.3747,,Japan,183612
+"Matsue, Japan",35.4833,133.05,,Japan,156811
+"Miyako, Japan",39.6469,141.9406,,Japan,51721
+"Nagano, Japan",36.65,138.1833,,Japan,360176
+"Nagasaki, Japan",32.75,129.8833,,Japan,410204
+"Nagato, Japan",34.3833,131.2,,Japan,23101
+"Nagoya, Japan",35.1815,136.9064,,Japan,2191279
+"Naha, Japan",26.2167,127.6833,,Japan,300795
+"Naze, Japan",28.3667,129.4833,,Japan,41365
+"Nemuro, Japan",43.3236,145.575,,Japan,31223
+"Niigata, Japan",37.8864,139.0059,,Japan,505272
+"Nishinoomote, Japan",30.7333,131,,Japan,17832
+"Okayama, Japan",34.65,133.9333,,Japan,639652
+"Osaka, Japan",34.6937,135.5022,,Japan,2592413
+"Sapporo, Japan",43.0667,141.35,,Japan,1883027
+"Sendai, Japan",38.2667,140.8667,,Japan,1063103
+"Shizunai-furukawachō, Japan",42.3339,142.3669,,Japan,22436
+"Shizuoka, Japan",34.9833,138.3833,,Japan,701561
+"Sukumo, Japan",32.9333,132.7333,,Japan,25784
+"Takanabe, Japan",32.1333,131.5,,Japan,22513
+"Tanabe, Japan",33.7333,135.3667,,Japan,69563
+"Toyooka, Japan",35.5401,134.8204,,Japan,46500
+"Tsuruoka, Japan",38.7217,139.8217,,Japan,99820
+"Wakkanai, Japan",45.4094,141.6739,,Japan,41556
+"Yonakuni, Japan",24.4667,123,,Japan,1684
+"Ōita, Japan",33.2333,131.6,,Japan,448907
+"Aqbaqay, Kazakhstan",45,72.7833,,Kazakhstan,1804
+"Arkalyk, Kazakhstan",50.2492,66.9203,,Kazakhstan,42000
+"Ayagoz, Kazakhstan",47.964,80.434,,Kazakhstan,33479
+"Balkhash, Kazakhstan",46.85,75.0,,Kazakhstan,81364
+"Bayganin, Kazakhstan",48.6897,55.8751,,Kazakhstan,7657
+"Chiganak, Kazakhstan",44.8306,70.0019,,Kazakhstan,2405
+"Krasnogorskiy, Kazakhstan",52.2456,66.5208,,Kazakhstan,3646
+"Kurchatov, Kazakhstan",50.7562,78.5419,,Kazakhstan,10747
+"Qarazhal, Kazakhstan",48.0063,70.7961,,Kazakhstan,13807
+"Say-Utes, Kazakhstan",44.3279,53.5322,,Kazakhstan,1571
+"Shalqar, Kazakhstan",47.8333,59.6,,Kazakhstan,27399
+"Torghay, Kazakhstan",49.6339,63.4981,,Kazakhstan,5277
+"Zhezqazghan, Kazakhstan",47.783,67.767,,Kazakhstan,104357
+"Zhumysker, Kazakhstan",49.3333,49.4,,Kazakhstan,6834
+"Garissa, Kenya",-0.4527,39.646,,Kenya,67861
+"Lodwar, Kenya",3.1199,35.5964,,Kenya,20219
+"Mandera, Kenya",3.9373,41.8569,,Kenya,36076
+"Wajir, Kenya",1.7471,40.0573,,Kenya,45771
+"Daugavpils, Latvia",55.8833,26.5333,,Latvia,111564
+"Liepāja, Latvia",56.5047,21.0109,,Latvia,85132
+"At Tāj, Libya",24.2049,23.2857,,Libya,46050
+"Awjilah, Libya",29.1081,21.2869,,Libya,6610
+"Tazirbu, Libya",25.665,21.13,,Libya,0
+"Raseiniai, Lithuania",55.3797,23.1239,,Lithuania,12523
+"Ambovombe, Madagascar",-25.1784,46.0872,,Madagascar,66818
+"Antsiranana, Madagascar",-12.3173,49.2919,,Madagascar,82937
+"Mahajanga, Madagascar",-15.7167,46.3167,,Madagascar,154657
+"Maintirano, Madagascar",-18.0635,44.0295,,Madagascar,16000
+"Mananjary, Madagascar",-21.2303,48.3417,,Madagascar,27686
+"Morondava, Madagascar",-20.2887,44.3178,,Madagascar,36803
+"Sambava, Madagascar",-14.2667,50.1667,,Madagascar,31522
+"Toamasina, Madagascar",-18.1492,49.4023,,Madagascar,206373
+"Tolagnaro, Madagascar",-25.03,46.98,,Madagascar,0
+"Toliara, Madagascar",-23.35,43.6667,,Madagascar,115319
+"Likoma, Malawi",-12.0667,34.7333,,Malawi,0
+"Bhamo, Myanmar",24.2526,97.2336,,Myanmar,47920
+"Dawei, Myanmar",14.0823,98.1915,,Myanmar,136783
+"Hakha, Myanmar",22.6445,93.6108,,Myanmar,20000
+"Kawthoung, Myanmar",9.9824,98.5503,,Myanmar,57949
+"Lashio, Myanmar",22.9359,97.7498,,Myanmar,131016
+"Magway, Myanmar",20.1496,94.9325,,Myanmar,96954
+"Mandalay, Myanmar",21.9747,96.0836,,Myanmar,1208099
+"Mawlaik, Myanmar",23.6425,94.4048,,Myanmar,44540
+"Mawlamyine, Myanmar",16.4905,97.6282,,Myanmar,438861
+"Meiktila, Myanmar",20.8778,95.8584,,Myanmar,177442
+"Myeik, Myanmar",12.4395,98.6003,,Myanmar,173298
+"Myitkyina, Myanmar",25.3833,97.3964,,Myanmar,90894
+"Nay Pyi Taw, Myanmar",19.745,96.1297,,Myanmar,925000
+"Nyaunglebin, Myanmar",17.9536,96.7225,,Myanmar,89626
+"Pathein, Myanmar",16.7792,94.7321,,Myanmar,237089
+"Pyay, Myanmar",18.8246,95.2222,,Myanmar,135308
+"Sittwe, Myanmar",20.1462,92.8983,,Myanmar,177743
+"Taunggyi, Myanmar",20.7892,97.0378,,Myanmar,160115
+"Aus, Namibia",-26.664,16.264,,Namibia,0
+"Karasburg, Namibia",-28.0167,18.75,,Namibia,6054
+"Keetmanshoop, Namibia",-26.5833,18.1333,,Namibia,15608
+"Lüderitz, Namibia",-26.6481,15.1538,,Namibia,15137
+"Oranjemund, Namibia",-28.55,16.4333,,Namibia,8496
+"Cape Reinga, New Zealand",-34.428,172.68,,New Zealand,0
+"Christchurch, New Zealand",-43.533,172.633,,New Zealand,0
+"Gisborne, New Zealand",-38.653,178.004,,New Zealand,0
+"Haast, New Zealand",-43.881,169.042,,New Zealand,0
+"Invercargill, New Zealand",-46.4,168.35,,New Zealand,0
+"New Plymouth, New Zealand",-39.067,174.083,,New Zealand,0
+"Oamaru, New Zealand",-45.098,170.971,,New Zealand,0
+"Wellington, New Zealand",-41.287,174.776,,New Zealand,0
+"Westport, New Zealand",-41.753,171.604,,New Zealand,0
+"Baro, Nigeria",8.6157,6.4185,,Nigeria,26821
+"Bauchi, Nigeria",10.3103,9.8439,,Nigeria,316149
+"Benin City, Nigeria",6.3381,5.6258,,Nigeria,1125058
+"Gassol, Nigeria",8.5353,10.4461,,Nigeria,14326
+"Ilorin, Nigeria",8.4966,4.5421,,Nigeria,814192
+"Jimeta, Nigeria",9.2795,12.4582,,Nigeria,248148
+"Kaduna, Nigeria",10.5264,7.4388,,Nigeria,1582102
+"Kano, Nigeria",12.0001,8.5167,,Nigeria,3626068
+"Kontagora, Nigeria",10.4032,5.4708,,Nigeria,98754
+"Madagali, Nigeria",10.8894,13.6283,,Nigeria,12919
+"Makurdi, Nigeria",7.7337,8.5214,,Nigeria,292645
+"Port Harcourt, Nigeria",4.7774,7.0134,,Nigeria,1148665
+"Potiskum, Nigeria",11.7139,11.0811,,Nigeria,86002
+"Sokoto, Nigeria",13.0627,5.2432,,Nigeria,563861
+"Bergen, Norway",60.393,5.3242,,Norway,213585
+"Bodø, Norway",67.28,14.405,,Norway,34073
+"Farnes, Norway",61.3085,7.7969,,Norway,3465
+"Honningsvåg, Norway",70.9821,25.9704,,Norway,2541
+"Koppang, Norway",61.5722,11.0466,,Norway,1182
+"Kristiansand, Norway",58.1467,7.9956,,Norway,63814
+"Mosjøen, Norway",65.836,13.1908,,Norway,9636
+"Sortland, Norway",68.6957,15.405,,Norway,4620
+"Stavanger, Norway",58.9701,5.7333,,Norway,121610
+"Tromsø, Norway",69.6489,18.9551,,Norway,52436
+"Trondheim, Norway",63.4305,10.3951,,Norway,147139
+"Vardø, Norway",70.3705,31.1107,,Norway,2075
+"Ålesund, Norway",62.4723,6.1549,,Norway,44096
+"Duqm, Oman",19.662,57.705,,Oman,0
+"Salalah, Oman",17.015,54.0924,,Oman,163140
+"Gilgit, Pakistan",35.9187,74.3124,,Pakistan,10414
+"Gwadar, Pakistan",25.1216,62.3254,,Pakistan,51901
+"Hyderabad, Pakistan",25.392,68.374,,Pakistan,1386330
+"Khuzdar, Pakistan",27.8119,66.611,,Pakistan,141227
+"Lahore, Pakistan",31.558,74.351,,Pakistan,6310888
+"Larkana, Pakistan",27.559,68.212,,Pakistan,364033
+"Loralai, Pakistan",30.371,68.598,,Pakistan,37787
+"Mastung, Pakistan",29.7997,66.8455,,Pakistan,29082
+"Mianwali, Pakistan",32.578,71.528,,Pakistan,89570
+"Multan, Pakistan",30.197,71.478,,Pakistan,1437230
+"Ormara, Pakistan",25.2102,64.6363,,Pakistan,13026
+"Rojhan, Pakistan",28.6873,69.9535,,Pakistan,13031
+"Washuk, Pakistan",27.736,64.802,,Pakistan,0
+"Daru, Papua New Guinea",-9.078,143.209,,Papua New Guinea,0
+"Finschhafen, Papua New Guinea",-6.558,147.846,,Papua New Guinea,0
+"Kiunga, Papua New Guinea",-6.122,141.291,,Papua New Guinea,0
+"Mount Hagen, Papua New Guinea",-5.857,144.231,,Papua New Guinea,0
+"Wewak, Papua New Guinea",-3.55,143.632,,Papua New Guinea,0
+"Białystok, Poland",53.1333,23.1643,,Poland,291855
+"Bydgoszcz, Poland",53.1235,18.0076,,Poland,366452
+"Koszalin, Poland",54.1944,16.1722,,Poland,107450
+"Kraków, Poland",50.0614,19.9366,,Poland,755050
+"Lublin, Poland",51.25,22.5667,,Poland,360044
+"Międzychód, Poland",52.5988,15.897,,Poland,10994
+"Wrocław, Poland",51.1,17.0333,,Poland,634893
+"Bragança, Portugal",41.8058,-6.7572,,Portugal,34375
+"Coimbra, Portugal",40.2056,-8.4195,,Portugal,106582
+"Lagos, Portugal",37.102,-8.6742,,Portugal,18831
+"Ouésso, Republic of the Congo",1.6136,16.0517,,Republic of the Congo,23915
+"Owando, Republic of the Congo",-0.4819,15.8999,,Republic of the Congo,23952
+"Sibiti, Republic of the Congo",-3.6819,13.3498,,Republic of the Congo,19089
+"Arad, Romania",46.1833,21.3167,,Romania,169065
+"Bacău, Romania",46.5672,26.9138,,Romania,171396
+"Cluj-Napoca, Romania",46.7667,23.6,,Romania,316748
+"Craiova, Romania",44.3167,23.8,,Romania,304142
+"Galaţi, Romania",45.4369,28.0503,,Romania,294087
+"Săveni, Romania",47.95,26.8667,,Romania,8126
+"Şinca Veche, Romania",45.7667,25.1667,,Romania,3445
+"Rumah, Saudi Arabia",25.567,47.163,,Saudi Arabia,0
+"Umm Al Melh, Saudi Arabia",19.116,50.129,,Saudi Arabia,0
+"Koidu, Sierra Leone",8.6439,-10.9714,,Sierra Leone,88000
+"Košice, Slovakia",48.7139,21.2581,,Slovakia,236563
+"Baidoa, Somalia",3.1138,43.6498,,Somalia,129839
+"Beledweyne, Somalia",4.7358,45.2036,,Somalia,55410
+"Berbera, Somalia",10.4396,45.0143,,Somalia,242344
+"Bosaso, Somalia",11.2842,49.1816,,Somalia,74287
+"Eyl, Somalia",7.9803,49.8164,,Somalia,18904
+"Galkayo, Somalia",6.77,47.43,,Somalia,0
+"Garowe, Somalia",8.4,48.48,,Somalia,0
+"Hargeisa, Somalia",9.56,44.06,,Somalia,0
+"Hobyo, Somalia",5.3505,48.5268,,Somalia,12564
+"Kismayo, Somalia",-0.3582,42.5454,,Somalia,234852
+"Las Anod, Somalia",8.48,47.36,,Somalia,0
+"Calvinia, South Africa",-31.4707,19.776,,South Africa,8146
+"Clanwilliam, South Africa",-32.1817,18.8922,,South Africa,0
+"Lambert's Bay, South Africa",-32.087,18.307,,South Africa,0
+"Pofadder, South Africa",-29.1283,19.3949,,South Africa,3287
+"Port Nolloth, South Africa",-29.2519,16.8697,,South Africa,0
+"Springbok, South Africa",-29.6643,17.8865,,South Africa,10438
+"Upington, South Africa",-28.4478,21.2561,,South Africa,71373
+"Vredendal, South Africa",-31.6683,18.5012,,South Africa,14806
+"Busan, South Korea",35.1017,129.03,,South Korea,3678555
+"Chinju, South Korea",35.1928,128.0847,,South Korea,307242
+"Daegu, South Korea",35.8703,128.5911,,South Korea,2566540
+"Daejeon, South Korea",36.3491,127.3849,,South Korea,1475221
+"Eisen, South Korea",36.8217,128.6308,,South Korea,84625
+"Gangneung, South Korea",37.7527,128.8724,,South Korea,180611
+"Gwangju, South Korea",35.1547,126.9156,,South Korea,1416938
+"Jeju City, South Korea",33.5097,126.5219,,South Korea,408364
+"Seosan, South Korea",36.7817,126.4522,,South Korea,74208
+"Sinan, South Korea",34.8262,126.1086,,South Korea,53150
+"Wŏnju, South Korea",37.3514,127.9453,,South Korea,243387
+"Yanggu, South Korea",38.1058,127.9894,,South Korea,24027
+"Bentiu, South Sudan",9.2572,29.7983,,South Sudan,7653
+"Kapoeta, South Sudan",4.7722,33.5914,,South Sudan,7042
+"Malakal, South Sudan",9.5334,31.6605,,South Sudan,160765
+"Maridi, South Sudan",4.9167,29.4694,,South Sudan,14224
+"Pibor, South Sudan",6.7985,33.1305,,South Sudan,0
+"Raja, South Sudan",8.4675,25.6783,,South Sudan,3700
+"Rumbek, South Sudan",6.8062,29.6774,,South Sudan,32083
+"Tambura, South Sudan",5.6,27.4667,,South Sudan,9483
+"Winejok, South Sudan",9.0122,27.5708,,South Sudan,300000
+"Almería, Spain",36.8381,-2.4597,,Spain,188810
+"Badajoz, Spain",38.8779,-6.9706,,Spain,148334
+"Bilbao, Spain",43.2627,-2.9253,,Spain,354860
+"Campiña, Spain",38.219,-2.9807,,Spain,67904
+"Córdoba, Spain",37.8916,-4.7728,,Spain,328428
+"Gijón, Spain",43.5357,-5.6615,,Spain,277554
+"Honrubia, Spain",39.6136,-2.2808,,Spain,1651
+"Huelva, Spain",37.2664,-6.94,,Spain,148806
+"Melilla, Spain",35.2937,-2.9383,,Spain,73460
+"Murcia, Spain",37.987,-1.13,,Spain,436870
+"Navalmoral de la Mata, Spain",39.8916,-5.5406,,Spain,17228
+"Palafrugell, Spain",41.9174,3.1631,,Spain,22365
+"Palma, Spain",39.5694,2.6502,,Spain,401270
+"Tarragona, Spain",41.1167,1.25,,Spain,140323
+"Valencia, Spain",39.4697,-0.3774,,Spain,814208
+"Valladolid, Spain",41.6552,-4.7237,,Spain,317864
+"Vigo, Spain",42.2328,-8.7226,,Spain,297332
+"Vinuesa, Spain",41.9103,-2.7648,,Spain,1022
+"Viveiro, Spain",43.6623,-7.5934,,Spain,16238
+"Zaragoza, Spain",41.6561,-0.8773,,Spain,674317
+"Abu Hamad, Sudan",19.53,33.33,,Sudan,0
+"Bir Natrun, Sudan",18.18,26.6,,Sudan,0
+"Gebeit, Sudan",21.0667,36.3167,,Sudan,11095
+"Karima, Sudan",18.55,31.85,,Sudan,0
+"Arjeplog, Sweden",66.0517,17.8861,,Sweden,1822
+"Gällivare, Sweden",67.1339,20.6528,,Sweden,10362
+"Gävle, Sweden",60.6745,17.1417,,Sweden,74884
+"Göteborg, Sweden",57.7072,11.9668,,Sweden,572799
+"Luleå, Sweden",65.5841,22.1547,,Sweden,43574
+"Lycksele, Sweden",64.5954,18.6735,,Sweden,8545
+"Malung, Sweden",60.6833,13.7154,,Sweden,4927
+"Sundsvall, Sweden",62.3913,17.3063,,Sweden,57606
+"Visby, Sweden",57.6409,18.296,,Sweden,23402
+"Växjö, Sweden",56.8777,14.8091,,Sweden,65383
+"Örebro, Sweden",59.2741,15.2066,,Sweden,115765
+"Östersund, Sweden",63.1792,14.6357,,Sweden,49806
+"Lausanne, Switzerland",46.516,6.6328,,Switzerland,116751
+"Arusha, Tanzania",-3.3667,36.6833,,Tanzania,341136
+"Bukoba, Tanzania",-1.3317,31.8122,,Tanzania,70628
+"Dodoma, Tanzania",-6.1722,35.7395,,Tanzania,180541
+"Iringa, Tanzania",-7.7667,35.7,,Tanzania,111820
+"Kigoma, Tanzania",-4.8769,29.6267,,Tanzania,164268
+"Kilwa Masoko, Tanzania",-8.925,39.513,,Tanzania,0
+"Lindi, Tanzania",-9.9971,39.7165,,Tanzania,41912
+"Mbeya, Tanzania",-8.9,33.45,,Tanzania,291649
+"Morogoro, Tanzania",-6.821,37.6612,,Tanzania,250902
+"Mpanda, Tanzania",-6.3438,31.0695,,Tanzania,73338
+"Mtwara, Tanzania",-10.2667,40.1833,,Tanzania,96602
+"Musoma, Tanzania",-1.5,33.8,,Tanzania,121119
+"Mwanza, Tanzania",-2.5167,32.9,,Tanzania,436801
+"Njombe, Tanzania",-9.3492,34.7717,,Tanzania,46724
+"Shinyanga, Tanzania",-3.6639,33.4212,,Tanzania,107362
+"Singida, Tanzania",-4.8163,34.7436,,Tanzania,62432
+"Songea, Tanzania",-10.6833,35.65,,Tanzania,126449
+"Sumbawanga, Tanzania",-7.9667,31.6167,,Tanzania,89161
+"Tabora, Tanzania",-5.0162,32.8266,,Tanzania,145292
+"Tanga, Tanzania",-5.0689,39.0988,,Tanzania,224876
+"Ban Selaphum, Thailand",16.0167,103.95,,Thailand,17412
+"Bang Saphan, Thailand",11.2126,99.5117,,Thailand,15134
+"Bo Phloi, Thailand",14.3252,99.5147,,Thailand,16786
+"Chiang Klang, Thailand",19.2938,100.8617,,Thailand,13244
+"Chiang Rai, Thailand",19.9086,99.8325,,Thailand,78756
+"Hat Yai, Thailand",7.0084,100.4767,,Thailand,191696
+"Hua Hin, Thailand",12.5707,99.9588,,Thailand,50456
+"Khon Kaen, Thailand",16.4467,102.833,,Thailand,147579
+"Mae Hong Son, Thailand",19.3003,97.9685,,Thailand,9109
+"Nakhon Ratchasima, Thailand",14.9707,102.102,,Thailand,208781
+"Nakhon Sawan, Thailand",15.7047,100.1372,,Thailand,91802
+"Nakhon Si Thammarat, Thailand",8.4333,99.9667,,Thailand,120836
+"Narathiwat, Thailand",6.4264,101.8231,,Thailand,47771
+"Phitsanulok, Thailand",16.8248,100.2586,,Thailand,103427
+"Phrae, Thailand",18.1459,100.141,,Thailand,38538
+"Phuket, Thailand",7.8906,98.3981,,Thailand,89072
+"Rayong, Thailand",12.6809,101.258,,Thailand,106737
+"Sa Kaeo, Thailand",13.8141,102.0722,,Thailand,28497
+"Sakon Nakhon, Thailand",17.1612,104.1472,,Thailand,76237
+"Sangkhla Buri, Thailand",15.1555,98.4536,,Thailand,10000
+"Surin, Thailand",14.8818,103.4936,,Thailand,46673
+"Tak, Thailand",16.8697,99.129,,Thailand,24149
+"Ubon Ratchathani, Thailand",15.2384,104.8487,,Thailand,122533
+"Balkanabat, Turkmenistan",39.5108,54.3671,,Turkmenistan,87822
+"Gazojak, Turkmenistan",41.1875,61.4036,,Turkmenistan,21021
+"Mary, Turkmenistan",37.594,61.83,,Turkmenistan,114680
+"Türkmenabat, Turkmenistan",39.073,63.579,,Turkmenistan,234817
+"Adana, Türkiye",36.9862,35.3253,,Türkiye,1248988
+"Alaca, Türkiye",40.1683,34.8425,,Türkiye,27019
+"Antalya, Türkiye",36.9081,30.6956,,Türkiye,758188
+"Ardahan, Türkiye",41.1087,42.7022,,Türkiye,21020
+"Cizre, Türkiye",37.3302,42.1848,,Türkiye,80992
+"Denizli, Türkiye",37.7742,29.0875,,Türkiye,313238
+"Diyarbakır, Türkiye",37.9136,40.2172,,Türkiye,644763
+"Dursunbey, Türkiye",39.586,28.6257,,Türkiye,17532
+"Erzurum, Türkiye",39.9086,41.2769,,Türkiye,420691
+"Eskişehir, Türkiye",39.7767,30.5206,,Türkiye,514869
+"Hozat, Türkiye",39.1003,39.2082,,Türkiye,8105
+"Kahramanmaraş, Türkiye",37.5847,36.9264,,Türkiye,376045
+"Kastamonu, Türkiye",41.3781,33.7753,,Türkiye,70402
+"Kayseri, Türkiye",38.7322,35.4853,,Türkiye,592840
+"Konya, Türkiye",37.8713,32.4846,,Türkiye,875530
+"Mut, Türkiye",36.6439,33.4389,,Türkiye,49397
+"Samsun, Türkiye",41.2798,36.3361,,Türkiye,394050
+"Sivas, Türkiye",39.7483,37.0161,,Türkiye,264022
+"Trabzon, Türkiye",41.005,39.7269,,Türkiye,244083
+"Van, Türkiye",38.4946,43.3832,,Türkiye,371713
+"Zonguldak, Türkiye",41.4514,31.7931,,Türkiye,100229
+"Üsküp, Türkiye",41.7358,27.4053,,Türkiye,2272
+"Şanlıurfa, Türkiye",37.1671,38.7939,,Türkiye,449549
+"Aberdeen, UK",57.1437,-2.0981,,UK,196670
+"Barra, UK",56.9804,-7.4573,,UK,1078
+"Bristol, UK",51.4552,-2.5966,,UK,617280
+"Derry, UK",54.9981,-7.3093,,UK,83652
+"Glasgow, UK",55.8651,-4.2576,,UK,591620
+"Haverfordwest, UK",51.8017,-4.9691,,UK,14596
+"Isle of Lewis, UK",58.219,-6.388,,UK,18500
+"Isles of Scilly, UK",49.9252,-6.2989,,UK,2100
+"Keyingham, UK",53.7096,-0.1133,,UK,2314
+"Lerwick, UK",60.1534,-1.1443,,UK,7040
+"Norwich, UK",52.6278,1.2983,,UK,213166
+"Orkney, UK",58.9847,-2.9595,,UK,20100
+"Plymouth, UK",50.3715,-4.143,,UK,260203
+"Sunderland, UK",54.9046,-1.3822,,UK,335415
+"Aberdeen, USA",45.4647,-98.4865,,USA,28102
+"Adak, USA",51.88,-176.658,,USA,0
+"Alliance, USA",42.1016,-102.8722,,USA,8522
+"Alpena, USA",45.0617,-83.4327,,USA,10175
+"Alturas, USA",41.4871,-120.5435,,USA,2594
+"Amarillo, USA",35.222,-101.8313,,USA,198645
+"Anchorage, USA",61.2181,-149.9003,,USA,298695
+"Bakersfield, USA",35.3733,-119.0187,,USA,373640
+"Basin, USA",44.38,-108.039,,USA,1305
+"Bemidji, USA",47.4736,-94.8803,,USA,14594
+"Bethel, USA",41.3712,-73.414,,USA,9549
+"Billings, USA",45.7833,-108.5007,,USA,110263
+"Bristol, USA",36.5951,-82.1887,,USA,26666
+"Brownsville, USA",25.9017,-97.4975,,USA,183887
+"Burns, USA",43.5863,-119.0541,,USA,2757
+"Cape Coral, USA",26.5629,-81.9495,,USA,175229
+"Cape Girardeau, USA",37.3059,-89.5182,,USA,39462
+"Casper, USA",42.8666,-106.3131,,USA,60285
+"Cedar Rapids, USA",42.0083,-91.6441,,USA,130405
+"Chanute, USA",37.6792,-95.4572,,USA,9252
+"Cherokee Village, USA",36.2978,-91.516,,USA,4603
+"Chicago, USA",41.85,-87.65,,USA,2720546
+"Childress, USA",34.4265,-100.204,,USA,6101
+"Cleveland, USA",33.744,-90.7248,,USA,12327
+"Clovis, USA",34.4048,-103.2052,,USA,39480
+"Colby, USA",39.3958,-101.0524,,USA,5417
+"Comanche, USA",31.8974,-98.6037,,USA,4197
+"Concord, USA",35.4089,-80.5816,,USA,87696
+"Concordia, USA",39.5708,-97.6625,,USA,5218
+"Corpus Christi, USA",27.8006,-97.3964,,USA,324074
+"Cuthbert, USA",31.7713,-84.7894,,USA,3670
+"Dallas, USA",32.7831,-96.8067,,USA,1300092
+"Delta, USA",39.3522,-112.5772,,USA,3482
+"Deltona, USA",28.9005,-81.2637,,USA,88474
+"Desert Hot Springs, USA",33.9617,-116.5035,,USA,28335
+"Devils Lake, USA",48.1128,-98.8651,,USA,7351
+"Dickinson, USA",46.8792,-102.7896,,USA,23765
+"Dillon, USA",45.2163,-112.6375,,USA,4210
+"Dodge City, USA",37.7528,-100.0171,,USA,27912
+"Douglas, USA",31.3446,-109.5453,,USA,16592
+"Dublin, USA",32.5404,-82.9038,,USA,16197
+"Duluth, USA",46.7833,-92.1066,,USA,86110
+"Edna, USA",28.9786,-96.6461,,USA,5792
+"El Paso, USA",31.7587,-106.4869,,USA,681124
+"Elkland, USA",41.9862,-77.3108,,USA,1779
+"Elko, USA",40.8324,-115.7631,,USA,20279
+"Ely, USA",39.2474,-114.8886,,USA,4134
+"Eugene, USA",44.0521,-123.0867,,USA,163460
+"Eureka, USA",40.8021,-124.1637,,USA,27017
+"Evansville, USA",37.9748,-87.5559,,USA,119943
+"Evergreen, USA",48.2258,-114.2762,,USA,7616
+"Fairbanks, USA",64.8378,-147.7164,,USA,32325
+"Fargo, USA",46.8772,-96.7898,,USA,118523
+"Farmington, USA",36.7281,-108.2187,,USA,42871
+"Flagstaff, USA",35.1981,-111.6513,,USA,70320
+"Forks, USA",47.9504,-124.3855,,USA,3747
+"Fort Smith, USA",35.3859,-94.3986,,USA,88194
+"Fort Wayne, USA",41.1306,-85.1289,,USA,260326
+"Fresno, USA",36.7477,-119.7724,,USA,520052
+"Ganado, USA",35.7114,-109.5421,,USA,1210
+"Georgetown, USA",33.3768,-79.2945,,USA,9062
+"Gillette, USA",44.2911,-105.5022,,USA,32649
+"Glasgow, USA",48.197,-106.6367,,USA,3414
+"Grand Junction, USA",39.0639,-108.5507,,USA,60358
+"Grangeville, USA",45.9265,-116.1224,,USA,3155
+"Grants, USA",35.1476,-107.8526,,USA,9239
+"Green Bay, USA",44.5192,-88.0198,,USA,105207
+"Greenville, USA",34.8526,-82.394,,USA,64579
+"Gunnison, USA",38.5458,-106.9253,,USA,6076
+"Guymon, USA",36.6828,-101.4815,,USA,11921
+"Hamlin, USA",32.8848,-100.1265,,USA,2042
+"Harrisonburg, USA",38.4496,-78.8689,,USA,52538
+"Havre, USA",48.55,-109.6841,,USA,9834
+"Hawthorne, USA",38.5246,-118.6246,,USA,3269
+"Huntsville, USA",34.7304,-86.5859,,USA,190582
+"Idaho Falls, USA",43.4666,-112.0341,,USA,59184
+"Jacksonville, USA",30.3322,-81.6556,,USA,868031
+"Jamestown, USA",42.097,-79.2353,,USA,30075
+"Kenai, USA",60.5544,-151.2583,,USA,7661
+"Ketchikan, USA",55.3418,-131.6476,,USA,8197
+"Kewanee, USA",41.2456,-89.9248,,USA,12533
+"Key West, USA",24.5552,-81.7816,,USA,25755
+"Knoxville, USA",35.9606,-83.9207,,USA,185291
+"Kodiak, USA",57.7885,-152.4053,,USA,6253
+"La Crosse, USA",43.8014,-91.2396,,USA,52306
+"Lake Charles, USA",30.2131,-93.2044,,USA,76070
+"Lake Havasu City, USA",34.4839,-114.3225,,USA,53553
+"Lamar, USA",38.0872,-102.6208,,USA,7555
+"Laredo, USA",27.5064,-99.5075,,USA,255473
+"Las Vegas, USA",36.175,-115.1372,,USA,623747
+"Lewistown, USA",47.0625,-109.4282,,USA,5874
+"Lexington, USA",35.6509,-88.3934,,USA,7822
+"Lexington, USA (2)",39.1847,-93.8799,,USA,4598
+"Livingston, USA",45.6624,-110.561,,USA,7302
+"Lompoc, USA",34.6392,-120.4579,,USA,44164
+"Lone Pine, USA",36.6063,-118.0646,,USA,2035
+"Lubbock, USA",33.5779,-101.8552,,USA,249042
+"Lufkin, USA",31.3382,-94.7291,,USA,36333
+"Manatee Road, USA",29.513,-82.9143,,USA,2244
+"Marquette, USA",46.5435,-87.3954,,USA,21297
+"Maryville, USA",40.3461,-94.8725,,USA,11879
+"Mason City, USA",43.1536,-93.201,,USA,27366
+"Medford, USA",42.3265,-122.8756,,USA,79805
+"Mehlville, USA",38.5084,-90.3229,,USA,28380
+"Memphis, USA",35.1495,-90.049,,USA,655770
+"Merrill, USA",45.1805,-89.6835,,USA,9233
+"Midland, USA",31.9974,-102.0779,,USA,132950
+"Miles City, USA",46.4083,-105.8406,,USA,8796
+"Millinocket, USA",45.6573,-68.7098,,USA,4466
+"Minden, USA",40.4986,-98.9479,,USA,3006
+"Minot, USA",48.2325,-101.2963,,USA,49450
+"Missoula, USA",46.8721,-113.994,,USA,71022
+"Mobile, USA",30.6944,-88.043,,USA,194288
+"Monroe, USA",32.5093,-92.1193,,USA,49598
+"Nashville, USA",33.9457,-93.8471,,USA,4479
+"Niceville, USA",30.5169,-86.4822,,USA,14714
+"Nikolski, USA",52.938,-168.868,,USA,0
+"Norfolk, USA",42.0283,-97.417,,USA,24366
+"North Muskegon, USA",43.2561,-86.2676,,USA,3779
+"North Platte, USA",41.1239,-100.7654,,USA,24194
+"Omak, USA",48.411,-119.5276,,USA,4854
+"Ontonagon, USA",46.871,-89.314,,USA,1324
+"Page, USA",36.9147,-111.4558,,USA,7490
+"Palmer, USA",42.1584,-72.3287,,USA,18261
+"Paris, USA",33.6609,-95.5555,,USA,24782
+"Paxton, USA",40.4603,-88.0953,,USA,4357
+"Pittsburgh, USA",40.4406,-79.9959,,USA,304391
+"Port Saint Lucie, USA",27.2939,-80.3503,,USA,164603
+"Port Sulphur, USA",29.4805,-89.694,,USA,1760
+"Price, USA",39.5994,-110.8107,,USA,8378
+"Pueblo, USA",38.2544,-104.6091,,USA,109412
+"Quincy, USA",39.9356,-91.4099,,USA,40780
+"Rapid City, USA",44.0805,-103.231,,USA,73569
+"Raton, USA",36.9034,-104.4391,,USA,6187
+"Redding, USA",40.5865,-122.3917,,USA,91582
+"Redmond, USA",44.2726,-121.1739,,USA,28654
+"River Road, USA",35.5068,-76.9908,,USA,4394
+"Riverton, USA",43.025,-108.3801,,USA,10873
+"Roanoke, USA",37.271,-79.9414,,USA,99897
+"Rock Springs, USA",41.5875,-109.2029,,USA,23962
+"Roswell, USA",33.3944,-104.5249,,USA,48544
+"Saint George, USA",37.1041,-113.5841,,USA,72897
+"Salinas, USA",36.6777,-121.6555,,USA,157380
+"San Angelo, USA",31.4638,-100.437,,USA,100450
+"San Diego, USA",32.7157,-117.1647,,USA,1394928
+"Sand Point, USA",55.3366,-160.4988,,USA,1064
+"Savannah, USA",32.0835,-81.0998,,USA,145674
+"Scranton, USA",41.4092,-75.6649,,USA,77118
+"Shelby, USA",48.5053,-111.857,,USA,3268
+"Show Low, USA",34.2542,-110.0298,,USA,10860
+"Shreveport, USA",32.5251,-93.7502,,USA,197204
+"Silver City, USA",32.7701,-108.2803,,USA,10004
+"Sioux Falls, USA",43.55,-96.7003,,USA,171544
+"Sitka, USA",57.0532,-135.3309,,USA,8863
+"Spokane, USA",47.6597,-117.4291,,USA,213272
+"Springfield, USA",37.2153,-93.2982,,USA,166810
+"Steamboat Springs, USA",40.485,-106.8317,,USA,12435
+"Storm Lake, USA",42.6411,-95.2097,,USA,10910
+"Syracuse, USA",43.0481,-76.1474,,USA,144142
+"Tampa, USA",27.9475,-82.4584,,USA,369075
+"Traverse City, USA",44.7631,-85.6206,,USA,15218
+"Tucson, USA",32.2217,-110.9265,,USA,531641
+"Tulsa, USA",36.154,-95.9928,,USA,403505
+"Tupelo, USA",34.2581,-88.7046,,USA,35680
+"Tupper Lake, USA",44.224,-74.4641,,USA,3577
+"Tuscaloosa, USA",33.2098,-87.5692,,USA,98332
+"Twin Falls, USA",42.563,-114.4609,,USA,47468
+"Ukiah, USA",39.1502,-123.2078,,USA,15917
+"Uvalde, USA",29.2097,-99.7862,,USA,16476
+"Valentine, USA",42.8728,-100.551,,USA,2836
+"Van Buren, USA",47.1573,-67.9353,,USA,1937
+"Van Horn, USA",31.0403,-104.8307,,USA,1928
+"Virginia Beach, USA",36.8529,-75.978,,USA,452745
+"Walla Walla, USA",46.0646,-118.343,,USA,32237
+"Wasilla, USA",61.5809,-149.4415,,USA,9284
+"Wichita Falls, USA",33.9137,-98.4934,,USA,104710
+"Wichita, USA",37.6922,-97.3375,,USA,389965
+"Williston, USA",48.147,-103.618,,USA,26977
+"Willmar, USA",45.1219,-95.0433,,USA,19638
+"Wilmington, USA",34.2257,-77.9447,,USA,115933
+"Winnemucca, USA",40.973,-117.7357,,USA,7887
+"Woodward, USA",36.4337,-99.3904,,USA,12993
+"Yakima, USA",46.6021,-120.5059,,USA,93701
+"Yuma, USA",40.1222,-102.7252,,USA,3596
+"Cherkasy, Ukraine",49.4285,32.0621,,Ukraine,297568
+"Dnipro, Ukraine",48.4593,35.0386,,Ukraine,1032822
+"Dolyns'ka, Ukraine",48.1104,32.7645,,Ukraine,34267
+"Donetsk, Ukraine",48.023,37.8022,,Ukraine,1024700
+"Dykan’ka, Ukraine",49.825,34.5279,,Ukraine,8000
+"Kerch, Ukraine",45.3567,36.4754,,Ukraine,148932
+"Khmelnytskyi, Ukraine",49.4216,26.9965,,Ukraine,398346
+"Kolomyia, Ukraine",48.5311,25.0365,,Ukraine,61781
+"Konotop, Ukraine",51.2403,33.2026,,Ukraine,91798
+"Lviv, Ukraine",49.8383,24.0232,,Ukraine,717803
+"Melitopol, Ukraine",46.8489,35.3653,,Ukraine,158000
+"Nova Kakhovka, Ukraine",46.7545,33.3486,,Ukraine,50672
+"Odessa, Ukraine",46.4775,30.7326,,Ukraine,1001558
+"Olyka, Ukraine",50.7186,25.8125,,Ukraine,3074
+"Ovruch, Ukraine",51.3246,28.8035,,Ukraine,16398
+"Sevastopol, Ukraine",44.608,33.5213,,Ukraine,416263
+"Starobil’s’k, Ukraine",49.2783,38.9107,,Ukraine,22000
+"Uman, Ukraine",48.7484,30.2218,,Ukraine,87658
+"Karakalpakia, Uzbekistan",44.767,56.2,,Uzbekistan,0
+"Namangan, Uzbekistan",40.9983,71.6726,,Uzbekistan,432456
+"Samarkand, Uzbekistan",39.6542,66.9597,,Uzbekistan,319366
+"Uchkuduk, Uzbekistan",42.15,63.552,,Uzbekistan,0
+"Buôn Ma Thuột, Vietnam",12.6675,108.0378,,Vietnam,146975
+"Côn Sơn, Vietnam",8.6864,106.6082,,Vietnam,1500
+"Cần Thơ, Vietnam",10.0371,105.7883,,Vietnam,259598
+"Da Nang, Vietnam",16.0678,108.2208,,Vietnam,752493
+"Dien Bien Phu, Vietnam",21.386,103.023,,Vietnam,40282
+"Kwang Binh, Vietnam",17.4688,106.6223,,Vietnam,31040
+"Nha Trang, Vietnam",12.2451,109.1943,,Vietnam,283441
+"Phan Thiết, Vietnam",10.9289,108.1021,,Vietnam,160652
+"Pleiku, Vietnam",13.9833,108,,Vietnam,114225
+"Qui Nhon, Vietnam",13.7765,109.2237,,Vietnam,210338
+"Quảng Ngãi, Vietnam",15.1205,108.7923,,Vietnam,32992
+"Sa Pa, Vietnam",22.3402,103.8441,,Vietnam,10554
+"Thanh Hóa, Vietnam",19.8,105.7667,,Vietnam,112473
+"Vinh, Vietnam",18.6734,105.6923,,Vietnam,163759
+"Yên Bái, Vietnam",21.7229,104.9113,,Vietnam,96540
+"Hadibu, Yemen",12.6488,54.0189,,Yemen,8545
+"Mukalla, Yemen",14.5425,49.1242,,Yemen,258132

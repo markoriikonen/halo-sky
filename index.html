@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halo Sky</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=Newsreader:opsz,wght@6..72,500&display=swap">
+<style>
+:root { --bg: #f4f6f7; --fg: #1c2329; --muted: #5d6973; --panel: #fff; --rule: #d8dfe4; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #11171c; --fg: #e3e8ec; --muted: #94a2ad; --panel: #182129; --rule: #2a3843; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #11171c; --fg: #e3e8ec; --muted: #94a2ad; --panel: #182129; --rule: #2a3843; color-scheme: dark; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.55 "IBM Plex Sans", system-ui, sans-serif; padding: 40px 16px; }
+.wrap { max-width: 760px; margin: 0 auto; display: grid; gap: 16px; }
+h1 { font: 500 38px/1.1 "Newsreader", Georgia, serif; margin: 0; }
+p { margin: 0; color: var(--muted); }
+a.card { display: block; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px; color: inherit; text-decoration: none; }
+a.card:hover { border-color: var(--muted); }
+a.card b { display: block; font-weight: 600; margin-bottom: 4px; }
+.note { font-size: 13px; }
+.note a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Halo Sky</h1>
+  <p>Where and when the sky favours ice-crystal halos, from ECMWF model data.</p>
+  <a class="card" href="gram/"><b>Halo Sky Gram</b>Cloud by height and time, with the 0, −15 and −40 °C isotherms, for any place and period.</a>
+  <a class="card" href="fingerprints/"><b>Halo Sky Fingerprints</b>A world map of about 2,500 sites: cloud-layer fingerprints, the elliptical-halo mid-layer search, high-cloud seasons, and photographed halo displays.</a>
+  <p class="note">Data: ECMWF IFS via <a href="https://open-meteo.com/">Open-Meteo</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Source: <a href="https://github.com/markoriikonen/halo-sky">github.com/markoriikonen/halo-sky</a>.</p>
+</div>
+</body>
+</html>
