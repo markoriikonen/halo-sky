@@ -1640,7 +1640,7 @@ function hexSVG(d, R, opts = {}) {
 }
 function dotSVG(list, R) {
   const lights = new Set(list.map(d => d.light)), col = lights.size === 1 ? (D_LIGHT[[...lights][0]] || D_MIXED) : D_MIXED;
-  const r = R * (1 + 0.16 * Math.log2(list.length));
+  const r = R;                                            // same size as a hexagon, whatever the count
   return `<circle r="${r.toFixed(2)}" fill="${col}"/><text y="${R * 0.33}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * 0.95}" fill="${D_TEXT[col] || "#1c2329"}">${list.length}</text>` + badges(aggFlags(list), r);
 }
 const dLabel = d => `${hCount(d)} halos${markStr(dFlags(d)) ? " " + markStr(dFlags(d)) : ""}${d.novel.length ? " ★" : ""}`;
