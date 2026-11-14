@@ -197,6 +197,7 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 .dthumbs img { width: 100%; height: auto; border-radius: 4px; border: 1px solid var(--rule); background: var(--bg); display: block; }
 .dthumbs figcaption { font-size: 11.5px; color: var(--muted); }
 .ddocs { font-size: 13px; display: grid; gap: 2px; }
+.dnotes { border-top: 1px solid var(--rule); padding-top: 9px; font: italic 15px/1.5 var(--f-display); white-space: pre-line; }
 .ddocs a, .dthumbs a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 2px; }
 .dlist { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .dlist th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 4px 8px; border-bottom: 1px solid var(--rule); }
@@ -1572,7 +1573,7 @@ const D_LIGHT = { sun: "#ffa500", moon: "#cd9b9b", artificial: "#4876ff" };
 const D_TEXT = { "#ffa500": "#1c2329", "#cd9b9b": "#1c2329", "#4876ff": "#ffffff", "#8d99a6": "#1c2329" };
 const D_MIXED = "#8d99a6";
 const D_TROPIC = 20, LIVE_DAYS = 30, LIVE_MIN = 20, PLACE_KM = 25;
-const C_ALIAS = { "usa": "united states of america", "united states": "united states of america", "czech republic": "czechia", "uk": "united kingdom", "great britain": "united kingdom" };
+const C_ALIAS = { "us": "united states of america", "usa": "united states of america", "united states": "united states of america", "czech republic": "czechia", "uk": "united kingdom", "great britain": "united kingdom" };
 let DISP = null, DFORMS = {}, dispLoading = null, dispPicked = [], dispSel = [], dispLoc = null, dScope = "recent", dLatest = null, dLiveNote = "";
 const dState = { q: "", y0: null, y1: null, light: new Set(["sun", "moon", "artificial"]), cloud: new Set(["High", "Mid", "Low", "Ice fog"]), firsts: false };
 const esc = s => String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
@@ -1620,7 +1621,7 @@ function badges(f, R) {          // star or pennant top right, marks bottom righ
   let s = "";
   if (f.wf) s += `<text x="${R * 0.72}" y="${-R * 0.5}" font-size="${R * 1.05}" fill="#d0306a" stroke="var(--panel)" stroke-width="${R * 0.12}" paint-order="stroke">★</text>`;
   else if (f.nfc || f.nfp) s += `<g transform="translate(${R * 0.9},${-R * 1.25})"><path d="M0 0v${R * 1.1}M0 0l${R * 0.75} ${R * 0.28}-${R * 0.75} ${R * 0.28}z" stroke="#2f7d4f" stroke-width="${R * 0.14}" fill="${f.nfc ? "#2f7d4f" : "var(--panel)"}"/></g>`;
-  s += markSVG(f, R * 1.1, R * 1.05, R * 0.72);
+  s += markSVG(f, R * 0.7, R * 1.05, R * 0.72);
   return s;
 }
 const hexPts = R => [...Array(6)].map((_, k) => { const a = Math.PI / 180 * (-120 + 60 * k); return [R * Math.cos(a), R * Math.sin(a)]; });
@@ -1806,16 +1807,16 @@ function dCard(d) {
   const sc = it => (it.card ? 4 : 0) + ([...d.novel, ...d.nfc, ...d.nfp].some(c => dShows(it, c)) ? 2 : 0);
   const thumbs = d.items.filter(it => it.thumb).sort((a, b) => sc(b) - sc(a)).slice(0, 3);
   const T = { photo: "Photo", video: "Video", description: "Description" };
-  el.innerHTML = `<div class="dh"><svg width="64" height="64" viewBox="-32 -32 64 64" aria-hidden="true">${hexSVG(d, 22, { big: true })}</svg>
+  el.innerHTML = `<div class="dh"><svg width="84" height="64" viewBox="-32 -32 84 64" aria-hidden="true">${hexSVG(d, 22, { big: true })}</svg>
       <div class="dt"><div class="dname">${esc(dName(d))}</div>
         <div class="dmeta">${esc(d.date)}${d.enddate ? "–" + esc(d.enddate) : ""}${d.time ? " · " + esc(d.time) : ""} · ${esc(d.light)}${d.cloud.length ? " · " + d.cloud.map(esc).join(", ") : ""}</div>
-        <div class="dmeta">${esc(dLabel(d))}${d.maxsim ? ` · at most ${esc(d.maxsim)} at the same time` : ""} · ${f.lit.size ? "rare forms in " + D_CLASSES.filter(c => f.lit.has(c)).join(", ") : "no rare oriented forms"}${d._pos && d._pos.approx ? " · location: country only" : ""}</div></div>
+        <div class="dmeta">${hCount(d)} halos${d.maxsim ? ` · at most ${esc(d.maxsim)} at the same time` : ""}${d._pos && d._pos.approx ? " · location: country only" : ""}</div></div>
       <button type="button" class="dx" aria-label="Close this card">×</button></div>` +
     (firsts.length ? `<div class="dfirst">${firsts.map(([k, lab, c]) => `<div><span class="${k}">${k === "wf" ? "★ " : ""}${lab}:</span> ${esc(hName(c))} — ${dCredit(d, c).length ? obsList(dCredit(d, c)) : "no documentation shows it"}</div>`).join("")}</div>` : "") +
     `<div class="dhalos">${d.halos.map(c => `<span class="${d.doubtful.includes(c) ? "doubt" : ""}" title="${esc(c)}">${esc(hName(c))}${d.doubtful.includes(c) ? " (doubtful)" : ""}</span>`).join("")}</div>` +
     `<div class="ddocs">${d.items.map(it => `<div>${T[it.type]} · ${obsList(it.by)}${it.link ? ` · <a href="${esc(it.link)}" target="_blank" rel="noopener">source</a>` : ""}</div>`).join("")}</div>` +
     `<div class="gramlinks">${dGram(d) || (d.date < "2017-01-01" ? "No gram: the model data starts in 2017." : d._pos && d._pos.approx ? "No gram: the exact place is not known." : "")}</div>` +
-    (d.notes ? `<div class="ddocs">${esc(d.notes)}</div>` : "") +
+    (d.notes ? `<div class="dnotes">${esc(d.notes)}</div>` : "") +
     (thumbs.length ? `<div class="dthumbs">${thumbs.map(it => `<figure>${it.link ? `<a href="${esc(it.link)}" target="_blank" rel="noopener">` : ""}<img src="data/disp/${esc(it.thumb)}" alt="${esc(T[it.type] + " by " + it.by.join(", "))}" loading="lazy">${it.link ? "</a>" : ""}<figcaption>${T[it.type]} · ${obsList(it.by)}</figcaption></figure>`).join("")}</div>` : "");
   el.querySelector(".dx").addEventListener("click", () => { dispPicked = dispPicked.filter(x => x !== d.id); dispCards(); dispList(); });
   return el;
