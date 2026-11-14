@@ -159,6 +159,9 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 .disp .latest { fill: none; stroke: rgb(var(--ink)); stroke-width: 1.3; opacity: .75; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; }
 @media (prefers-reduced-motion: no-preference) { .disp .latest { animation: latest 2.6s ease-out infinite; } }
 @keyframes latest { 0% { transform: scale(.75); opacity: .9; } 70% { transform: scale(1.25); opacity: 0; } 100% { transform: scale(1.25); opacity: 0; } }
+.tip .inset { display: block; margin: 5px 0 3px; border: 1px solid var(--rule); border-radius: 3px; background: var(--ocean); }
+.tip .inset .iland { fill: var(--panel); stroke: var(--coast); stroke-width: .6; vector-effect: non-scaling-stroke; }
+.tip .inset .ibord { fill: none; stroke: var(--coast); stroke-width: .5; vector-effect: non-scaling-stroke; opacity: .8; }
 .dunder { font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 5px; align-items: center; margin-top: 6px; }
 .dunder span { border: 1px solid var(--rule); border-radius: 3px; padding: 1px 6px; color: var(--fg); }
 .strip { display: flex; flex-wrap: wrap; gap: 4px; }
@@ -619,11 +622,16 @@ const W = 960, H = 480;
 const svg = d3.select("#map").attr("viewBox", `0 0 ${W} ${H}`);
 const proj = d3.geoEqualEarth().fitExtent([[6, 6], [W - 6, H - 6]], { type: "Sphere" });
 const path = d3.geoPath(proj);
+const insetDefs = svg.append("defs");
+insetDefs.append("path").attr("id", "iSphere").datum({ type: "Sphere" }).attr("d", path);
+insetDefs.append("path").attr("id", "iLand").attr("vector-effect", "non-scaling-stroke");
+insetDefs.append("path").attr("id", "iBorders").attr("vector-effect", "non-scaling-stroke");
 const gZoom = svg.append("g");
 gZoom.append("path").datum({ type: "Sphere" }).attr("class", "sphere").attr("d", path);
 gZoom.append("path").datum(d3.geoGraticule().step([30, 30])()).attr("class", "grat").attr("d", path);
 const LAND50 = topojson.feature(LAND, LAND.objects.land);
 const land50 = gZoom.append("path").datum(LAND50).attr("class", "land").attr("d", path);
+d3.select("#iLand").attr("d", land50.attr("d"));
 const land10 = gZoom.append("path").attr("class", "land").attr("hidden", true);
 const gLayer = gZoom.append("g").attr("class", "koppen");          // Köppen layer: above the land fill, below coastline and dots
 const coastTop = gZoom.append("path").datum(LAND50).attr("class", "coastline").attr("d", path).attr("hidden", true);
@@ -1552,6 +1560,7 @@ async function bordersLoad() {
     await loadScript("data/borders.js");
     const T = window.FP_BORDERS; window.FP_BORDERS = null;
     gBorders.datum(topojson.mesh(T, T.objects.countries, (a, b) => a !== b)).attr("d", path);
+    d3.select("#iBorders").attr("d", gBorders.attr("d"));
     topojson.feature(T, T.objects.countries).features.forEach(f => COUNTRIES.set(f.properties.name.toLowerCase(), f));
   } catch (e) { document.getElementById("bdon").parentElement.hidden = true; }
 }
@@ -1696,10 +1705,10 @@ function placeGroups() {
   });
 }
 const dScale = () => 1 / Math.pow(zk, 0.7);
-function clusters(list) {
+function clusters(list, near = 26 * dScale()) {
   const byPlace = [...d3.group(list.filter(d => d._pos), d => d._place).values()].map(m => ({ m, xy: proj(m[0]._pos.ll) }));
   byPlace.sort((a, b) => b.m.length - a.m.length);
-  const out = [], near = 26 * dScale();
+  const out = [];
   byPlace.forEach(c => { const o = out.find(o => Math.hypot(o.xy[0] - c.xy[0], o.xy[1] - c.xy[1]) < near); if (o) o.m.push(...c.m); else out.push({ m: c.m.slice(), xy: c.xy }); });
   out.forEach(c => { c.m.sort((a, b) => dKey(b).localeCompare(dKey(a))); c.key = c.m.map(d => d.id).join("_"); });
   return out;
@@ -1711,7 +1720,30 @@ function dispDraw() {
     .html(c => (dScope === "recent" && dLatest && c.m.includes(dLatest) ? `<circle class="latest" r="17"/>` : "") + (c.m.length === 1 ? hexSVG(c.m[0], 10) : dotSVG(c.m, 10)))
     .attr("transform", c => `translate(${c.xy[0]},${c.xy[1]}) scale(${dScale()})`)
     .on("pointerenter pointermove", (ev, c) => dispTip(ev, c)).on("pointerleave", () => { tip.hidden = true; })
-    .on("click", (ev, c) => { ev.stopPropagation(); tip.hidden = true; c.m.length === 1 ? (dispLoc = null, dPick(c.m[0].id)) : openLoc(c); });
+    .on("click", (ev, c) => { ev.stopPropagation(); tip.hidden = true; c.m.length === 1 ? (dispLoc = null, dPick(c.m[0].id)) : nPlaces(c.m) > 1 && zk < 15.9 ? zoomToCluster(c) : openLoc(c); });
+}
+const nPlaces = m => new Set(m.map(d => d._place)).size;
+function clusterBox(m) {                     // the places of a merged dot, in map units
+  const pts = [...d3.group(m, d => d._place).values()].map(g => proj(g[0]._pos.ll));
+  const x0 = d3.min(pts, p => p[0]), x1 = d3.max(pts, p => p[0]), y0 = d3.min(pts, p => p[1]), y1 = d3.max(pts, p => p[1]);
+  return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, w: x1 - x0, h: y1 - y0 };
+}
+function zoomToCluster(c) {                  // zoom the main map so the merged places come apart
+  const b = clusterBox(c.m);
+  const pts = [...d3.group(c.m, d => d._place).values()].map(g => proj(g[0]._pos.ll));
+  let dmin = Infinity; pts.forEach((p, i) => pts.forEach((q, j) => { if (j > i) dmin = Math.min(dmin, Math.hypot(p[0] - q[0], p[1] - q[1])); }));
+  const kFit = Math.min(16, W / (b.w * 1.8 + 1e-6), H / (b.h * 1.8 + 1e-6));          // deepest zoom that still shows them all
+  const kSep = Math.pow(26 / dmin, 1 / 0.7) * 1.5;                                    // just enough to pull the nearest two apart
+  const k = Math.min(16, Math.max(Math.min(kSep, kFit), zk * 1.5));
+  svg.transition().duration(650).call(zoom.transform, d3.zoomIdentity.translate(W / 2 - k * b.cx, H / 2 - k * b.cy).scale(k));
+}
+function insetSVG(m) {                       // small zoomed-in map of a merged dot, for the hover box
+  const IW = 250, IH = 160, b = clusterBox(m);
+  const vw = Math.max(b.w * 1.9, b.h * 1.9 * IW / IH, 14), vh = vw * IH / IW, u = vw / IW;       // u: map units per inset pixel
+  const cl = clusters(m, 24 * u);
+  return `<svg class="inset" width="${IW}" height="${IH}" viewBox="${b.cx - vw / 2} ${b.cy - vh / 2} ${vw} ${vh}" aria-hidden="true">` +
+    `<use href="#iLand" class="iland"/><use href="#iBorders" class="ibord"/>` +
+    cl.map(c => `<g transform="translate(${c.xy[0]},${c.xy[1]}) scale(${u * 1.05})">${c.m.length === 1 ? hexSVG(c.m[0], 10) : dotSVG(c.m, 10)}</g>`).join("") + `</svg>`;
 }
 function placeTitle(list) {
   const names = [...new Set(list.map(dName))];
@@ -1724,6 +1756,11 @@ function dispTip(ev, c) {
     tip.innerHTML = `<div>${esc(dName(d))}${d._pos.approx ? " (country only)" : ""}</div><div class="c">${esc(d.date)}${d.time ? " " + esc(d.time) : ""} · ${esc(d.light)} · ${esc(dLabel(d))}</div>` +
       (d.novel.length ? `<div class="c">world first: ${d.novel.map(c => esc(hName(c))).join(", ")}</div>` : "") +
       (d.nfc.length + d.nfp.length ? `<div class="c">national first: ${[...d.nfc.map(hName), ...d.nfp.map(c => hName(c) + " (possible)")].map(esc).join(", ")}</div>` : "");
+  } else if (nPlaces(m) > 1) {
+    const wf = m.reduce((s, d) => s + d.novel.length, 0), nf = m.reduce((s, d) => s + d.nfc.length + d.nfp.length, 0);
+    tip.innerHTML = `<div>${m.length} displays at ${nPlaces(m)} places</div>` +
+      (wf || nf ? `<div class="c">${[wf ? `${wf} world first halo${wf === 1 ? "" : "s"}` : "", nf ? `${nf} national first halo${nf === 1 ? "" : "s"}` : ""].filter(Boolean).join(" · ")}</div>` : "") +
+      insetSVG(m) + `<div class="c">${zk < 15.9 ? "click to zoom in here" : "click to list them"}</div>`;
   } else {
     const ds = m.map(d => d.date).sort(), wf = m.reduce((s, d) => s + d.novel.length, 0), nf = m.reduce((s, d) => s + d.nfc.length + d.nfp.length, 0), a = aggFlags(m);
     const lead = dQ.wf ? `${wf} world first halo${wf === 1 ? "" : "s"} in these ${m.length} displays` : dQ.nf || dQ.nfp ? `${nf} national first halo${nf === 1 ? "" : "s"} in these ${m.length} displays` : `${m.length} displays, ${esc(ds[0])} – ${esc(ds[ds.length - 1])}`;
@@ -1809,7 +1846,7 @@ function dispLegend() {
   const sw = (fill, stroke) => `<svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><polygon points="${hexPts(7).map(p => p.map(v => v.toFixed(1)).join(",")).join(" ")}" fill="${fill}" ${stroke ? `stroke="${stroke}" stroke-width="1.3"` : ""}/></svg>`;
   document.getElementById("displegend").innerHTML =
     `<span class="k">${hex}<span>One display. The number is how many halos it had. A side is drawn bold when it had a rare halo of that crystal orientation.</span></span>` +
-    `<span class="k"><svg width="22" height="22" viewBox="-11 -11 22 22" aria-hidden="true"><circle r="10" fill="${D_MIXED}"/><text y="3.5" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" font-weight="600" fill="#1c2329">4</text></svg> several nearby displays; zoom in to separate the locations. Grey when their light sources differ.</span>` +
+    `<span class="k"><svg width="22" height="22" viewBox="-11 -11 22 22" aria-hidden="true"><circle r="10" fill="${D_MIXED}"/><text y="3.5" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" font-weight="600" fill="#1c2329">4</text></svg> several nearby displays; point at it for a closer view, click to zoom in. Grey when their light sources differ.</span>` +
     `<span class="k"><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><circle r="11" fill="none" stroke="rgb(var(--ink))" stroke-width="1.2" opacity=".7"/>${hexSVG({ light: "sun", items: [{ type: "photo" }], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], lat: 60 }, 7, { nobadge: true }).replace(/>0</, "><")}</svg> the latest display</span>` +
     `<span class="k">${sw(D_LIGHT.sun)} sun</span><span class="k">${sw(D_LIGHT.moon)} moon</span><span class="k">${sw(D_LIGHT.artificial)} artificial light</span>` +
     `<span class="k"><b style="color:#d0306a">★</b> world first</span><span class="k"><svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="#2f7d4f"/></svg> national first <svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="var(--panel)"/></svg> possible</span>` +
