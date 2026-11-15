@@ -51,7 +51,7 @@ def api_key():
 def sites(listfile="locations_current.csv"):
     with open(BASE / listfile, encoding="utf-8") as fh:
         return [(r["name"], float(r["lat"]), float(r["lon"]),
-                 float(r["elev_m"]) if r.get("elev_m") else None)
+                 float(r["elev_m"]) if (r.get("elev_m") or "").strip() else None)
                 for r in csv.DictReader(fh)]
 
 

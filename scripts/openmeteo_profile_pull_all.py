@@ -60,7 +60,7 @@ def sites():
             with open(p, encoding="utf-8") as fh:
                 for r in csv.DictReader(fh):
                     out.append((r["name"], float(r["lat"]), float(r["lon"]),
-                                float(r["elev_m"]) if r.get("elev_m") else None))
+                                float(r["elev_m"]) if (r.get("elev_m") or "").strip() else None))
     return out
 
 
