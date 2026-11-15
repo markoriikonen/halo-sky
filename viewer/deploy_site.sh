@@ -15,6 +15,8 @@ cp -r "$REPO/gram" "$REPO/locations" "$OUT/"
 mkdir -p "$OUT/fingerprints"
 cp -r "$VIEW/index.html" "$VIEW/data" "$OUT/fingerprints/"
 touch "$OUT/.nojekyll"
+# the custom domain: GitHub Pages reads it from this file, and a force-push without it would drop the domain
+echo "haloskyatlas.com" > "$OUT/CNAME"
 cd "$OUT"
 git init -q -b site
 git config user.email "noreply@anthropic.com"; git config user.name "Claude"

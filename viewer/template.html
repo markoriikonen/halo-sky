@@ -958,7 +958,7 @@ function update() {
 
 
 // ---- links to the Halo Sky Gram page (GitHub Pages; it fetches from Open-Meteo's free API)
-const GRAM_URL = "https://markoriikonen.github.io/halo-sky/gram/";
+const GRAM_URL = "../gram/";   // the gram sits next to the viewer on the site
 function gramLink(s, year, month, months, label, extra = {}) {
   const q = new URLSearchParams({ name: s.n, lat: s.la, lon: s.lo, type: year >= 2024 ? "height" : "lmh", year, month, months, ...extra });
   return `<a class="gramlink" href="${GRAM_URL}?${q}" target="_blank" rel="noopener">${label}</a>`;
