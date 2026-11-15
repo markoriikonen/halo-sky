@@ -188,7 +188,7 @@ textarea { resize: vertical; min-height: 54px; }
 <script>
 const FORMS = /*FORMS*/[];
 const GROUP_NAMES = {"ORIENTATION UNDETERMINABLE":"Orientation undeterminable","MIXED/UNCERTAIN ORIENTATION":"Mixed/uncertain orientation","SURFACE REFLECTION SOURCE":"Surface reflection source","RANDOM ORIENTATION":"Random orientation","PLATE ORIENTATION":"Plate orientation","COLUMN ORIENTATION":"Column orientation","PARRY ORIENTATION":"Parry orientation","LOWITZ ORIENTATION":"Lowitz orientation","TRICKER ORIENTATION (experimental)":"Tricker orientation (experimental)","MULTI-SCATTERING":"Multiple scattering","DIFFUSED SOURCE":"Diffused source","SURFACE REFLECTION":"Surface reflection","ODD RADIUS CIRCULAR HALOS":"Odd radius circular halos","ODD RADIUS PLATE ARCS":"Odd radius plate arcs","ODD RADIUS COLUMN ARCS":"Odd radius column arcs","EXOTICS":"Exotics"};
-const CLASSES = ["random", "plate", "column", "Parry", "Lowitz", "Tricker"];   // hexagon sides clockwise from the top
+const CLASSES = ["plate", "random", "column", "Parry", "Tricker", "Lowitz"];   // hexagon sides clockwise from the top
 const TROPIC = 20;                                                            // fliphelion counts as rare within this latitude
 const FORM = {};                                                              // code -> first entry
 FORMS.forEach(([c, n, g, s, cls, rare, mark]) => { if (!FORM[c]) FORM[c] = { c, n, g, s, cls, rare, mark }; });

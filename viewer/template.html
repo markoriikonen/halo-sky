@@ -159,6 +159,9 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 .disp .latest { fill: none; stroke: rgb(var(--ink)); stroke-width: 1.3; opacity: .75; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; }
 @media (prefers-reduced-motion: no-preference) { .disp .latest { animation: latest 2.6s ease-out infinite; } }
 @keyframes latest { 0% { transform: scale(.75); opacity: .9; } 70% { transform: scale(1.25); opacity: 0; } 100% { transform: scale(1.25); opacity: 0; } }
+.tip.dtip { max-width: 230px; white-space: normal; }
+.tip.dtip.wide { max-width: 270px; }
+.tip.dtip .c { overflow-wrap: anywhere; }
 .tip .tipimg { display: block; width: 150px; max-height: 150px; object-fit: contain; border-radius: 3px; margin-bottom: 5px; background: var(--bg); }
 .tip .inset { display: block; margin: 5px 0 3px; border: 1px solid var(--rule); border-radius: 3px; background: var(--ocean); }
 .tip .inset .iland { fill: var(--panel); stroke: var(--coast); stroke-width: .6; vector-effect: non-scaling-stroke; }
@@ -743,6 +746,7 @@ let dots;
 function showTip(ev, s) {
   if (mode === "season") {
     const c = series(s), v = seasonValue(s);
+    tip.classList.remove("dtip");
     tip.innerHTML = `<div>${s.n}</div><div class="c">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""}${KG ? " · " + (KG[s.kg] ? KG[s.kg][0] : "–") : ""}</div>` +
       `<div class="c">${c ? (sView === "timing" ? `peak ${pDate(c.peak)} · concentration ${c.R.toFixed(2)}` : fmtSV(v)) : "no data"}</div>`;
     tip.hidden = false;
@@ -752,6 +756,7 @@ function showTip(ev, s) {
     return;
   }
   const v = share(s, month);
+  tip.classList.remove("dtip");
   tip.innerHTML = `<div>${s.n}</div><div class="c">${fmtLat(s.la)} ${fmtLon(s.lo)}${s.el != null ? " · " + s.el + " m" : ""}${KG ? " · " + (KG[s.kg] ? KG[s.kg][0] : "–") : ""}</div>` +
     `<div class="c">${MONTHS[month]}: ${isNaN(v) ? "no data" : pct(v) + (mode === "halo" && hBy === "pres" ? (pView === "cv" ? " clear view" : " high, no low") : " in window")}${excluded(s) ? " (above 1500 m, hidden)" : ""}</div>`;
   tip.hidden = false;
@@ -1573,7 +1578,7 @@ async function bordersLoad() {
 document.getElementById("bdon").addEventListener("change", e => gBorders.attr("hidden", e.target.checked ? null : true));
 
 // ===================== Displays mode: photographed halo displays from the Halo Display Log =====================
-const D_CLASSES = ["random", "plate", "column", "Parry", "Lowitz", "Tricker"];      // hexagon sides clockwise from the top
+const D_CLASSES = ["plate", "random", "column", "Parry", "Tricker", "Lowitz"];      // hexagon sides clockwise from the top: the two with horizontal faces top and bottom
 const D_LIGHT = { sun: "#ffa500", moon: "#cd9b9b", artificial: "#4876ff" };
 const D_TEXT = { "#ffa500": "#1c2329", "#cd9b9b": "#1c2329", "#4876ff": "#ffffff", "#8d99a6": "#1c2329" };
 const D_MIXED = "#8d99a6";
@@ -1759,12 +1764,14 @@ function placeTitle(list) {
 }
 function dispTip(ev, c) {
   const m = c.m;
+  tip.classList.add("dtip"); tip.classList.toggle("wide", m.length > 1 && nPlaces(m) > 1);
   if (m.length === 1) {
     const d = m[0];
     const pic = d.items.find(it => it.pop && it.thumb);
     tip.innerHTML = (pic ? `<img class="tipimg" src="data/disp/${esc(pic.thumb)}" alt="">` : "") + `<div>${esc(dName(d))}${d._pos.approx ? " (country only)" : ""}</div><div class="c">${esc(d.date)}${d.time ? " " + esc(d.time) : ""} · ${esc(d.light)} · ${esc(dLabel(d))}</div>` +
       (d.novel.length ? `<div class="c">world first: ${d.novel.map(c => esc(hName(c))).join(", ")}</div>` : "") +
-      (d.nfc.length + d.nfp.length ? `<div class="c">national first: ${[...d.nfc.map(hName), ...d.nfp.map(c => hName(c) + " (possible)")].map(esc).join(", ")}</div>` : "");
+      (d.nfc.length ? `<div class="c">national first: ${d.nfc.map(c => esc(hName(c))).join(", ")}</div>` : "") +
+      (d.nfp.length ? `<div class="c">possible national first: ${d.nfp.map(c => esc(hName(c))).join(", ")}</div>` : "");
   } else if (nPlaces(m) > 1) {
     const wf = m.reduce((s, d) => s + d.novel.length, 0), nf = m.reduce((s, d) => s + d.nfc.length + d.nfp.length, 0);
     tip.innerHTML = `<div>${m.length} displays at ${nPlaces(m)} places</div>` +
