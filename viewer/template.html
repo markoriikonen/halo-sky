@@ -1768,7 +1768,7 @@ function dispTip(ev, c) {
   if (m.length === 1) {
     const d = m[0];
     const pic = d.items.find(it => it.pop && it.thumb);
-    tip.innerHTML = (pic ? `<img class="tipimg" src="data/disp/${esc(pic.thumb)}" alt="">` : "") + `<div>${esc(dName(d))}${d._pos.approx ? " (country only)" : ""}</div><div class="c">${esc(d.date)}${d.time ? " " + esc(d.time) : ""} · ${esc(dLabel(d))}</div>` +
+    tip.innerHTML = (pic ? `<img class="tipimg" src="data/disp/${esc(pic.thumb)}" alt="">` : "") + `<div>${esc(dName(d))}${d._pos.approx ? " (country only)" : ""}</div><div class="c">${esc(d.date)}${d.time ? " " + esc(d.time) : ""}</div><div class="c" style="white-space:nowrap">${esc(dLabel(d))}</div>` +
       (d.novel.length ? `<div class="c">world first: ${d.novel.map(c => esc(hName(c))).join(", ")}</div>` : "") +
       (d.nfc.length ? `<div class="c">national first: ${d.nfc.map(c => esc(hName(c))).join(", ")}</div>` : "") +
       (d.nfp.length ? `<div class="c">possible national first: ${d.nfp.map(c => esc(hName(c))).join(", ")}</div>` : "");
