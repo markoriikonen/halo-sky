@@ -1863,7 +1863,7 @@ function dCard(d) {
         <div class="dmeta">${hCount(d)} halos${d.maxsim ? ` · at most ${esc(d.maxsim)} at the same time` : ""}${d._pos && d._pos.approx ? " · location: country only" : ""}</div></div>
       <button type="button" class="dx" aria-label="Close this card">×</button></div>` +
     (firsts.length ? `<div class="dfirst">${firsts.map(([k, lab, c]) => `<div><span class="${k}">${k === "wf" ? "★ " : ""}${lab}:</span> ${esc(hName(c))} — ${dCredit(d, c).length ? obsList(dCredit(d, c)) : "no documentation shows it"}</div>`).join("")}</div>` : "") +
-    `<div class="dhalos">${d.halos.map(c => `<span class="${d.doubtful.includes(c) ? "doubt" : ""}" title="${esc(c)}">${esc(hName(c))}${d.doubtful.includes(c) ? " (doubtful)" : ""}</span>`).join("")}</div>` +
+    `<div class="dhalos">${d.halos.map(c => `<span class="${d.doubtful.includes(c) ? "doubt" : ""}" title="${esc(c)}">${esc(hName(c))}${d.doubtful.includes(c) ? " (uncertain)" : ""}</span>`).join("")}</div>` +
     `<div class="ddocs">${d.items.map(it => `<div>${obsList(it.by)}${it.link ? ` · <a href="${esc(it.link)}" target="_blank" rel="noopener">source</a>` : ""}</div>`).join("")}</div>` +
     `<div class="gramlinks">${dGram(d) || (d.date < "2017-01-01" ? "No gram: the model data starts in 2017." : d._pos && d._pos.approx ? "No gram: the exact place is not known." : "")}</div>` +
     (d.notes ? noteHTML(d.notes) : "") +

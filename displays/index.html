@@ -161,7 +161,7 @@ textarea { resize: vertical; min-height: 54px; }
       <div class="f"><label for="halo-in">Halo forms</label>
         <div class="tokens" id="halos"><input id="halo-in" placeholder="type a code or name, Enter to add"></div>
         <div class="sugg" id="halo-s" hidden></div>
-        <span class="hint">Click a halo to mark it doubtful, a world first or a national first. Or pick from the list on the right.</span></div>
+        <span class="hint">Click a halo to mark it uncertain, a world first or a national first. Or pick from the list on the right.</span></div>
       <div class="preview" id="preview"></div>
       <div class="row"><div class="f"><label for="maxsim">Most halos at the same time</label><input id="maxsim" inputmode="numeric" placeholder="optional"><span class="hint">only for the biggest displays: the halo count of the richest stage</span></div></div>
       <div class="f"><span class="lab">Documentation</span>
@@ -260,7 +260,7 @@ function renderPreview() {
   const n = rec.halos.length, d = rec.doubtful.length;
   $("preview").innerHTML = hexSVG(rec, 72) + `<div class="sum"><span class="lbl">${haloCount(rec)} halo${haloCount(rec) === 1 ? "" : "s"}${h.novel ? " ★" : ""}</span>
     <span>${lit.length ? "Rare forms in: " + lit.join(", ") : "No rare oriented forms yet"}</span>
-    ${creditLines()}<span class="hint">${n} halo${n === 1 ? "" : "s"}${d ? `, ${d} doubtful` : ""}${h.nfc ? " · national first" : h.nfp ? " · possible national first" : ""}${!rec.lat ? " · fliphelion rule needs the latitude" : ""}</span></div>`;
+    ${creditLines()}<span class="hint">${n} halo${n === 1 ? "" : "s"}${d ? `, ${d} uncertain` : ""}${h.nfc ? " · national first" : h.nfp ? " · possible national first" : ""}${!rec.lat ? " · fliphelion rule needs the latitude" : ""}</span></div>`;
 }
 
 // ---------- token fields ----------
@@ -301,7 +301,7 @@ function haloMenu(c, anchor) {
   closeMenu();
   const m = document.createElement("div"); m.className = "menu"; m.setAttribute("role", "menu");
   const item = (key, label) => `<button type="button" role="menuitemcheckbox" data-k="${key}" aria-checked="${rec[key].includes(c)}"><span class="chk">${rec[key].includes(c) ? "✓" : ""}</span>${label}</button>`;
-  m.innerHTML = `<div class="ttl">${esc(c)} · ${esc(FORM[c]?.n || "not in the list")}</div>` + item("doubtful", "Doubtful") + item("novel", "World first") +
+  m.innerHTML = `<div class="ttl">${esc(c)} · ${esc(FORM[c]?.n || "not in the list")}</div>` + item("doubtful", "Uncertain") + item("novel", "World first") +
     item("nfc", "National first, confirmed") + item("nfp", "National first, possible") + `<button type="button" data-k="rm"><span class="chk">×</span>Remove</button>`;
   m.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; closeMenu(); b.dataset.k === "rm" ? toggleHalo(c, false) : flag(b.dataset.k, c); });
   document.body.appendChild(m);
