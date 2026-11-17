@@ -22,11 +22,11 @@ body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 var(--
 h1 { font: 500 clamp(26px, 3vw, 34px)/1.15 var(--f-display); margin: 0; }
 .lede { margin: 4px 0 0; color: var(--muted); max-width: 75ch; }
 .panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; }
-.controls { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: end; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: end; }
 label.f { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
 label.f input, label.f select { font: inherit; font-size: 14px; color: var(--fg); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 8px; }
-label.f input.n { width: 92px; }
-label.f input.w { width: 220px; }
+label.f input.n { width: 86px; }
+label.f input.w { width: 180px; }
 .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
 .seg button { font: 13px var(--f-data); padding: 7px 10px; border: 0; background: var(--bg); color: var(--fg); cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--fg); color: var(--panel); }
@@ -34,6 +34,7 @@ label.f input.w { width: 220px; }
 .stylebar label.f { display: flex; align-items: center; gap: 8px; }
 .stylebar input[type=range] { width: 140px; accent-color: var(--accent); }
 button.go { font: 500 14px var(--f-body); padding: 8px 16px; border-radius: 4px; border: 1px solid var(--fg); background: var(--fg); color: var(--panel); cursor: pointer; }
+button.go.alt { background: var(--panel); color: var(--fg); }
 button.go:disabled { opacity: .5; cursor: default; }
 .hint { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
 #status { font-family: var(--f-data); font-size: 13px; color: var(--muted); }
@@ -44,6 +45,7 @@ canvas#gram { display: block; background: #fff; border-radius: 3px; }
 .tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px;
   padding: 5px 8px; font: 12px var(--f-data); white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
 .note { font-size: 13px; color: var(--muted); margin: 0; }
+[hidden] { display: none !important; }
 .note a { color: inherit; }
 </style>
 </head>
@@ -51,7 +53,7 @@ canvas#gram { display: block; background: #fff; border-radius: 3px; }
 <div class="wrap">
   <header>
     <h1>Halo Sky Gram</h1>
-    <p class="lede">Cloud by height and time for any place, from ECMWF model data via Open-Meteo, in local time. The height gram shades cloud cover on 13 pressure levels with the 0, −15 and −40 °C isotherms; the low/mid/high gram shows ECMWF's own three cloud bands.</p>
+    <p class="lede">Cloud by height and time for any place, from ECMWF model data via Open-Meteo, in local time. The height gram shades cloud cover on 13 pressure levels with the 0, −15 and −40 °C isotherms; the low/mid/high gram shows ECMWF's own three cloud bands. The 5-day forecast shows yesterday, today and the next four days from the latest ECMWF run.</p>
   </header>
 
   <div class="panel">
@@ -70,6 +72,7 @@ canvas#gram { display: block; background: #fff; border-radius: 3px; }
       <label class="f">From <select id="month"></select></label>
       <label class="f">Months <select id="months"></select></label>
       <button class="go" id="go" type="button">Draw gram</button>
+      <button class="go alt" id="fc" type="button" title="Yesterday, today and the next four days, from the latest ECMWF run">5-day forecast</button>
     </div>
     <p class="hint" id="avail"></p>
     <p class="hint">Pick one of the 2,500 Fingerprints sites from the Place list to fill in its coordinates, or type any place with its own latitude and longitude.</p>
@@ -94,12 +97,14 @@ canvas#gram { display: block; background: #fff; border-radius: 3px; }
     <div id="status">Choose a place and period, then Draw gram.</div>
   </div>
 
-  <p class="note">Data: ECMWF IFS via <a href="https://open-meteo.com/">Open-Meteo</a>, licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Height gram: IFS 0.25° (about 25 km) temperature and cloud cover on 13 pressure levels, with heights worked out from temperature and surface pressure, available from January 2024; cloud cover on pressure levels is derived from relative humidity. Low/mid/high: IFS HRES 9 km, from January 2017; ECMWF splits the bands at 0.8 and 0.45 of surface pressure (dashed lines in the height gram). Each gram is fetched directly from Open-Meteo's free, non-commercial API by your browser; no key is used.</p>
+  <p class="note">Data: ECMWF IFS via <a href="https://open-meteo.com/">Open-Meteo</a>, licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Height gram: IFS 0.25° (about 25 km) temperature and cloud cover on 13 pressure levels, with heights worked out from temperature and surface pressure, available from January 2024; cloud cover on pressure levels is derived from relative humidity. Low/mid/high: IFS HRES 9 km, from January 2017; ECMWF splits the bands at 0.8 and 0.45 of surface pressure (dashed lines in the height gram). The 5-day forecast comes from Open-Meteo's forecast API with the same two models and is renewed as ECMWF runs come in, four times a day; the hours already past are shaded. Each gram is fetched directly from Open-Meteo's free, non-commercial API by your browser; no key is used.</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script>
 const API = "https://historical-forecast-api.open-meteo.com/v1/forecast";
+const FAPI = "https://api.open-meteo.com/v1/forecast";          // the forecast: yesterday, today and four days ahead
+const FC_PAST = 1, FC_DAYS = 5;
 const LEVELS = [1000, 925, 850, 700, 600, 500, 400, 300, 250, 200, 150, 100, 50];
 const FIRST = { height: 2024, lmh: 2017 };
 const Z_TOP = 18000, DZ = 50, EDGE_FADE = 600, GAMMA = 0.8;
@@ -107,6 +112,7 @@ const ISOTHERMS = [0, -15, -40], SIGMA = [0.8, 0.45];
 const C_CLOUD = [60, 60, 60], C_BG = [255, 255, 255], C_GROUND = [217, 203, 180];
 const SUN = { day: "#f2cf6b", twi: "#a9b4c9", night: "#3d4559" };
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 let gtype = "height";
 // height-gram style: smooth shading between levels, or one block per pressure level and hour
@@ -139,6 +145,7 @@ document.querySelectorAll("#type button").forEach(b => b.addEventListener("click
 }));
 
 // from the address: ?name=&lat=&lon=&type=height|lmh&year=&month=&months=&season=best|worst
+//   or the forecast: ?name=&lat=&lon=&type=&forecast=1 (always the latest run)
 //   or a free range from the displays map: &from=YYYY-MM-DD&to=YYYY-MM-DD&mark=<start>/<end> (local time, Z = UTC)
 const P = new URLSearchParams(location.search);
 let RANGE = P.get("from") && P.get("to") ? { from: P.get("from"), to: P.get("to") } : null;
@@ -205,6 +212,17 @@ function period() {
   return { start, end: end > yest ? yest : end };
 }
 const iso = d => d.toISOString().slice(0, 10);
+function fillGaps(h, maxGap = 6) {                // a missing hour between two known ones: linear in time
+  Object.keys(h).forEach(k => {
+    const a = h[k]; if (k === "time" || !Array.isArray(a)) return;
+    let last = -1;
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] == null) continue;
+      if (last >= 0 && i - last > 1 && i - last <= maxGap) for (let j = last + 1; j < i; j++) a[j] = a[last] + (a[i] - a[last]) * (j - last) / (i - last);
+      last = i;
+    }
+  });
+}
 let tick = null;
 async function getJSON(url, what, limitMs = 180000) {
   const ctl = new AbortController(), t0 = Date.now();
@@ -224,15 +242,20 @@ async function getJSON(url, what, limitMs = 180000) {
 }
 function status(t, err) { const s = $("status"); s.textContent = t; s.classList.toggle("err", !!err); }
 
-$("go").addEventListener("click", draw);
-async function draw() {
+$("go").addEventListener("click", () => draw(false));
+$("fc").addEventListener("click", () => draw(true));
+async function draw(fc = false) {
   const lat = +$("lat").value, lon = +$("lon").value;
   if (!$("lat").value || !$("lon").value || Math.abs(lat) > 90 || Math.abs(lon) > 180) { status("Give the latitude and longitude.", true); return; }
-  const { start, end } = period();
-  if (end < start) { status("That period is not available yet.", true); return; }
-  if (start.getUTCFullYear() < FIRST[gtype]) { status(`The ${gtype === "height" ? "height gram starts in 2024" : "low/mid/high data starts in 2017"}.`, true); return; }
-  $("go").disabled = true;
-  const base = `${API}?latitude=${lat}&longitude=${lon}&start_date=${iso(start)}&end_date=${iso(end)}&timezone=auto`;
+  let start = null, end = null, base;
+  if (fc) base = `${FAPI}?latitude=${lat}&longitude=${lon}&past_days=${FC_PAST}&forecast_days=${FC_DAYS}&timezone=auto`;
+  else {
+    ({ start, end } = period());
+    if (end < start) { status("That period is not available yet.", true); return; }
+    if (start.getUTCFullYear() < FIRST[gtype]) { status(`The ${gtype === "height" ? "height gram starts in 2024" : "low/mid/high data starts in 2017"}.`, true); return; }
+    base = `${API}?latitude=${lat}&longitude=${lon}&start_date=${iso(start)}&end_date=${iso(end)}&timezone=auto`;
+  }
+  $("go").disabled = $("fc").disabled = true;
   try {
     const lmh = await getJSON(`${base}&hourly=cloud_cover_low,cloud_cover_mid,cloud_cover_high&models=ecmwf_ifs`, "low/mid/high cloud");
     let lev = null, levErr = null;
@@ -241,16 +264,27 @@ async function draw() {
       try { lev = await getJSON(`${base}&hourly=${vars.join(",")}&models=ecmwf_ifs025`, "pressure levels", 90000); }
       catch (e) { levErr = e.message; }
     }
-    lastDraw = [lmh, lev, { name: $("name").value.trim(), lat, lon, start, end }];
+    if (fc) {                                    // later forecast hours can come 3-hourly
+      fillGaps(lmh.hourly); if (lev) fillGaps(lev.hourly);
+      const t = lmh.hourly.time;
+      start = new Date(t[0].slice(0, 10) + "T00:00:00Z"); end = new Date(t[t.length - 1].slice(0, 10) + "T00:00:00Z");
+      $("seasonnote").hidden = true;
+    }
+    lastDraw = [lmh, lev, { name: $("name").value.trim(), lat, lon, start, end, fc }];
     styleUI();
     render(...lastDraw);
     if (levErr) status(`The pressure levels did not come through (${levErr}), so only the low/mid/high gram is shown. Try the height gram again later.`, true);
-    else status(`Drawn: ${lmh.hourly.time.length} hours. Hover the gram for values.`);
-    const q = new URLSearchParams({ name: $("name").value.trim(), lat, lon, type: gtype, year: $("year").value, month: $("month").value, months: $("months").value });
-    if (RANGE) { q.set("from", RANGE.from); q.set("to", RANGE.to); if (MARK) q.set("mark", MARK); }
+    else status(fc ? "Forecast drawn: yesterday, today and the next four days, from the latest ECMWF run. Hover the gram for values."
+                   : `Drawn: ${lmh.hourly.time.length} hours. Hover the gram for values.`);
+    const q = new URLSearchParams({ name: $("name").value.trim(), lat, lon, type: gtype });
+    if (fc) q.set("forecast", "1");
+    else {
+      q.set("year", $("year").value); q.set("month", $("month").value); q.set("months", $("months").value);
+      if (RANGE) { q.set("from", RANGE.from); q.set("to", RANGE.to); if (MARK) q.set("mark", MARK); }
+    }
     history.replaceState(null, "", "?" + q.toString());
   } catch (e) { status("Could not draw the gram: " + e.message, true); }
-  $("go").disabled = false;
+  $("go").disabled = $("fc").disabled = false;
 }
 
 // ---------- science helpers
@@ -289,15 +323,15 @@ function render(lmh, lev, site) {
   const h9 = lmh.hourly, n = h9.time.length;
   const off = (lmh.utc_offset_seconds || 0) * 1000;
   const tLocal = h9.time.map(s => Date.parse(s + ":00Z"));     // local wall time as if UTC
-  const days = n / 24, pxDay = Math.max(6, Math.min(60, Math.floor(1700 / days)));
-  const pxH = pxDay / 24;
-  const mL = 38, mR = 10, mT = 34, barH = 9, gap = 6;
+  const days = n / 24, pxDay = site.fc ? Math.max(60, Math.floor(1150 / days)) : Math.max(6, Math.min(60, Math.floor(1700 / days)));
+  const pxH = pxDay / 24, hours = pxDay >= 100;  // wide days: weekday labels and 6-hour ticks
+  const mL = 38, mR = 10, mT = 34, barH = 9, gap = 6, hourRow = hours ? 12 : 0;
   const plotW = Math.ceil(n * pxH);
   const heightMode = !!lev;
   const plotH = heightMode ? Z_TOP / DZ : 0;
   const stripRowH = heightMode ? 12 : 34, stripH = 3 * stripRowH;
   const W = mL + plotW + mR;
-  const yBar = mT, yPlot = yBar + barH + gap, yStrip = yPlot + plotH + (heightMode ? 14 : 0), Ht = yStrip + stripH + 26;
+  const yBar = mT, yPlot = yBar + barH + gap, yStrip = yPlot + plotH + (heightMode ? 14 : 0), Ht = yStrip + stripH + 26 + hourRow;
   const cv = $("gram"), dpr = window.devicePixelRatio || 1;
   cv.width = W * dpr; cv.height = Ht * dpr; cv.style.width = W + "px"; cv.style.height = Ht + "px";
   const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -333,6 +367,26 @@ function render(lmh, lev, site) {
   // day and month lines, labels
   ctx.textBaseline = "alphabetic"; ctx.textAlign = "center";
   const bottom = yStrip + stripH;
+  let iNow = NaN;
+  if (site.fc) {                                // the hours already past, lightly shaded
+    iNow = (Date.now() + off - tLocal[0]) / 3.6e6;
+    if (iNow > 0) {
+      const xN = X(Math.min(n, iNow));
+      ctx.fillStyle = "rgba(40, 62, 92, .10)";
+      if (heightMode) ctx.fillRect(mL, yPlot, xN - mL, plotH);
+      ctx.fillRect(mL, yStrip, xN - mL, stripH);
+    }
+  }
+  if (hours) {                                  // 6-hour ticks and labels
+    ctx.strokeStyle = "rgba(150,150,150,.35)"; ctx.lineWidth = .6; ctx.fillStyle = "#777"; ctx.font = "9px IBM Plex Mono, monospace";
+    for (let i = 0; i < n; i++) {
+      const hh = new Date(tLocal[i]).getUTCHours();
+      if (hh % 6 || hh === 0) continue;
+      const x = Math.round(X(i)) + .5;
+      ctx.beginPath(); ctx.moveTo(x, yPlot); ctx.lineTo(x, heightMode ? yPlot + plotH : yPlot); ctx.moveTo(x, yStrip); ctx.lineTo(x, bottom); ctx.stroke();
+      ctx.fillText(String(hh).padStart(2, "0"), x, bottom + 11);
+    }
+  }
   for (let i = 0; i < n; i++) {
     const d = new Date(tLocal[i]);
     if (d.getUTCHours() !== 0) continue;
@@ -343,8 +397,18 @@ function render(lmh, lev, site) {
       ctx.strokeStyle = "#fff"; ctx.beginPath(); ctx.moveTo(x, yBar); ctx.lineTo(x, yBar + barH); ctx.stroke();
     }
     ctx.fillStyle = "#333"; ctx.font = "10px IBM Plex Mono, monospace";
-    if (pxDay >= 18) ctx.fillText(first ? `${MON[d.getUTCMonth()]} 1` : String(d.getUTCDate()), x + pxDay / 2, yBar - 5);
+    if (hours) ctx.fillText(`${WD[d.getUTCDay()]} ${d.getUTCDate()} ${MON[d.getUTCMonth()]}`, x + pxDay / 2, yBar - 5);
+    else if (pxDay >= 18) ctx.fillText(first ? `${MON[d.getUTCMonth()]} 1` : String(d.getUTCDate()), x + pxDay / 2, yBar - 5);
     else if (first) { ctx.textAlign = "left"; ctx.fillText(`${MON[d.getUTCMonth()]}${d.getUTCMonth() === 0 ? " " + d.getUTCFullYear() : ""}`, x + 3, yBar - 5); ctx.textAlign = "center"; }
+  }
+  if (iNow > 0 && iNow < n) {                   // now: past to the left, forecast to the right
+    const x = Math.round(X(iNow)) + .5;
+    ctx.strokeStyle = "rgba(196, 64, 47, .95)"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x, yBar - 22); ctx.lineTo(x, bottom); ctx.stroke();
+    ctx.font = "600 10px IBM Plex Sans, sans-serif"; ctx.fillStyle = "rgba(170, 50, 35, 1)";
+    ctx.textAlign = "right"; ctx.fillText("past", x - 5, yBar - 16);
+    ctx.textAlign = "left"; ctx.fillText("forecast", x + 5, yBar - 16);
+    ctx.textAlign = "center";
   }
   if (pxDay < 18 && new Date(tLocal[0]).getUTCDate() !== 1) { ctx.textAlign = "left"; ctx.fillText(MON[new Date(tLocal[0]).getUTCMonth()], mL + 3, yBar - 5); }
   if (MARK && RANGE) {                          // the display's time, shaded across the gram
@@ -359,13 +423,13 @@ function render(lmh, lev, site) {
     }
   }
   ctx.textAlign = "left"; ctx.fillStyle = "#888"; ctx.font = "10px IBM Plex Sans, sans-serif";
-  ctx.fillText(heightMode ? "ECMWF IFS 9 km low / mid / high cloud cover" : "ECMWF IFS 9 km cloud cover", mL, bottom + 14);
+  ctx.fillText(heightMode ? "ECMWF IFS 9 km low / mid / high cloud cover" : "ECMWF IFS 9 km cloud cover", mL, bottom + 14 + hourRow);
 
   const tz = (lmh.utc_offset_seconds || 0) / 3600, tzs = `UTC${tz >= 0 ? "+" : "−"}${Math.abs(tz)}`;
   const elev = lev ? lev.elevation : lmh.elevation;
   const fmt = d => `${d.getUTCDate()} ${MON[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
   $("gramhead").textContent = `${site.name || "Unnamed place"} · ${site.lat.toFixed(2)}, ${site.lon.toFixed(2)} · model ground ${Math.round(elev)} m · ` +
-    `${heightMode ? "IFS 0.25° levels + 9 km bands" : "IFS 9 km"} · ${fmt(site.start)} – ${fmt(site.end)} · local time (${tzs})`;
+    `${heightMode ? "IFS 0.25° levels + 9 km bands" : "IFS 9 km"} · ${site.fc ? "forecast, " : ""}${fmt(site.start)} – ${fmt(site.end)} · local time (${tzs})`;
 
   // hover
   const tip = $("tip"), box = $("scroll");
@@ -518,7 +582,7 @@ function drawHeight(ctx, lev, n, X, yPlot, plotW, plotH, pxH, mL) {
   return { T, C };
 }
 
-if (P.get("lat") && P.get("lon") && P.get("auto") !== "0") draw();
+if (P.get("lat") && P.get("lon") && P.get("auto") !== "0") draw(P.get("forecast") === "1");
 </script>
 </body>
 </html>

@@ -963,6 +963,10 @@ function gramLink(s, year, month, months, label, extra = {}) {
   const q = new URLSearchParams({ name: s.n, lat: s.la, lon: s.lo, type: year >= 2024 ? "height" : "lmh", year, month, months, ...extra });
   return `<a class="gramlink" href="${GRAM_URL}?${q}" target="_blank" rel="noopener">${label}</a>`;
 }
+function fcLink(s) {                                 // the latest ECMWF forecast: yesterday, today and four days ahead
+  const q = new URLSearchParams({ name: s.n, lat: s.la, lon: s.lo, type: "height", forecast: 1 });
+  return `<a class="gramlink" href="${GRAM_URL}?${q}" target="_blank" rel="noopener">5-day forecast</a>`;
+}
 function lastCompleteYear(month, months) {          // latest year whose chosen months have all passed
   const now = new Date(), y = now.getUTCFullYear(), m = now.getUTCMonth() + 1;
   const endMonth = month + months - 1;              // may run past 12 into next year
@@ -988,10 +992,10 @@ function gramLinks(s) {
       const { month, months } = seasonMonths(st, len), y = lastCompleteYear(month, months);
       out.push(gramLink(s, y, month, months, `${lab} ${y}${month + months - 1 > 12 ? "–" + String(y + 1).slice(2) : ""}`, { season: k, sdates: pSpan(st, len) }));
     });
-    return `<div class="gramlinks">Gram: ${out.join(" · ")}</div>`;
+    return `<div class="gramlinks">Gram: ${out.join(" · ")} · ${fcLink(s)}</div>`;
   }
   const m = month || Math.max(1, new Date().getUTCMonth()), y = lastCompleteYear(m, 1);
-  return `<div class="gramlinks">Gram: ${gramLink(s, y, m, 1, `${MONTHS[m]} ${y}`)} · ${gramLink(s, y - 1, m, 1, `${MONTHS[m]} ${y - 1}`)}</div>`;
+  return `<div class="gramlinks">Gram: ${gramLink(s, y, m, 1, `${MONTHS[m]} ${y}`)} · ${gramLink(s, y - 1, m, 1, `${MONTHS[m]} ${y - 1}`)} · ${fcLink(s)}</div>`;
 }
 // ===================== Light: daylight, + civil twilight, or all hours =====================
 let light = "day";
