@@ -177,6 +177,11 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 .tip .tall { color: inherit; }
 .tip .tri { font-size: 13px; }
 .tip .tri .more { color: var(--muted); }
+.tip .nfl { display: flex; align-items: flex-start; gap: 7px; margin-top: 4px; }
+.tip .flag { width: 21px; height: 16px; flex: none; border-radius: 2px; box-shadow: 0 0 0 1px var(--rule); margin-top: 1px; }
+.tip .fq { position: relative; flex: none; display: inline-flex; }
+.tip .flag.poss { opacity: .45; box-shadow: none; outline: 1px dashed var(--muted); outline-offset: 1px; }
+.tip .fq b { position: absolute; right: -7px; top: -7px; width: 13px; height: 13px; border-radius: 50%; background: var(--panel); box-shadow: 0 0 0 1px var(--rule); font: 600 10px/13px var(--f-body); text-align: center; color: var(--fg); }
 .tip .inset .iland { fill: var(--panel); stroke: var(--coast); stroke-width: .6; vector-effect: non-scaling-stroke; }
 .tip .inset .ibord { fill: none; stroke: var(--coast); stroke-width: .5; vector-effect: non-scaling-stroke; opacity: .8; }
 .dunder { font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 5px; align-items: center; margin-top: 6px; }
@@ -1808,8 +1813,14 @@ function dispTrinity(d) {
     `<div class="tri">${when}</div>` +
     `<div class="tri">${first ? obsH(first) : "<i>observer unknown</i>"}${others ? ` <span class="more">and ${others} other${others === 1 ? "" : "s"}</span>` : ""}</div>` +
     (d.novel.length ? `<div class="c">world first: ${d.novel.map(c => esc(hName(c))).join(", ")}</div>` : "") +
-    (d.nfc.length ? `<div class="c">national first: ${d.nfc.map(c => esc(hName(c))).join(", ")}</div>` : "") +
-    (d.nfp.length ? `<div class="c">possible national first: ${d.nfp.map(c => esc(hName(c))).join(", ")}</div>` : "");
+    nfLine(d, d.nfc, false) + nfLine(d, d.nfp, true);
+}
+function nfLine(d, codes, possible) {            // national firsts: the country's flag, faded with a ? when only possible
+  if (!codes.length) return "";
+  const names = `<span class="c">${codes.map(c => esc(hName(c))).join(", ")}</span>`;
+  if (!d.cc) return `<div class="c">${possible ? "possible " : ""}national first: ${codes.map(c => esc(hName(c))).join(", ")}</div>`;
+  const img = `<img class="flag${possible ? " poss" : ""}" src="data/flags/${esc(d.cc)}.svg" alt="${esc(d.country || "")}">`;
+  return `<div class="nfl">${possible ? `<span class="fq">${img}<b>?</b></span>` : img}${names}</div>`;
 }
 // several displays at one place: a pop-up with their hexagons that the pointer can enter (or that a click pins);
 // hovering a hexagon shows that display, clicking it opens its card
@@ -1980,7 +1991,7 @@ function dispLegend() {
     `<span class="k"><svg width="22" height="22" viewBox="-11 -11 22 22" aria-hidden="true"><circle r="10" fill="${D_MIXED}"/><text y="3.5" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" font-weight="600" fill="#1c2329">4</text></svg> several nearby displays; point at it for a closer view, click to zoom in. Grey when their light sources differ.</span>` +
     `<span class="k"><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><circle r="11" fill="none" stroke="rgb(var(--ink))" stroke-width="1.2" opacity=".7"/>${hexSVG({ light: "sun", items: [{ type: "photo" }], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], lat: 60 }, 7, { nobadge: true }).replace(/>0</, "><")}</svg> the latest display</span>` +
     `<span class="k">${sw(D_LIGHT.sun)} sun</span><span class="k">${sw(D_LIGHT.moon)} moon</span><span class="k">${sw(D_LIGHT.artificial)} artificial light</span>` +
-    `<span class="k"><b style="color:#d0306a">★</b> world first</span><span class="k"><svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="#2f7d4f"/></svg> national first <svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="var(--panel)"/></svg> possible</span>` +
+    `<span class="k"><b style="color:#d0306a">★</b> world first</span><span class="k"><svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="#2f7d4f"/></svg> national first <svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="var(--panel)"/></svg> possible; in pop-ups the country's flag, faded with ? when possible</span>` +
     `<span class="k"><b>R</b> surface reflection ${markIcon(1, 0)} odd radius ${markIcon(0, 1)} double-odd radius <b>M</b> multiple scattering <b>E</b> elliptical <b>B</b> Bottlinger's ring</span>`;
 }
 function dispList() {
