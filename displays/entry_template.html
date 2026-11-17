@@ -231,7 +231,9 @@ function hexInfo(r) {
   return { lit, marks, novel: r.novel.length > 0, nfc: r.nfc.length > 0, nfp: r.nfp.length > 0 };
 }
 const hollow = r => false;      // every display is filled with its light-source colour, description-only ones too
-const LIGHT_COL = { sun: "#e9a623", moon: "#9fb3c8", artificial: "#c7653b" };
+const LIGHT_COL = { sun: "#ffa500", moon: "#cd9b9b", artificial: "#4876ff" };        // as on the displays map
+const LIGHT_TXT = { artificial: "#ffffff" };
+const haloCount = r => r.halos.filter(c => !r.doubtful.includes(c)).length;    // the number in the hexagon, as on the map
 function hexSVG(r, size = 64) {
   const h = hexInfo(r), cx = size / 2, cy = size / 2, R = size * 0.42;
   const pts = [...Array(6)].map((_, k) => { const a = Math.PI / 180 * (-120 + 60 * k); return [cx + R * Math.cos(a), cy + R * Math.sin(a)]; });
@@ -243,7 +245,7 @@ function hexSVG(r, size = 64) {
     const [a, b] = [pts[k], pts[(k + 1) % 6]];
     s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${h.lit.has(cl) ? "var(--fg)" : "var(--rule)"}" stroke-width="${h.lit.has(cl) ? 5 : 1.5}" stroke-linecap="round"/>`;
   });
-  s += `<text x="${cx}" y="${cy + 5}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${size * 0.24}" fill="var(--fg)">${h.lit.size}</text>`;
+  s += `<text x="${cx}" y="${cy + 5}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${size * 0.24}" fill="${LIGHT_TXT[r.light] || "#1c2329"}">${haloCount(r)}</text>`;
   if (h.novel) s += `<text x="${size - 2}" y="${size * .2}" text-anchor="end" font-size="${size * .24}" fill="var(--novel)">★</text>`;
   else if (h.nfc || h.nfp) s += `<path d="M${size - 13} ${size * .06}v${size * .26}M${size - 13} ${size * .06}l9 4-9 4" stroke="var(--first)" stroke-width="1.6" fill="${h.nfc ? "var(--first)" : "none"}"/>`;
   return s + "</svg>";
@@ -256,7 +258,7 @@ function renderPreview() {
   const h = hexInfo(rec);
   const lit = CLASSES.filter(c => h.lit.has(c));
   const n = rec.halos.length, d = rec.doubtful.length;
-  $("preview").innerHTML = hexSVG(rec, 72) + `<div class="sum"><span class="lbl">${h.lit.size}${esc(h.marks)}${h.novel ? " ★" : ""}</span>
+  $("preview").innerHTML = hexSVG(rec, 72) + `<div class="sum"><span class="lbl">${haloCount(rec)} halo${haloCount(rec) === 1 ? "" : "s"}${h.novel ? " ★" : ""}</span>
     <span>${lit.length ? "Rare forms in: " + lit.join(", ") : "No rare oriented forms yet"}</span>
     ${creditLines()}<span class="hint">${n} halo${n === 1 ? "" : "s"}${d ? `, ${d} doubtful` : ""}${h.nfc ? " · national first" : h.nfp ? " · possible national first" : ""}${!rec.lat ? " · fliphelion rule needs the latitude" : ""}</span></div>`;
 }

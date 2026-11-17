@@ -1663,7 +1663,7 @@ function dotSVG(list, R) {
   const r = R;                                            // same size as a hexagon, whatever the count
   return `<circle r="${r.toFixed(2)}" fill="${col}"/><text y="${R * 0.33}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * 0.95}" fill="${D_TEXT[col] || "#1c2329"}">${list.length}</text>` + badges(aggFlags(list), r);
 }
-const dLabel = d => `${hCount(d)} halos${markStr(dFlags(d)) ? " " + markStr(dFlags(d)) : ""}${d.novel.length ? " ★" : ""}`;
+const dLabel = d => `${hCount(d)} halos${d.novel.length ? " ★" : ""}`;      // the marks (R, O, M, E, B) are left out of text for now: O reads as zero
 const dYear = d => +String(d.date || "").slice(0, 4);
 function dPos(d) {
   if (d.lat !== "" && d.lon !== "" && d.lat != null && !isNaN(+d.lat)) return { ll: [+d.lon, +d.lat], approx: false };
@@ -1909,7 +1909,7 @@ function dispList() {
   let list = dispSel.slice();
   if (dispLoc) list = dispLoc.ids.map(id => DISP.find(d => d.id === id)).filter(Boolean);
   list.sort((a, b) => dKey(b).localeCompare(dKey(a)));
-  body.innerHTML = list.map(d => `<tr data-id="${esc(d.id)}" class="${dispPicked.includes(d.id) ? "on" : ""}"><td class="num">${esc(d.date)}</td><td>${esc(dName(d))}${d._pos ? "" : ' <span class="dmeta">(not on map)</span>'}</td><td class="num">${hCount(d)}${esc(markStr(dFlags(d)))}</td>` +
+  body.innerHTML = list.map(d => `<tr data-id="${esc(d.id)}" class="${dispPicked.includes(d.id) ? "on" : ""}"><td class="num">${esc(d.date)}</td><td>${esc(dName(d))}${d._pos ? "" : ' <span class="dmeta">(not on map)</span>'}</td><td class="num">${hCount(d)}</td>` +
     `<td>${[...d.novel.map(c => "★ " + hName(c)), ...d.nfc.map(hName), ...d.nfp.map(c => hName(c) + " (possible)")].map(esc).join("; ")}</td><td>${obsList(dObs(d))}</td></tr>`).join("") ||
     `<tr><td colspan="5" class="empty">No display matches.</td></tr>`;
   body.querySelectorAll("tr[data-id]").forEach(tr => tr.addEventListener("click", () => dPick(tr.dataset.id)));
