@@ -180,6 +180,9 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 .tip .nfl { display: flex; align-items: flex-start; gap: 7px; margin-top: 4px; }
 .tip .flag { width: 21px; height: 16px; flex: none; border-radius: 2px; box-shadow: 0 0 0 1px var(--rule); margin-top: 1px; }
 .tip .fq { position: relative; flex: none; display: inline-flex; }
+.tip.dtip.firsts { max-width: 290px; }
+.tip .nfl .who { font-size: 13px; }
+.tip .wstar { flex: none; width: 21px; text-align: center; color: #d0306a; font-size: 18px; line-height: 17px; }
 .tip .flag.poss { opacity: .45; box-shadow: none; outline: 1px dashed var(--muted); outline-offset: 1px; }
 .tip .fq b { position: absolute; right: -7px; top: -7px; width: 13px; height: 13px; border-radius: 50%; background: var(--panel); box-shadow: 0 0 0 1px var(--rule); font: 600 10px/13px var(--f-body); text-align: center; color: var(--fg); }
 .tip .inset .iland { fill: var(--panel); stroke: var(--coast); stroke-width: .6; vector-effect: non-scaling-stroke; }
@@ -1812,15 +1815,38 @@ function dispTrinity(d) {
     `<div class="tri">${esc(dName(d))}${d._pos.approx ? " (country only)" : ""}</div>` +
     `<div class="tri">${when}</div>` +
     `<div class="tri">${first ? obsH(first) : "<i>observer unknown</i>"}${others ? ` <span class="more">and ${others} other${others === 1 ? "" : "s"}</span>` : ""}</div>` +
-    (d.novel.length ? `<div class="c">world first: ${d.novel.map(c => esc(hName(c))).join(", ")}</div>` : "") +
-    nfLine(d, d.nfc, false) + nfLine(d, d.nfp, true);
+    firstsHTML(d);
 }
-function nfLine(d, codes, possible) {            // national firsts: the country's flag, faded with a ? when only possible
-  if (!codes.length) return "";
-  const names = `<span class="c">${codes.map(c => esc(hName(c))).join(", ")}</span>`;
-  if (!d.cc) return `<div class="c">${possible ? "possible " : ""}national first: ${codes.map(c => esc(hName(c))).join(", ")}</div>`;
-  const img = `<img class="flag${possible ? " poss" : ""}" src="data/flags/${esc(d.cc)}.svg" alt="${esc(d.country || "")}">`;
-  return `<div class="nfl">${possible ? `<span class="fq">${img}<b>?</b></span>` : img}${names}</div>`;
+// firsts are credited to the observers whose items show them (an item with no Shows list shows every halo);
+// observers credited with the same halos share a line
+function firstsBy(d, codes, lead) {
+  const per = new Map();
+  d.items.forEach(it => {
+    const shown = it.shows == null ? d.halos : it.shows, got = codes.filter(c => shown.includes(c));
+    if (got.length) (it.by && it.by.length ? it.by : ["unknown"]).forEach(n => { if (!per.has(n)) per.set(n, new Set()); got.forEach(c => per.get(n).add(c)); });
+  });
+  const byName = (a, b) => hName(a).localeCompare(hName(b), "en", { numeric: true }), groups = [];
+  per.forEach((set, n) => {
+    const cs = [...set].sort(byName), key = cs.join("|"), g = groups.find(g => g.key === key);
+    g ? g.names.push(n) : groups.push({ key, names: [n], codes: cs });
+  });
+  const unk = n => /^unknown$/i.test(String(n).trim()), rank = n => n === lead ? 0 : unk(n) ? 2 : 1;
+  groups.forEach(g => g.names.sort((a, b) => rank(a) - rank(b)));                     // the observer named above first, unknown last
+  if (lead) groups.sort((a, b) => b.names.includes(lead) - a.names.includes(lead));
+  const none = codes.filter(c => ![...per.values()].some(s => s.has(c))).sort(byName);
+  if (none.length) groups.push({ key: "", names: [], codes: none });
+  return groups;
+}
+const joinNames = a => a.length < 2 ? a.map(obsH).join("") : a.slice(0, -1).map(obsH).join(", ") + " and " + obsH(a[a.length - 1]);
+function firstsHTML(d) {                      // ★ for world firsts; the country's flag for national firsts, faded with a ? when possible
+  const flag = possible => {
+    if (!d.cc) return `<span class="c" style="flex:none">${possible ? "possible " : ""}national first</span>`;
+    const img = `<img class="flag${possible ? " poss" : ""}" src="data/flags/${esc(d.cc)}.svg" alt="${esc(d.country || "")}">`;
+    return possible ? `<span class="fq">${img}<b>?</b></span>` : img;
+  };
+  const pic = d.items.find(it => it.pop && it.thumb), lead = ((pic || d.items.find(it => it.by && it.by.length) || { by: [] }).by || [])[0];
+  const lines = (codes, sym) => firstsBy(d, codes, lead).map(g => `<div class="nfl">${sym}<span>${g.names.length ? `<span class="who">${joinNames(g.names)}</span>: ` : ""}<span class="c">${g.codes.map(c => esc(hName(c))).join(", ")}</span></span></div>`).join("");
+  return lines(d.novel, `<span class="wstar" aria-label="world first">★</span>`) + lines(d.nfc, flag(false)) + lines(d.nfp, flag(true));
 }
 // several displays at one place: a pop-up with their hexagons that the pointer can enter (or that a click pins);
 // hovering a hexagon shows that display, clicking it opens its card
@@ -1838,7 +1864,7 @@ function placeTip(ev, c, pin) {
   clearTimeout(tipHideT); tipKey = c.key; tipPinned = !!pin;
   const ds = m.map(d => d.date).sort(), wf = m.reduce((s, d) => s + d.novel.length, 0), nf = m.reduce((s, d) => s + d.nfc.length + d.nfp.length, 0);
   const shown = m.slice(0, 24);
-  tip.classList.add("dtip", "live"); tip.classList.remove("wide"); tip.classList.toggle("pinned", tipPinned);
+  tip.classList.add("dtip", "live"); tip.classList.remove("wide", "firsts"); tip.classList.toggle("pinned", tipPinned);
   tip.innerHTML = (tipPinned ? `<button type="button" class="tx" aria-label="Close">×</button>` : "") +
     `<div>${esc(placeTitle(m))}</div><div class="c">${m.length} displays, ${esc(ds[0])} – ${esc(ds[ds.length - 1])}</div>` +
     (wf || nf ? `<div class="c">${[wf ? `${wf} world first halo${wf === 1 ? "" : "s"}` : "", nf ? `${nf} national first halo${nf === 1 ? "" : "s"}` : ""].filter(Boolean).join(" · ")}</div>` : "") +
@@ -1872,6 +1898,7 @@ function dispTip(ev, c) {
   if (tipPinned) return;
   if (tip.classList.contains("live")) closeTip();
   tip.classList.add("dtip"); tip.classList.toggle("wide", m.length > 1 && nPlaces(m) > 1);
+  tip.classList.toggle("firsts", m.length === 1 && !!(m[0].novel.length + m[0].nfc.length + m[0].nfp.length));
   if (m.length === 1) {
     tip.innerHTML = dispTrinity(m[0]);
   } else if (nPlaces(m) > 1) {
