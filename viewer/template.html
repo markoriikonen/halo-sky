@@ -166,6 +166,15 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 .tip.dtip .c { overflow-wrap: anywhere; }
 .tip .tipimg { display: block; width: 150px; max-height: 150px; object-fit: contain; border-radius: 3px; margin-bottom: 5px; background: var(--bg); }
 .tip .inset { display: block; margin: 5px 0 3px; border: 1px solid var(--rule); border-radius: 3px; background: var(--ocean); }
+.tip.live { pointer-events: auto; max-width: 300px; }
+.tip.live.pinned { box-shadow: 0 3px 16px rgba(0,0,0,.25); }
+.tip .hexrow { display: flex; flex-wrap: wrap; gap: 2px; margin: 6px 0 4px; }
+.tip .hexrow button { display: flex; flex-direction: column; align-items: center; gap: 1px; background: none; border: 1px solid transparent; border-radius: 4px; padding: 2px 1px 1px; cursor: pointer; font: 10px var(--f-data); color: var(--muted); }
+.tip .hexrow button:hover, .tip .hexrow button:focus-visible, .tip .hexrow button.on { border-color: var(--rule); background: var(--bg); outline: none; }
+.tip .tdet { border-top: 1px solid var(--rule); padding-top: 6px; margin-top: 2px; min-height: 40px; }
+.tip .tdet .tipimg { margin-top: 2px; }
+.tip .tx { position: absolute; top: 2px; right: 4px; background: none; border: 0; font-size: 16px; line-height: 1; color: var(--muted); cursor: pointer; padding: 2px 4px; }
+.tip .tall { color: inherit; }
 .tip .inset .iland { fill: var(--panel); stroke: var(--coast); stroke-width: .6; vector-effect: non-scaling-stroke; }
 .tip .inset .ibord { fill: none; stroke: var(--coast); stroke-width: .5; vector-effect: non-scaling-stroke; opacity: .8; }
 .dunder { font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 5px; align-items: center; margin-top: 6px; }
@@ -737,7 +746,7 @@ const zoom = d3.zoom().scaleExtent([1, 16]).translateExtent([[0, 0], [W, H]])
     updateCoast(); kgUpdateTiles();
     if (dots) dots.attr("r", dotR());
     if (mode === "displays") dispScale();
-    tip.hidden = true;
+    if (typeof closeTip === "function") closeTip(); else tip.hidden = true;
   });
 svg.call(zoom);
 document.getElementById("zin").addEventListener("click", () => svg.transition().duration(250).call(zoom.scaleBy, 2));
@@ -1744,8 +1753,12 @@ function dispDraw() {
   gDisp.selectAll("g.disp").data(cl, c => c.key).join("g").attr("class", "disp")
     .html(c => (dScope === "recent" && dLatest && c.m.includes(dLatest) ? `<circle class="latest" r="17"/>` : "") + (c.m.length === 1 ? hexSVG(c.m[0], 10) : dotSVG(c.m, 10)))
     .attr("transform", c => `translate(${c.xy[0]},${c.xy[1]}) scale(${dScale()})`)
-    .on("pointerenter pointermove", (ev, c) => dispTip(ev, c)).on("pointerleave", () => { tip.hidden = true; })
-    .on("click", (ev, c) => { ev.stopPropagation(); tip.hidden = true; c.m.length === 1 ? (dispLoc = null, dPick(c.m[0].id)) : nPlaces(c.m) > 1 && zk < 15.9 ? zoomToCluster(c) : openLoc(c); });
+    .on("pointerenter pointermove", (ev, c) => dispTip(ev, c)).on("pointerleave", leaveTip)
+    .on("click", (ev, c) => {
+      ev.stopPropagation();
+      if (c.m.length > 1 && nPlaces(c.m) === 1) { placeTip(ev, c, true); return; }
+      closeTip(); c.m.length === 1 ? (dispLoc = null, dPick(c.m[0].id)) : zk < 15.9 ? zoomToCluster(c) : openLoc(c);
+    });
 }
 const nPlaces = m => new Set(m.map(d => d._place)).size;
 function clusterBox(m) {                     // the places of a merged dot, in map units
@@ -1774,16 +1787,65 @@ function placeTitle(list) {
   const names = [...new Set(list.map(dName))];
   return names.length <= 2 ? names.join(" · ") : `${names.slice(0, 2).join(" · ")} and ${names.length - 2} more`;
 }
+function dispBrief(d) {                      // picture, name, date, halo count and firsts of one display
+  const pic = d.items.find(it => it.pop && it.thumb);
+  return (pic ? `<img class="tipimg" src="data/disp/${esc(pic.thumb)}" alt="">` : "") + `<div>${esc(dName(d))}${d._pos.approx ? " (country only)" : ""}</div><div class="c">${esc(d.date)}${d.time ? " " + esc(d.time) : ""}</div><div class="c" style="white-space:nowrap">${esc(dLabel(d))}</div>` +
+    (d.novel.length ? `<div class="c">world first: ${d.novel.map(c => esc(hName(c))).join(", ")}</div>` : "") +
+    (d.nfc.length ? `<div class="c">national first: ${d.nfc.map(c => esc(hName(c))).join(", ")}</div>` : "") +
+    (d.nfp.length ? `<div class="c">possible national first: ${d.nfp.map(c => esc(hName(c))).join(", ")}</div>` : "");
+}
+// several displays at one place: a pop-up with their hexagons that the pointer can enter (or that a click pins);
+// hovering a hexagon shows that display, clicking it opens its card
+let tipKey = null, tipPinned = false, tipHideT = 0;
+function closeTip() { clearTimeout(tipHideT); tipKey = null; tipPinned = false; tip.hidden = true; tip.classList.remove("live", "pinned"); tip.onpointerenter = tip.onpointerleave = null; }
+function leaveTip() {                          // the pointer left a dot or the pop-up
+  if (!tip.classList.contains("live")) { tip.hidden = true; return; }
+  if (tipPinned) return;
+  clearTimeout(tipHideT); tipHideT = setTimeout(closeTip, 350);
+}
+function placeTip(ev, c, pin) {
+  const m = c.m;
+  if (tipPinned && !pin) return;               // a pinned pop-up stays until closed
+  if (tipKey === c.key && !pin) { clearTimeout(tipHideT); return; }
+  clearTimeout(tipHideT); tipKey = c.key; tipPinned = !!pin;
+  const ds = m.map(d => d.date).sort(), wf = m.reduce((s, d) => s + d.novel.length, 0), nf = m.reduce((s, d) => s + d.nfc.length + d.nfp.length, 0);
+  const shown = m.slice(0, 24);
+  tip.classList.add("dtip", "live"); tip.classList.remove("wide"); tip.classList.toggle("pinned", tipPinned);
+  tip.innerHTML = (tipPinned ? `<button type="button" class="tx" aria-label="Close">×</button>` : "") +
+    `<div>${esc(placeTitle(m))}</div><div class="c">${m.length} displays, ${esc(ds[0])} – ${esc(ds[ds.length - 1])}</div>` +
+    (wf || nf ? `<div class="c">${[wf ? `${wf} world first halo${wf === 1 ? "" : "s"}` : "", nf ? `${nf} national first halo${nf === 1 ? "" : "s"}` : ""].filter(Boolean).join(" · ")}</div>` : "") +
+    `<div class="hexrow">${shown.map(d => `<button type="button" data-id="${esc(d.id)}" aria-label="${esc(d.date + " · " + dLabel(d))}"><svg width="42" height="42" viewBox="-21 -21 42 42" aria-hidden="true">${hexSVG(d, 13)}</svg><span>${esc((d.date || "").slice(0, 4))}</span></button>`).join("")}</div>` +
+    (m.length > shown.length ? `<div class="c">and ${m.length - shown.length} more</div>` : "") +
+    `<div class="tdet c">hover a hexagon to see the display, click it for its card</div>` +
+    `<div class="c" style="margin-top:4px"><a href="#" class="tall">show all ${m.length} as cards</a></div>`;
+  tip.hidden = false;
+  const det = tip.querySelector(".tdet"), byId = new Map(m.map(d => [String(d.id), d]));
+  tip.querySelectorAll(".hexrow button").forEach(b => {
+    const show = () => { tip.querySelectorAll(".hexrow button.on").forEach(x => x.classList.remove("on")); b.classList.add("on"); det.classList.remove("c"); det.innerHTML = dispBrief(byId.get(b.dataset.id)); };
+    b.addEventListener("pointerenter", show); b.addEventListener("focus", show);
+    b.addEventListener("click", e => { e.stopPropagation(); const id = b.dataset.id; closeTip(); dispLoc = null; dPick(byId.get(id).id); });
+  });
+  tip.querySelector(".tall").addEventListener("click", e => { e.preventDefault(); closeTip(); openLoc(c); });
+  const x = tip.querySelector(".tx"); if (x) x.addEventListener("click", e => { e.stopPropagation(); closeTip(); });
+  tip.onpointerenter = () => clearTimeout(tipHideT);
+  tip.onpointerleave = leaveTip;
+  // beside the dot, its lower left corner close to it, so the pointer can step in
+  const r = box.getBoundingClientRect(), g = ev.currentTarget.getBoundingClientRect();
+  const dx = (g.left + g.right) / 2 - r.left, dy = (g.top + g.bottom) / 2 - r.top, gap = g.width / 2 + 2;
+  let left = dx + gap, top = dy - tip.offsetHeight + gap;
+  if (left + tip.offsetWidth > r.width - 4) left = dx - gap - tip.offsetWidth;
+  tip.style.left = Math.max(4, left) + "px"; tip.style.top = Math.max(4, Math.min(top, r.height - tip.offsetHeight - 4)) + "px";
+}
+document.addEventListener("pointerdown", e => { if (tipPinned && !tip.contains(e.target) && !e.target.closest("g.disp")) closeTip(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && tip.classList.contains("live")) closeTip(); });
 function dispTip(ev, c) {
   const m = c.m;
+  if (m.length > 1 && nPlaces(m) === 1) { placeTip(ev, c, false); return; }
+  if (tipPinned) return;
+  if (tip.classList.contains("live")) closeTip();
   tip.classList.add("dtip"); tip.classList.toggle("wide", m.length > 1 && nPlaces(m) > 1);
   if (m.length === 1) {
-    const d = m[0];
-    const pic = d.items.find(it => it.pop && it.thumb);
-    tip.innerHTML = (pic ? `<img class="tipimg" src="data/disp/${esc(pic.thumb)}" alt="">` : "") + `<div>${esc(dName(d))}${d._pos.approx ? " (country only)" : ""}</div><div class="c">${esc(d.date)}${d.time ? " " + esc(d.time) : ""}</div><div class="c" style="white-space:nowrap">${esc(dLabel(d))}</div>` +
-      (d.novel.length ? `<div class="c">world first: ${d.novel.map(c => esc(hName(c))).join(", ")}</div>` : "") +
-      (d.nfc.length ? `<div class="c">national first: ${d.nfc.map(c => esc(hName(c))).join(", ")}</div>` : "") +
-      (d.nfp.length ? `<div class="c">possible national first: ${d.nfp.map(c => esc(hName(c))).join(", ")}</div>` : "");
+    tip.innerHTML = dispBrief(m[0]);
   } else if (nPlaces(m) > 1) {
     const wf = m.reduce((s, d) => s + d.novel.length, 0), nf = m.reduce((s, d) => s + d.nfc.length + d.nfp.length, 0);
     tip.innerHTML = `<div>${m.length} displays at ${nPlaces(m)} places</div>` +
