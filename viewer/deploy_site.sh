@@ -11,7 +11,7 @@ OUT=$(mktemp -d)
 sed -e 's#href="https://claude.ai/artifact/QLgEuMgeaU1XYKTv3nErfs"#href="fingerprints/"#' \
     -e 's#A world map of about 2,000 sites: cloud-layer fingerprints, the elliptical-halo mid-layer search and high-cloud seasons.#A world map of about 2,500 sites: cloud-layer fingerprints, the elliptical-halo mid-layer search, high-cloud seasons, and photographed halo displays.#' \
     "$REPO/index.html" > "$OUT/index.html"
-cp -r "$REPO/gram" "$REPO/locations" "$OUT/"
+cp -r "$REPO/gram" "$REPO/locations" "$REPO/methods" "$OUT/"
 mkdir -p "$OUT/fingerprints"
 cp -r "$VIEW/index.html" "$VIEW/data" "$OUT/fingerprints/"
 touch "$OUT/.nojekyll"

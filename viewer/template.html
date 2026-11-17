@@ -113,6 +113,8 @@ svg.yc { display: block; width: 100%; height: auto; margin-top: 6px; }
 .yct { font: 9px var(--f-data); fill: var(--muted); }
 .ycs { fill: rgba(var(--ink), .55); } .ycm { fill: rgba(var(--ink), .32); } .ycth { fill: rgba(var(--ink), .14); }
 .ycl { fill: none; stroke: var(--win); stroke-width: 1.6; }
+.ymc { stroke: #c4402f; stroke-width: 1.3; stroke-dasharray: 3 2; }
+.ymct { font: 9px var(--f-data, monospace); fill: #c4402f; }
 .yavg { fill: none; stroke: var(--muted); stroke-width: 1; opacity: .55; }
 .yrbg { fill: rgba(var(--ink), .03); }
 .ycact { fill: var(--winline); opacity: .22; }
@@ -1418,6 +1420,9 @@ function smooth30(tot, m, valid) {
     return nv >= 4 && T ? M / T : NaN;
   });
 }
+// ECMWF model upgrades that changed how the model makes cloud (see the methods page): marked in the year-by-year view
+const MODEL_CHANGES = [{ date: "2021-10-12", cyc: "47r3" }, { date: "2026-05-12", cyc: "50r1" }]
+  .map(c => { const d = new Date(c.date + "T00:00:00Z"); return { ...c, y: d.getUTCFullYear(), pos: (d - Date.UTC(d.getUTCFullYear(), 0, 1)) / 864e5 / 5 }; });
 async function openYears(s) {
   const modal = document.getElementById("ymodal"), body = document.getElementById("ybody");
   document.getElementById("ytitle").textContent = s.n;
@@ -1451,7 +1456,9 @@ async function openYears(s) {
     mult += `<g transform="translate(0,${y0})"><rect x="${pl}" y="1" width="${Wd - pl - 4}" height="${Hr - 2}" class="yrbg"/>`;
     runsAbove(r.sm).forEach(([p0, p1]) => { mult += `<rect x="${x(p0)}" y="1" width="${x(p1) - x(p0)}" height="${Hr - 2}" class="ycact"/>`; });
     if (thr != null) mult += `<line x1="${pl}" x2="${Wd - 4}" y1="${yv(thr, Hr)}" y2="${yv(thr, Hr)}" class="ycthr"/>`;
-    mult += line(avg, Hr, "yavg") + line(r.sm, Hr, "ycl") + `<text x="${pl - 5}" y="${Hr / 2 + 4}" class="yct" text-anchor="end">${r.y}</text></g>`;
+    mult += line(avg, Hr, "yavg") + line(r.sm, Hr, "ycl") + `<text x="${pl - 5}" y="${Hr / 2 + 4}" class="yct" text-anchor="end">${r.y}</text>`;
+    MODEL_CHANGES.filter(c => c.y === r.y).forEach(c => { mult += `<line x1="${x(c.pos)}" x2="${x(c.pos)}" y1="1" y2="${Hr - 1}" class="ymc"/><text x="${x(c.pos) + 3}" y="11" class="ymct">IFS ${c.cyc}</text>`; });
+    mult += `</g>`;
   });
   ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"].forEach((tx, i) => { mult += `<text x="${x((i + 0.5) * NP / 12)}" y="${rows.length * Hr + 12}" class="yct" text-anchor="middle">${tx}</text>`; });
   mult += `</svg>`;
@@ -1489,7 +1496,7 @@ async function openYears(s) {
   body.innerHTML = `<div class="ysec">Average ${years[0]}–${years[years.length - 1] - (rows.length > whole.length ? 1 : 0)}</div>${yearCurve(s, { wide: true, season: mode === "season" }) || ""}
     <div class="ysec">Year by year</div>${heat}<div class="yrows" style="margin-top:8px">${mult}</div>
     <div class="ysec">Variability</div><div class="ystats">${stats}</div>
-    <p class="note" style="margin:10px 0 0">Year panels share one scale, 0 to ${Math.round(ymax * 100)}%. Thin grey line in each year: the multi-year average. Shaded: that year's spells above ${clear ? "the average curve's break value" : "the average curve's median (it has no clear season)"}${thr != null ? ` (${pct(thr)})` : ""}, gaps under 30 days closed. Shading that wanders from year to year means the season is not reliable.</p>`;
+    <p class="note" style="margin:10px 0 0">Year panels share one scale, 0 to ${Math.round(ymax * 100)}%. Thin grey line in each year: the multi-year average. Shaded: that year's spells above ${clear ? "the average curve's break value" : "the average curve's median (it has no clear season)"}${thr != null ? ` (${pct(thr)})` : ""}, gaps under 30 days closed. Shading that wanders from year to year means the season is not reliable. <span style="color:#c4402f">Red marks</span>: ECMWF model upgrades that changed how the model makes cloud (12 Oct 2021, IFS cycle 47r3; 12 May 2026, cycle 50r1), so years on either side are not fully comparable; see <a href="../methods/#upgrades" target="_blank" rel="noopener">Methods</a>.</p>`;
   // paint the heat strip
   const cv = document.getElementById("yheat"), ctx = cv.getContext("2d"), fg = getComputedStyle(document.documentElement).getPropertyValue("--muted").trim() || "#666";
   ctx.scale(dpr, dpr);
@@ -1498,6 +1505,7 @@ async function openYears(s) {
   rows.forEach((r, i) => {
     ctx.textAlign = "right"; ctx.fillStyle = fg; ctx.fillText(String(r.y), padL - 5, padT + i * ch + 10);
     r.sm.forEach((v, p) => { if (isNaN(v)) return; ctx.fillStyle = d3.interpolateYlGnBu(0.08 + 0.92 * Math.min(1, v)); ctx.fillRect(padL + p * cw, padT + i * ch, cw, ch - 1); });
+    MODEL_CHANGES.filter(c => c.y === r.y).forEach(c => { ctx.fillStyle = "#c4402f"; ctx.fillRect(padL + c.pos * cw - 1, padT + i * ch - 1, 2, ch + 1); });
   });
   const lg = document.getElementById("yheatlg"), lx = lg.getContext("2d");
   for (let i = 0; i < lg.width; i++) { lx.fillStyle = d3.interpolateYlGnBu(0.08 + 0.92 * i / lg.width); lx.fillRect(i, 0, 1, lg.height); }
@@ -1978,7 +1986,8 @@ load().catch(e => { document.getElementById('status').textContent = 'Could not l
     `ECMWF splits low/mid/high by pressure relative to the surface (0.8 and 0.45 of surface pressure), so at high-altitude sites its "mid" band reaches cirrus heights; those sites are hidden in mid-band mode unless included. ` +
     (LSET ? `Temperature-range mode: 25 km pressure-level temperature and cloud cover (cloud derived from humidity), interpolated between 13 levels, from ${LSET.start}` +
       (LSET.aloft_only ? "; a range that reaches the ground (surface air no warmer than its warm edge) counts as no layer. " : ". ") : "") +
-    `Daylight: sun at least ${SETTINGS.sun_min_deg}° above the horizon.`;
+    `Daylight: sun at least ${SETTINGS.sun_min_deg}° above the horizon. `;
+  document.getElementById("foot").append(Object.assign(document.createElement("a"), { href: "../methods/", textContent: "How the data are made: Methods" }));
   update();
   bordersLoad().then(() => { if (mode === "displays") update(); });
   kgLoad().then(() => update());
