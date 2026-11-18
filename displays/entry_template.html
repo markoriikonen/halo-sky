@@ -364,7 +364,7 @@ $("place").addEventListener("input", e => {
   const q = e.target.value.trim().toLowerCase(); const seen = new Set();
   const list = q ? displays.filter(d => d.place && d.place.toLowerCase().includes(q) && !seen.has(d.place + d.country) && seen.add(d.place + d.country)).slice(0, 8) : [];
   showSugg("place-s", list.map(d => ({ v: d, html: `${esc(d.place)}<small>${esc(d.country)} · ${esc(d.lat)}, ${esc(d.lon)}</small>` })), it => {
-    Object.assign(rec, { place: it.v.place, country: it.v.country, lat: it.v.lat, lon: it.v.lon }); fillForm(true); changed(); hideSugg();
+    Object.assign(rec, { place: it.v.place, country: it.v.country, lat: it.v.lat, lon: it.v.lon }); fillForm(true); $("place").value = it.v.place; changed(); hideSugg();
   });
 });
 $("country").addEventListener("input", e => {
