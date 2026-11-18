@@ -174,10 +174,9 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 .tip .tdet { border-top: 1px solid var(--rule); padding-top: 6px; margin-top: 2px; min-height: 40px; }
 .tip .tdet .tpic { margin-top: 2px; }
 .tip .tpic { position: relative; display: inline-block; vertical-align: top; margin: 0 28px 6px 0; }
+.tip .tpic.solo { margin-right: 0; }
 .tip .tpic .tipimg { width: auto; height: auto; max-width: 150px; max-height: 150px; object-fit: initial; margin: 0; background: none; }
 .tip .vcred { position: absolute; left: calc(100% + 3px); top: 0; bottom: 0; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 10px; line-height: 1.25; color: var(--muted); }
-.tip .nfl.wf { font-weight: 600; }
-.tip .nfl.wf .c { color: var(--fg); }
 .tip .tx { position: absolute; top: 2px; right: 4px; background: none; border: 0; font-size: 16px; line-height: 1; color: var(--muted); cursor: pointer; padding: 2px 4px; }
 .tip .tall { color: inherit; }
 .tip .tri { font-size: 13px; }
@@ -1810,9 +1809,12 @@ function dispTrinity(d) {
   const first = lead[0], all = [...new Set(d.items.flatMap(it => it.by || []).filter(known))];
   const others = all.filter(n => n !== first).length, hasFirsts = d.novel.length + d.nfc.length + d.nfp.length > 0;
   const pby = pic ? pic.by || [] : [], credit = !pby.length ? "<i>unknown</i>" : pby.length <= 2 ? joinNames(pby) : `${obsH(pby[0])} and ${pby.length - 1} others`;
+  // no credit when everyone behind the display took the picture: a lone observer, or one team for all the items
+  const everyone = new Set(d.items.flatMap(it => it.by && it.by.length ? it.by : ["unknown"]));
+  const sameCrew = pby.length > 0 && everyone.size === new Set(pby).size && pby.every(n => everyone.has(n));
   const when = d.date ? esc(d.date) + (d.enddate && d.enddate !== d.date ? " – " + esc(d.enddate) : "") : "<i>date unknown</i>";
   // the picture carries its own credit, set upright beside it; with firsts the observers are named there, so the third line goes
-  return (pic ? `<div class="tpic"><img class="tipimg" src="data/disp/${esc(pic.thumb)}" alt=""><span class="vcred">${credit}</span></div>` : "") +
+  return (pic ? `<div class="tpic${sameCrew ? " solo" : ""}"><img class="tipimg" src="data/disp/${esc(pic.thumb)}" alt="">${sameCrew ? "" : `<span class="vcred">${credit}</span>`}</div>` : "") +
     `<div class="tri">${esc(dName(d))}${d._pos.approx ? " (country only)" : ""}</div>` +
     `<div class="tri">${when}</div>` +
     (hasFirsts ? "" : `<div class="tri">${first ? obsH(first) : "<i>observer unknown</i>"}${others ? ` <span class="more">and ${others} other${others === 1 ? "" : "s"}</span>` : ""}</div>`) +
