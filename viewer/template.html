@@ -158,9 +158,6 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 .borders { fill: none; stroke: var(--coast); stroke-width: .55; vector-effect: non-scaling-stroke; pointer-events: none; opacity: .9; }
 .disp { cursor: pointer; }
 .disp .hx { vector-effect: non-scaling-stroke; }
-.disp .latest { fill: none; stroke: rgb(var(--ink)); stroke-width: 1.3; opacity: .75; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; }
-@media (prefers-reduced-motion: no-preference) { .disp .latest { animation: latest 2.6s ease-out infinite; } }
-@keyframes latest { 0% { transform: scale(.75); opacity: .9; } 70% { transform: scale(1.25); opacity: 0; } 100% { transform: scale(1.25); opacity: 0; } }
 .tip.dtip { max-width: 230px; white-space: normal; }
 .tip.dtip.wide { max-width: 270px; }
 .tip.dtip .c { overflow-wrap: anywhere; }
@@ -1776,7 +1773,7 @@ function dispScale() { dispDraw(); }
 function dispDraw() {
   const cl = clusters(dispSel);
   gDisp.selectAll("g.disp").data(cl, c => c.key).join("g").attr("class", "disp")
-    .html(c => (dScope === "recent" && dLatest && c.m.includes(dLatest) ? `<circle class="latest" r="17"/>` : "") + (c.m.length === 1 ? hexSVG(c.m[0], 10) : dotSVG(c.m, 10)))
+    .html(c => c.m.length === 1 ? hexSVG(c.m[0], 10) : dotSVG(c.m, 10))       // no mark for the latest: the map is a record, not a live feed
     .attr("transform", c => `translate(${c.xy[0]},${c.xy[1]}) scale(${dScale()})`)
     .on("pointerenter pointermove", (ev, c) => dispTip(ev, c)).on("pointerleave", leaveTip)
     .on("click", (ev, c) => {
@@ -2033,7 +2030,6 @@ function dispLegend() {
   document.getElementById("displegend").innerHTML =
     `<span class="k">${hex}<span>One display. The number is how many halos it had. A side is drawn for each crystal orientation that made halos: black when one of them was rare, grey when all were common.</span></span>` +
     `<span class="k"><svg width="26" height="26" viewBox="-11 -15 26 26" aria-hidden="true">${[[4, -4], [2, -2], [0, 0]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="10" fill="${D_MIXED}" stroke="var(--land)" stroke-width="1.2"/>`).join("")}<text y="3.5" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" font-weight="600" fill="#1c2329">4</text></svg> several nearby displays; point at it for a closer view, click to zoom in. Grey when their light sources differ.</span>` +
-    `<span class="k"><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><circle r="11" fill="none" stroke="rgb(var(--ink))" stroke-width="1.2" opacity=".7"/>${hexSVG({ light: "sun", items: [{ type: "photo" }], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], lat: 60 }, 7, { nobadge: true }).replace(/>0</, "><")}</svg> the latest display</span>` +
     `<span class="k">${sw(D_LIGHT.sun)} sun</span><span class="k">${sw(D_LIGHT.moon)} moon</span><span class="k">${sw(D_LIGHT.artificial)} artificial light</span>` +
     `<span class="k"><b style="color:#d0306a">★</b> world first</span><span class="k"><svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="#2f7d4f"/></svg> national first <svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="var(--panel)"/></svg> possible; in pop-ups the country's flag, faded with ? when possible</span>` +
     `<span class="k">${camIcon} automatic camera</span>` +
