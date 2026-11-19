@@ -1632,18 +1632,19 @@ const hName = c => (DFORMS[c] || [c])[0];
 const hCount = d => d.halos.filter(c => !d.doubtful.includes(c)).length;
 const dKey = d => (d.date || "") + "T" + (String(d.time || "").match(/^\d{1,2}(:\d{2})?/) || ["00"])[0].padStart(2, "0");
 function dFlags(d) {
-  const lat = Math.abs(+d.lat), f = { lit: new Set(), odd: 0, dodd: 0, ms: 0, R: 0, E: 0, B: 0, wf: d.novel.length > 0, nfc: d.nfc.length > 0, nfp: d.nfp.length > 0 };
+  const lat = Math.abs(+d.lat), f = { lit: new Set(), com: new Set(), odd: 0, dodd: 0, ms: 0, R: 0, E: 0, B: 0, wf: d.novel.length > 0, nfc: d.nfc.length > 0, nfp: d.nfp.length > 0 };
   d.halos.forEach(c => {
     const F = DFORMS[c]; if (!F || d.doubtful.includes(c)) return;
     const [, cls, rare, mark] = F;
-    if (cls && (rare === 1 || (rare === 2 && d.lat !== "" && lat < D_TROPIC))) cls.split(";").forEach(c => f.lit.add(c));
+    if (cls) cls.split(";").forEach(c => f.com.add(c));          // any halo of the orientation draws its side, grey
+    if (cls && (rare === 1 || (rare === 2 && d.lat !== "" && lat < D_TROPIC))) cls.split(";").forEach(c => f.lit.add(c));   // a rare one draws it black
     if (mark === "odd") f.odd = 1; if (mark === "dodd") f.dodd = 1; if (mark === "ms") f.ms = 1; if (mark === "R") f.R = 1; if (mark === "E") f.E = 1; if (mark === "B") f.B = 1;
   });
   return f;
 }
 function aggFlags(list) {
-  const a = { lit: new Set(), odd: 0, dodd: 0, ms: 0, R: 0, E: 0, B: 0, wf: false, nfc: false, nfp: false };
-  list.forEach(d => { const f = dFlags(d); f.lit.forEach(c => a.lit.add(c)); ["odd", "dodd", "ms", "R", "E", "B"].forEach(k => a[k] = a[k] || f[k]); ["wf", "nfc", "nfp"].forEach(k => a[k] = a[k] || f[k]); });
+  const a = { lit: new Set(), com: new Set(), odd: 0, dodd: 0, ms: 0, R: 0, E: 0, B: 0, wf: false, nfc: false, nfp: false };
+  list.forEach(d => { const f = dFlags(d); f.lit.forEach(c => a.lit.add(c)); f.com.forEach(c => a.com.add(c)); ["odd", "dodd", "ms", "R", "E", "B"].forEach(k => a[k] = a[k] || f[k]); ["wf", "nfc", "nfp"].forEach(k => a[k] = a[k] || f[k]); });
   return a;
 }
 const markStr = f => (f.R ? "R" : "") + (f.dodd ? "⊕" : f.odd ? "O" : "") + (f.ms ? "M" : "") + (f.E ? "E" : "") + (f.B ? "B" : "");
@@ -1671,13 +1672,14 @@ function badges(f, R) {          // star or pennant top right, marks bottom righ
   s += markSVG(f, R * 0.7, R * 1.05, R * 0.72);
   return s;
 }
+const D_SIDE_COMMON = "rgba(var(--ink), .45)";              // a side with only common halos of that orientation
 const hexPts = R => [...Array(6)].map((_, k) => { const a = Math.PI / 180 * (-120 + 60 * k); return [R * Math.cos(a), R * Math.sin(a)]; });
 function hexSVG(d, R, opts = {}) {
   const f = dFlags(d), docOnly = false, col = D_LIGHT[d.light] || D_MIXED;
   const pts = hexPts(R), n = hCount(d);
   let s = `<polygon class="hx" points="${pts.map(p => p.map(v => v.toFixed(2)).join(",")).join(" ")}" fill="${docOnly ? "var(--panel)" : col}" ${docOnly ? `stroke="${col}" stroke-width="1.6"` : ""}/>`;
-  D_CLASSES.forEach((c, k) => { if (!f.lit.has(c)) return; const [a, b] = [pts[k], pts[(k + 1) % 6]];
-    s += `<line class="hx" x1="${a[0].toFixed(2)}" y1="${a[1].toFixed(2)}" x2="${b[0].toFixed(2)}" y2="${b[1].toFixed(2)}" stroke="rgb(var(--ink))" stroke-width="${opts.big ? 4.5 : 2.6}" stroke-linecap="round"/>`; });
+  D_CLASSES.forEach((c, k) => { if (!f.com.has(c)) return; const [a, b] = [pts[k], pts[(k + 1) % 6]];
+    s += `<line class="hx" x1="${a[0].toFixed(2)}" y1="${a[1].toFixed(2)}" x2="${b[0].toFixed(2)}" y2="${b[1].toFixed(2)}" stroke="${f.lit.has(c) ? "rgb(var(--ink))" : D_SIDE_COMMON}" stroke-width="${opts.big ? 4.5 : 2.6}" stroke-linecap="round"/>`; });
   s += `<text y="${R * 0.33}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * (n >= 10 ? 0.82 : 0.95)}" fill="${docOnly ? "rgb(var(--ink))" : D_TEXT[col] || "#1c2329"}">${n}</text>`;
   return s + (opts.nobadge ? "" : badges(f, R));
 }
@@ -2018,7 +2020,7 @@ function dispLegend() {
     D_CLASSES.map((c, k) => { const [x, y] = side(k); return `<text x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="${x > 2 ? "start" : x < -2 ? "end" : "middle"}" font-size="9" fill="var(--muted)">${c}</text>`; }).join("") + `</svg>`;
   const sw = (fill, stroke) => `<svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><polygon points="${hexPts(7).map(p => p.map(v => v.toFixed(1)).join(",")).join(" ")}" fill="${fill}" ${stroke ? `stroke="${stroke}" stroke-width="1.3"` : ""}/></svg>`;
   document.getElementById("displegend").innerHTML =
-    `<span class="k">${hex}<span>One display. The number is how many halos it had. A side is drawn bold when it had a rare halo of that crystal orientation.</span></span>` +
+    `<span class="k">${hex}<span>One display. The number is how many halos it had. A side is drawn for each crystal orientation that made halos: black when one of them was rare, grey when all were common.</span></span>` +
     `<span class="k"><svg width="22" height="22" viewBox="-11 -11 22 22" aria-hidden="true"><circle r="10" fill="${D_MIXED}"/><text y="3.5" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" font-weight="600" fill="#1c2329">4</text></svg> several nearby displays; point at it for a closer view, click to zoom in. Grey when their light sources differ.</span>` +
     `<span class="k"><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><circle r="11" fill="none" stroke="rgb(var(--ink))" stroke-width="1.2" opacity=".7"/>${hexSVG({ light: "sun", items: [{ type: "photo" }], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], lat: 60 }, 7, { nobadge: true }).replace(/>0</, "><")}</svg> the latest display</span>` +
     `<span class="k">${sw(D_LIGHT.sun)} sun</span><span class="k">${sw(D_LIGHT.moon)} moon</span><span class="k">${sw(D_LIGHT.artificial)} artificial light</span>` +

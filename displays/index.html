@@ -224,16 +224,17 @@ let rec = blank();
 // ---------- halo logic ----------
 function hexInfo(r) {
   const lat = Math.abs(parseFloat(r.lat));
-  const lit = new Set(); let odd = false, dodd = false, ms = false, refl = false, E = false, B = false;
+  const lit = new Set(), com = new Set(); let odd = false, dodd = false, ms = false, refl = false, E = false, B = false;
   for (const c of r.halos) {
     const f = FORM[c]; if (!f || r.doubtful.includes(c)) continue;
     const rare = f.rare === 1 || (f.rare === 2 && lat < TROPIC);
+    if (f.cls) f.cls.split(";").forEach(c => com.add(c));
     if (f.cls && rare) f.cls.split(";").forEach(c => lit.add(c));
     if (f.mark === "odd") odd = true; if (f.mark === "dodd") dodd = true; if (f.mark === "ms") ms = true;
     if (f.mark === "R") refl = true; if (f.mark === "E") E = true; if (f.mark === "B") B = true;
   }
   const marks = (refl ? "R" : "") + (dodd ? "⊕" : odd ? "O" : "") + (ms ? "M" : "") + (E ? "E" : "") + (B ? "B" : "");
-  return { lit, marks, novel: r.novel.length > 0, nfc: r.nfc.length > 0, nfp: r.nfp.length > 0 };
+  return { lit, com, marks, novel: r.novel.length > 0, nfc: r.nfc.length > 0, nfp: r.nfp.length > 0 };
 }
 const hollow = r => false;      // every display is filled with its light-source colour, description-only ones too
 const LIGHT_COL = { sun: "#ffa500", moon: "#cd9b9b", artificial: "#4876ff" };        // as on the displays map
@@ -248,7 +249,8 @@ function hexSVG(r, size = 64) {
   s += `<polygon points="${pts.map(p => p.join(",")).join(" ")}" fill="${hollow(r) ? "none" : fill}" stroke="${fill}" stroke-width="1.5" opacity="${hollow(r) ? 1 : .85}"/>`;
   CLASSES.forEach((cl, k) => {
     const [a, b] = [pts[k], pts[(k + 1) % 6]];
-    s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${h.lit.has(cl) ? "var(--fg)" : "var(--rule)"}" stroke-width="${h.lit.has(cl) ? 5 : 1.5}" stroke-linecap="round"/>`;
+    const on = h.com.has(cl), col = h.lit.has(cl) ? "var(--fg)" : on ? "rgba(28, 35, 41, .45)" : "var(--rule)";   // black: rare halo; grey: common only
+    s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${col}" stroke-width="${on ? 5 : 1.5}" stroke-linecap="round"/>`;
   });
   s += `<text x="${cx}" y="${cy + 5}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${size * 0.24}" fill="${LIGHT_TXT[r.light] || "#1c2329"}">${haloCount(r)}</text>`;
   if (h.novel) s += `<text x="${size - 2}" y="${size * .2}" text-anchor="end" font-size="${size * .24}" fill="var(--novel)">★</text>`;
