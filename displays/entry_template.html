@@ -56,6 +56,7 @@ textarea { resize: vertical; min-height: 54px; }
 .f { display: grid; gap: 3px; min-width: 0; position: relative; }
 .f > label, .lab { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
 .hint { font-size: 11px; color: var(--muted); }
+.pastenote { font-size: 12px; color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-left: 3px solid var(--accent, #1f5f8b); border-radius: 4px; padding: 6px 8px; }
 .seg { display: flex; flex-wrap: wrap; gap: 4px; }
 .seg button { border: 1px solid var(--rule); background: var(--panel); border-radius: 5px; padding: 4px 10px; }
 .seg button[aria-pressed="true"] { background: var(--ice-soft); border-color: var(--ice); color: var(--ice-fg); font-weight: 600; }
@@ -163,6 +164,7 @@ textarea { resize: vertical; min-height: 54px; }
       </div>
       <div class="f"><label for="halo-in">Halo forms</label>
         <div class="tokens" id="halos"><input id="halo-in" placeholder="type a code or name, Enter to add; or paste a halo list"></div>
+        <div class="pastenote" id="pastenote" hidden></div>
         <div class="sugg" id="halo-s" hidden></div>
         <span class="hint">Click a halo to mark it uncertain, a world first or a national first. Or pick from the list on the right. A halo list pasted from Ice Halo Tracker adds the halos it names; the rest are listed for you to enter.</span></div>
       <div class="preview" id="preview"></div>
@@ -391,8 +393,10 @@ $("halo-in").addEventListener("paste", e => {
   const fresh = added.filter(c => !rec.halos.includes(c));
   fresh.forEach(c => toggleHalo(c, true));
   $("halo-in").value = ""; hideSugg();
-  setStatus((fresh.length ? `Added ${fresh.length} halo${fresh.length === 1 ? "" : "s"} from the pasted list: ${fresh.join(", ")}.` : "The pasted halos are already in.") +
-    (unknown.length ? ` Enter these yourself: ${unknown.join(", ")}.` : ""), false, !unknown.length);
+  // the report stays under the halo box until the display is saved, so the names to enter by hand stay in view
+  $("pastenote").textContent = (fresh.length ? `Added ${fresh.length} halo${fresh.length === 1 ? "" : "s"} from the pasted list: ${fresh.join(", ")}.` : "The pasted halos are already in.") +
+    (unknown.length ? ` Enter these yourself: ${unknown.join(", ")}.` : "");
+  $("pastenote").hidden = false;
 });
 
 const known = key => { const m = new Map(); displays.forEach(d => [].concat(d[key] || []).forEach(v => v && m.set(v, (m.get(v) || 0) + 1))); return [...m.entries()].sort((a, b) => b[1] - a[1]).map(x => x[0]); };
@@ -559,6 +563,7 @@ function fillForm(keepFocus) {
 }
 function openDisplay(id) {
   if (dirty && !confirmLeave()) return;
+  $("pastenote").hidden = true;
   const d = displays.find(x => x.id === id); if (!d) return;
   rec = { ...blank(), ...migrate(structuredClone(d)) }; current = id; dirty = false;
   $("ftitle").textContent = `Display ${id}`; $("fid").textContent = d.updated ? "saved " + d.updated.slice(0, 16).replace("T", " ") : "";
@@ -567,6 +572,7 @@ function openDisplay(id) {
 }
 function startNew() {
   if (dirty && !confirmLeave()) return;
+  $("pastenote").hidden = true;
   rec = blank(); current = null; dirty = false;
   $("ftitle").textContent = `New display ${nextId()}`; $("fid").textContent = ""; $("delbtn").hidden = true; $("delyes").hidden = true;
   fillForm(); renderList(); setStatus(""); $("date").focus();
@@ -623,7 +629,7 @@ $("savebtn").addEventListener("click", async () => {
   try {
     await db.collection("displays").doc(id).set(body);
     current = id; dirty = false; rec = body;
-    $("ftitle").textContent = `Display ${id}`; $("delbtn").hidden = false; setStatus(`✓ Saved display ${id}`, false, true);
+    $("ftitle").textContent = `Display ${id}`; $("delbtn").hidden = false; setStatus(`✓ Saved display ${id}`, false, true); $("pastenote").hidden = true;
   } catch (e) {
     if (e.code === "invalid_argument") { canWrite = false; readOnly(); }
     setStatus(e.code === "invalid_argument" ? "This log is read-only for you." : "Not saved: " + (e.message || e.code) + ". Try again.", true);
