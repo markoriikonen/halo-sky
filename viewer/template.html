@@ -342,7 +342,7 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
       <label class="slider" for="dy0" style="min-width:0"><span>From year</span><select id="dy0"></select></label>
       <label class="slider" for="dy1" style="min-width:0"><span>To year</span><select id="dy1"></select></label>
       <div><h2>Light source</h2><div class="dseg" id="dlight"><button type="button" data-v="sun" aria-pressed="true">Sun</button><button type="button" data-v="moon" aria-pressed="true">Moon</button><button type="button" data-v="artificial" aria-pressed="true">Artificial</button></div></div>
-      <div><h2>Cloud</h2><div class="dseg" id="dcloud"><button type="button" data-v="High" aria-pressed="true">High</button><button type="button" data-v="Mid" aria-pressed="true">Mid</button><button type="button" data-v="Low" aria-pressed="true">Low</button><button type="button" data-v="Ice fog" aria-pressed="true">Ice fog</button></div></div>
+      <div><h2>Cloud</h2><div class="dseg" id="dcloud"><button type="button" data-v="High" aria-pressed="true">High</button><button type="button" data-v="Mid" aria-pressed="true">Mid</button><button type="button" data-v="Low" aria-pressed="true">Low</button><button type="button" data-v="Ice fog" aria-pressed="true">Ice fog</button><button type="button" data-v="Contrail" aria-pressed="true">Contrail</button></div></div>
       <label class="tog" for="dfirsts"><input id="dfirsts" type="checkbox"> only world or national firsts</label>
     </div>
     <label class="slider" for="light" id="lightwrap"><span>Hours counted</span>
@@ -1620,7 +1620,7 @@ const D_MIXED = "#8d99a6";
 const D_TROPIC = 20, LIVE_DAYS = 30, LIVE_MIN = 20, PLACE_KM = 25;
 const C_ALIAS = { "us": "united states of america", "usa": "united states of america", "united states": "united states of america", "czech republic": "czechia", "uk": "united kingdom", "great britain": "united kingdom" };
 let DISP = null, DFORMS = {}, dispLoading = null, dispPicked = [], dispSel = [], dispLoc = null, dScope = "recent", dLatest = null, dLiveNote = "";
-const dState = { q: "", y0: null, y1: null, light: new Set(["sun", "moon", "artificial"]), cloud: new Set(["High", "Mid", "Low", "Ice fog"]), firsts: false };
+const dState = { q: "", y0: null, y1: null, light: new Set(["sun", "moon", "artificial"]), cloud: new Set(["High", "Mid", "Low", "Ice fog", "Contrail"]), firsts: false };
 const esc = s => String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
 const obsH = n => /^unknown$/i.test(String(n).trim()) ? "<i>unknown</i>" : esc(n);
 const obsList = a => a.map(obsH).join(", ");
@@ -1715,6 +1715,7 @@ function parseQuery(q) {
   take(/\b(artificial( light)?|lamp|spot ?lights?|search ?lights?|street ?lights?|lights?)\b/g, () => { f.light = "artificial"; });
   take(/\b(sun ?light|solar|sun)\b/g, () => { f.light = "sun"; });
   take(/\b(ice fog|diamond dust)\b/g, () => { f.cloud = "Ice fog"; });
+  take(/\b(contrails?|aircraft trails?)\b/g, () => { f.cloud = "Contrail"; });
   take(/\b(high cloud|cirrus)\b/g, () => { f.cloud = "High"; });
   take(/\b(mid( |-)?(level )?cloud|altocumulus)\b/g, () => { f.cloud = "Mid"; });
   take(/\b(low cloud|stratocumulus)\b/g, () => { f.cloud = "Low"; });
