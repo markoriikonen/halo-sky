@@ -2070,11 +2070,19 @@ async function dispUpdate() {
   dQ = parseQuery(dState.q);
   let pool = DISP;
   if (dScope === "recent") {           // the last 30 days, but never fewer than the 20 latest displays
+    // an automatic camera counts as one display here; once in, it brings all its displays, from the whole period
     const cut = new Date(Date.now() - LIVE_DAYS * 864e5).toISOString().slice(0, 10);
     const byNew = DISP.slice().sort((a, b) => dKey(b).localeCompare(dKey(a)));
-    const inWin = byNew.filter(d => (d.enddate || d.date) >= cut);
-    pool = inWin.length >= LIVE_MIN ? inWin : byNew.slice(0, LIVE_MIN);
-    dLiveNote = inWin.length >= LIVE_MIN ? `the last ${LIVE_DAYS} days` : `the ${pool.length} latest displays${pool.length ? `, since ${pool[pool.length - 1].date}` : ""}`;
+    const unitOf = d => d.auto ? `cam:${(d.place || "").toLowerCase()}:${Math.round(+d.lat * 10)}:${Math.round(+d.lon * 10)}` : `id:${d.id}`;
+    const units = [], seen = new Set();
+    byNew.forEach(d => { const k = unitOf(d); if (!seen.has(k)) { seen.add(k); units.push({ k, d, cam: !!d.auto }); } });
+    const inWin = units.filter(u => (u.d.enddate || u.d.date) >= cut);
+    const chosen = inWin.length >= LIVE_MIN ? inWin : units.slice(0, LIVE_MIN), keys = new Set(chosen.map(u => u.k));
+    pool = byNew.filter(d => keys.has(unitOf(d)));
+    const cams = chosen.some(u => u.cam) ? "; an automatic camera counts as one" : "";
+    dLiveNote = inWin.length >= LIVE_MIN ? `the last ${LIVE_DAYS} days${cams}`
+      : chosen.length === units.length ? `all ${pool.length} displays, as there are fewer than ${LIVE_MIN}${cams ? " (an automatic camera counting as one)" : ""}`
+      : `the ${chosen.length} latest displays${chosen.length ? `, since ${chosen[chosen.length - 1].d.date}` : ""}${cams}`;
     dLatest = byNew[0] || null;
   }
   dispSel = pool.filter(d => dPass(d, dQ));
