@@ -161,6 +161,7 @@ textarea { resize: vertical; min-height: 54px; }
           <button type="button" data-v="sun">Sun</button><button type="button" data-v="moon">Moon</button><button type="button" data-v="artificial">Artificial</button></div></div>
         <div class="f"><span class="lab">Cloud</span><div class="seg" id="cloud">
           <button type="button" data-v="High">High</button><button type="button" data-v="Mid">Mid</button><button type="button" data-v="Low">Low</button><button type="button" data-v="Ice fog">Ice fog</button><button type="button" data-v="Contrail">Contrail</button></div></div>
+        <div class="f"><span class="lab">Recorded by</span><label class="oncard"><input type="checkbox" id="auto"> Automatic camera</label></div>
       </div>
       <div class="f"><label for="halo-in">Halo forms</label>
         <div class="tokens" id="halos"><input id="halo-in" placeholder="type a code or name, Enter to add; or paste a halo list"></div>
@@ -203,7 +204,7 @@ const esc = s => String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": 
 // ---------- state ----------
 let db = null, canWrite = true, displays = [], current = null, dirty = false;
 const blank = () => ({ id: null, date: "", enddate: "", time: "", place: "", country: "", lat: "", lon: "", light: "sun",
-  cloud: [], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], items: [blankItem()], maxsim: "", notes: "" });
+  cloud: [], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], items: [blankItem()], maxsim: "", notes: "", auto: false });
 const blankItem = () => ({ by: [], link: "", image: "", perm: "", shows: null, card: true, pop: false });   // shows null = all halos
 // earlier records kept documentation, links and image on the display itself: turn them into items
 function migrate(d) {
@@ -253,6 +254,7 @@ function hexSVG(r, size = 64) {
     s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${col}" stroke-width="${on ? 5 : 1.5}" stroke-linecap="round"/>`;
   });
   s += `<text x="${cx}" y="${cy + 5}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${size * 0.24}" fill="${LIGHT_TXT[r.light] || "#1c2329"}">${haloCount(r)}</text>`;
+  if (r.auto) s += `<g transform="translate(2 ${size * .04})" aria-label="automatic camera"><rect x="0" y="3" width="13" height="9" rx="2" fill="var(--fg)"/><rect x="3.5" y="1" width="5" height="3" rx="1" fill="var(--fg)"/><circle cx="6.5" cy="7.5" r="2.6" fill="var(--panel)"/></g>`;
   if (h.novel) s += `<text x="${size - 2}" y="${size * .2}" text-anchor="end" font-size="${size * .24}" fill="var(--novel)">★</text>`;
   else if (h.nfc || h.nfp) s += `<path d="M${size - 13} ${size * .06}v${size * .26}M${size - 13} ${size * .06}l9 4-9 4" stroke="var(--first)" stroke-width="1.6" fill="${h.nfc ? "var(--first)" : "none"}"/>`;
   return s + "</svg>";
@@ -432,12 +434,15 @@ document.querySelectorAll(".seg").forEach(seg => seg.addEventListener("click", e
   const b = e.target.closest("button"); if (!b) return;
   if (seg.closest(".item")) return;
   const key = { light: "light", cloud: "cloud" }[seg.id];
-  if (seg.hasAttribute("data-single")) rec[key] = rec[key] === b.dataset.v ? "" : b.dataset.v;
-  if (key === "light" && rec.light === "artificial") rec.cloud = ["Ice fog"];
-  else rec[key] = rec[key].includes(b.dataset.v) ? rec[key].filter(x => x !== b.dataset.v) : [...rec[key], b.dataset.v];
+  if (seg.hasAttribute("data-single")) {
+    rec[key] = rec[key] === b.dataset.v ? "" : b.dataset.v;
+    if (key === "light" && rec.light === "artificial") rec.cloud = ["Ice fog"];
+  } else rec[key] = rec[key].includes(b.dataset.v) ? rec[key].filter(x => x !== b.dataset.v) : [...rec[key], b.dataset.v];
   segs(); changed(); renderPreview();
 }));
+$("auto").addEventListener("change", e => { rec.auto = e.target.checked; changed(); renderPreview(); });
 function segs() {
+  $("auto").checked = !!rec.auto;
   document.querySelectorAll("#light, #cloud").forEach(seg => {
     const key = { light: "light", cloud: "cloud" }[seg.id];
     seg.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", seg.hasAttribute("data-single") ? rec[key] === b.dataset.v : rec[key].includes(b.dataset.v)));

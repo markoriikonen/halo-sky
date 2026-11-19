@@ -1632,7 +1632,7 @@ const hName = c => (DFORMS[c] || [c])[0];
 const hCount = d => d.halos.filter(c => !d.doubtful.includes(c)).length;
 const dKey = d => (d.date || "") + "T" + (String(d.time || "").match(/^\d{1,2}(:\d{2})?/) || ["00"])[0].padStart(2, "0");
 function dFlags(d) {
-  const lat = Math.abs(+d.lat), f = { lit: new Set(), com: new Set(), odd: 0, dodd: 0, ms: 0, R: 0, E: 0, B: 0, wf: d.novel.length > 0, nfc: d.nfc.length > 0, nfp: d.nfp.length > 0 };
+  const lat = Math.abs(+d.lat), f = { lit: new Set(), com: new Set(), odd: 0, dodd: 0, ms: 0, R: 0, E: 0, B: 0, wf: d.novel.length > 0, nfc: d.nfc.length > 0, nfp: d.nfp.length > 0, auto: !!d.auto };
   d.halos.forEach(c => {
     const F = DFORMS[c]; if (!F || d.doubtful.includes(c)) return;
     const [, cls, rare, mark] = F;
@@ -1643,8 +1643,8 @@ function dFlags(d) {
   return f;
 }
 function aggFlags(list) {
-  const a = { lit: new Set(), com: new Set(), odd: 0, dodd: 0, ms: 0, R: 0, E: 0, B: 0, wf: false, nfc: false, nfp: false };
-  list.forEach(d => { const f = dFlags(d); f.lit.forEach(c => a.lit.add(c)); f.com.forEach(c => a.com.add(c)); ["odd", "dodd", "ms", "R", "E", "B"].forEach(k => a[k] = a[k] || f[k]); ["wf", "nfc", "nfp"].forEach(k => a[k] = a[k] || f[k]); });
+  const a = { lit: new Set(), com: new Set(), odd: 0, dodd: 0, ms: 0, R: 0, E: 0, B: 0, wf: false, nfc: false, nfp: false, auto: false };
+  list.forEach(d => { const f = dFlags(d); f.lit.forEach(c => a.lit.add(c)); f.com.forEach(c => a.com.add(c)); ["odd", "dodd", "ms", "R", "E", "B"].forEach(k => a[k] = a[k] || f[k]); ["wf", "nfc", "nfp", "auto"].forEach(k => a[k] = a[k] || f[k]); });
   return a;
 }
 const markStr = f => (f.R ? "R" : "") + (f.dodd ? "⊕" : f.odd ? "O" : "") + (f.ms ? "M" : "") + (f.E ? "E" : "") + (f.B ? "B" : "");
@@ -1665,8 +1665,14 @@ function markSVG(f, x, y, size) {
   return s;
 }
 const markIcon = (odd, dodd) => `<svg width="14" height="14" viewBox="0 -14 14 14" aria-hidden="true" style="vertical-align:-2px">${markSVG({ odd, dodd }, -1, 0, 16)}</svg>`;
-function badges(f, R) {          // star or pennant top right, marks bottom right
+// a small camera: displays recorded by an automatic camera
+const camSVG = (x, y, w) => `<g transform="translate(${x.toFixed(2)},${y.toFixed(2)}) scale(${(w / 14).toFixed(3)})" aria-label="automatic camera">` +
+  `<path d="M1.5 4h3l1.2-2h3.6l1.2 2h2a1 1 0 0 1 1 1v6.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" fill="rgb(var(--ink))" stroke="var(--panel)" stroke-width="1.4" paint-order="stroke"/>` +
+  `<circle cx="7.5" cy="8" r="2.6" fill="var(--panel)"/><circle cx="7.5" cy="8" r="1.3" fill="rgb(var(--ink))"/></g>`;
+const camIcon = `<svg width="15" height="13" viewBox="0 0 15 13" aria-hidden="true" style="vertical-align:-1px">${camSVG(0, 0, 14)}</svg>`;
+function badges(f, R, opts = {}) {   // star or pennant top right, marks bottom right, camera top left
   let s = "";
+  if (f.auto && !opts.nocam) s += camSVG(-R * 1.75, -R * 1.35, R * 0.95);
   if (f.wf) s += `<text x="${R * 0.72}" y="${-R * 0.5}" font-size="${R * 1.05}" fill="#d0306a" stroke="var(--panel)" stroke-width="${R * 0.12}" paint-order="stroke">★</text>`;
   else if (f.nfc || f.nfp) s += `<g transform="translate(${R * 0.9},${-R * 1.25})"><path d="M0 0v${R * 1.1}M0 0l${R * 0.75} ${R * 0.28}-${R * 0.75} ${R * 0.28}z" stroke="#2f7d4f" stroke-width="${R * 0.14}" fill="${f.nfc ? "#2f7d4f" : "var(--panel)"}"/></g>`;
   s += markSVG(f, R * 0.7, R * 1.05, R * 0.72);
@@ -1681,7 +1687,7 @@ function hexSVG(d, R, opts = {}) {
   D_CLASSES.forEach((c, k) => { if (!f.com.has(c)) return; const [a, b] = [pts[k], pts[(k + 1) % 6]];
     s += `<line class="hx" x1="${a[0].toFixed(2)}" y1="${a[1].toFixed(2)}" x2="${b[0].toFixed(2)}" y2="${b[1].toFixed(2)}" stroke="${f.lit.has(c) ? "rgb(var(--ink))" : D_SIDE_COMMON}" stroke-width="${opts.big ? 4.5 : 2.6}" stroke-linecap="round"/>`; });
   s += `<text y="${R * 0.33}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * (n >= 10 ? 0.82 : 0.95)}" fill="${docOnly ? "rgb(var(--ink))" : D_TEXT[col] || "#1c2329"}">${n}</text>`;
-  return s + (opts.nobadge ? "" : badges(f, R));
+  return s + (opts.nobadge ? "" : badges(f, R, opts));
 }
 function dotSVG(list, R) {
   const lights = new Set(list.map(d => d.light)), col = lights.size === 1 ? (D_LIGHT[[...lights][0]] || D_MIXED) : D_MIXED;
@@ -1821,6 +1827,7 @@ function dispTrinity(d) {
     `<div class="tri">${esc(dName(d))}${d._pos.approx ? " (country only)" : ""}</div>` +
     `<div class="tri">${when}</div>` +
     (hasFirsts ? "" : `<div class="tri">${first ? obsH(first) : "<i>observer unknown</i>"}${others ? ` <span class="more">and ${others} other${others === 1 ? "" : "s"}</span>` : ""}</div>`) +
+    (d.auto ? `<div class="c">${camIcon} automatic camera</div>` : "") +
     firstsHTML(d);
 }
 // firsts are credited to the observers whose items show them (an item with no Shows list shows every halo);
@@ -1869,12 +1876,14 @@ function placeTip(ev, c, pin) {
   if (tipKey === c.key && !pin) { clearTimeout(tipHideT); return; }
   clearTimeout(tipHideT); tipKey = c.key; tipPinned = !!pin;
   const ds = m.map(d => d.date).sort(), wf = m.reduce((s, d) => s + d.novel.length, 0), nf = m.reduce((s, d) => s + d.nfc.length + d.nfp.length, 0);
-  const shown = m.slice(0, 24);
+  const shown = m.slice(0, 24), allCam = m.every(d => d.auto), oneYear = new Set(m.map(d => (d.date || "").slice(0, 4))).size === 1;
+  const lab = d => { if (!oneYear || !d.date) return (d.date || "").slice(0, 4); const [y, mo, da] = d.date.split("-"); return `${+da} ${MONTHS[+mo] || ""}`; };   // one year: day and month
   tip.classList.add("dtip", "live"); tip.classList.remove("wide", "firsts"); tip.classList.toggle("pinned", tipPinned);
   tip.innerHTML = (tipPinned ? `<button type="button" class="tx" aria-label="Close">×</button>` : "") +
     `<div>${esc(placeTitle(m))}</div><div class="c">${m.length} displays, ${esc(ds[0])} – ${esc(ds[ds.length - 1])}</div>` +
+    (allCam ? `<div class="c">${camIcon} automatic camera</div>` : "") +
     (wf || nf ? `<div class="c">${[wf ? `${wf} world first halo${wf === 1 ? "" : "s"}` : "", nf ? `${nf} national first halo${nf === 1 ? "" : "s"}` : ""].filter(Boolean).join(" · ")}</div>` : "") +
-    `<div class="hexrow">${shown.map(d => `<button type="button" data-id="${esc(d.id)}" aria-label="${esc(d.date + " · " + dLabel(d))}"><svg width="42" height="42" viewBox="-21 -21 42 42" aria-hidden="true">${hexSVG(d, 13)}</svg><span>${esc((d.date || "").slice(0, 4))}</span></button>`).join("")}</div>` +
+    `<div class="hexrow">${shown.map(d => `<button type="button" data-id="${esc(d.id)}" aria-label="${esc(d.date + " · " + dLabel(d))}"><svg width="42" height="42" viewBox="-21 -21 42 42" aria-hidden="true">${hexSVG(d, 13, { nocam: allCam })}</svg><span>${esc(lab(d))}</span></button>`).join("")}</div>` +
     (m.length > shown.length ? `<div class="c">and ${m.length - shown.length} more</div>` : "") +
     `<div class="tdet c">hover a hexagon to see the display, click it for its card</div>` +
     `<div class="c" style="margin-top:4px"><a href="#" class="tall">show all ${m.length} as cards</a></div>`;
@@ -1983,7 +1992,7 @@ function dCard(d) {
   el.innerHTML = `<div class="dh"><svg width="84" height="64" viewBox="-32 -32 84 64" aria-hidden="true">${hexSVG(d, 22, { big: true })}</svg>
       <div class="dt"><div class="dname">${esc(dName(d))}</div>
         <div class="dmeta">${esc(d.date)}${d.enddate ? "–" + esc(d.enddate) : ""}${d.time ? " · " + esc(d.time) : ""} · ${esc(d.light)}${d.cloud.length ? " · " + d.cloud.map(esc).join(", ") : ""}</div>
-        <div class="dmeta">${hCount(d)} halos${d.maxsim ? ` · at most ${esc(d.maxsim)} at the same time` : ""}${d._pos && d._pos.approx ? " · location: country only" : ""}</div></div>
+        <div class="dmeta">${hCount(d)} halos${d.auto ? ` · ${camIcon} automatic camera` : ""}${d.maxsim ? ` · at most ${esc(d.maxsim)} at the same time` : ""}${d._pos && d._pos.approx ? " · location: country only" : ""}</div></div>
       <button type="button" class="dx" aria-label="Close this card">×</button></div>` +
     (firsts.length ? `<div class="dfirst">${firsts.map(([k, lab, c]) => `<div><span class="${k}">${k === "wf" ? "★ " : ""}${lab}:</span> ${esc(hName(c))} — ${dCredit(d, c).length ? obsList(dCredit(d, c)) : "no documentation shows it"}</div>`).join("")}</div>` : "") +
     `<div class="dhalos">${d.halos.map(c => `<span class="${d.doubtful.includes(c) ? "doubt" : ""}" title="${esc(c)}">${esc(hName(c))}${d.doubtful.includes(c) ? " (uncertain)" : ""}</span>`).join("")}</div>` +
@@ -2025,6 +2034,7 @@ function dispLegend() {
     `<span class="k"><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><circle r="11" fill="none" stroke="rgb(var(--ink))" stroke-width="1.2" opacity=".7"/>${hexSVG({ light: "sun", items: [{ type: "photo" }], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], lat: 60 }, 7, { nobadge: true }).replace(/>0</, "><")}</svg> the latest display</span>` +
     `<span class="k">${sw(D_LIGHT.sun)} sun</span><span class="k">${sw(D_LIGHT.moon)} moon</span><span class="k">${sw(D_LIGHT.artificial)} artificial light</span>` +
     `<span class="k"><b style="color:#d0306a">★</b> world first</span><span class="k"><svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="#2f7d4f"/></svg> national first <svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="var(--panel)"/></svg> possible; in pop-ups the country's flag, faded with ? when possible</span>` +
+    `<span class="k">${camIcon} automatic camera</span>` +
     `<span class="k"><b>R</b> surface reflection ${markIcon(1, 0)} odd radius ${markIcon(0, 1)} double-odd radius <b>M</b> multiple scattering <b>E</b> elliptical <b>B</b> Bottlinger's ring</span>`;
 }
 function dispList() {
