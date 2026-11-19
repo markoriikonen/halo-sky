@@ -159,9 +159,9 @@ textarea { resize: vertical; min-height: 54px; }
           <button type="button" data-v="High">High</button><button type="button" data-v="Mid">Mid</button><button type="button" data-v="Low">Low</button><button type="button" data-v="Ice fog">Ice fog</button></div></div>
       </div>
       <div class="f"><label for="halo-in">Halo forms</label>
-        <div class="tokens" id="halos"><input id="halo-in" placeholder="type a code or name, Enter to add"></div>
+        <div class="tokens" id="halos"><input id="halo-in" placeholder="type a code or name, Enter to add; or paste a halo list"></div>
         <div class="sugg" id="halo-s" hidden></div>
-        <span class="hint">Click a halo to mark it uncertain, a world first or a national first. Or pick from the list on the right.</span></div>
+        <span class="hint">Click a halo to mark it uncertain, a world first or a national first. Or pick from the list on the right. A halo list pasted from Ice Halo Tracker adds the halos it names; the rest are listed for you to enter.</span></div>
       <div class="preview" id="preview"></div>
       <div class="row"><div class="f"><label for="maxsim">Most halos at the same time</label><input id="maxsim" inputmode="numeric" placeholder="optional"><span class="hint">only for the biggest displays: the halo count of the richest stage</span></div></div>
       <div class="f"><span class="lab">Documentation</span>
@@ -357,6 +357,38 @@ $("halo-in").addEventListener("keydown", e => {
   }
 });
 $("halo-in").addEventListener("blur", () => setTimeout(hideSugg, 120));
+
+// Ice Halo Tracker (Runnan Lin's Vancouver camera) halo names -> Log codes, after Marko's table of 19 Nov 2026.
+// Keys are matched after normName(): lower case, plural endings dropped, so "Tangent arcs" and "tangent arc" both match.
+const TRACKER_NAMES = {
+  "22° halo": "22H", "46° halo": "46H", "Sun dogs": "PH", "120° parhelia": "120PH",
+  "Circumzenithal arc": "ZA", "Zenith arc": "ZA", "Tangent arcs": "TA", "Supralateral arc": "SA", "Infralateral arcs": "IA",
+  "Helic arc": "HA", "Upper suncave Parry arc": "USP",
+  "9° halo": "9H", "18° halo": "18H", "20° halo": "20H", "23° halo": "23H", "24° halo": "24H", "35° halo": "35H",
+  "18° parhelia": "18B", "23° parhelia": "US23",
+};
+const normName = t => t.toLowerCase().replace(/\s*°\s*/g, "° ").replace(/[^a-z0-9° ]+/g, " ").replace(/\b(rare|common)\b/g, " ")
+  .split(/\s+/).filter(Boolean).map(w => w === "parhelia" ? "parhelion" : w.length > 3 && /[^s]s$/.test(w) ? w.slice(0, -1) : w).join(" ");
+const TRACKER = new Map(Object.entries(TRACKER_NAMES).map(([n, c]) => [normName(n), c]));
+$("halo-in").addEventListener("paste", e => {
+  const text = (e.clipboardData || window.clipboardData)?.getData("text") || "";
+  const parts = text.split(/[\n\r,;•·|]+/).map(t => t.trim()).filter(t => t && !/^\+\s*\d+\s+(more|common)$/i.test(t));
+  const codeOf = t => { const f = Object.values(FORM).find(f => f.c.toLowerCase() === t.toLowerCase()); return f ? f.c : null; };
+  const added = [], unknown = [];
+  parts.forEach(t => {
+    const c = TRACKER.get(normName(t)) || codeOf(t);
+    if (c) { if (!added.includes(c)) added.push(c); return; }
+    const codes = t.split(/\s+/).map(codeOf);              // a row of codes, "22H 46H PH"
+    if (codes.length > 1 && codes.every(Boolean)) codes.forEach(c => added.includes(c) || added.push(c)); else unknown.push(t.replace(/\s+(rare|common)$/i, ""));
+  });
+  if (!added.length) return;                               // nothing known: let the text in as typed
+  e.preventDefault();
+  const fresh = added.filter(c => !rec.halos.includes(c));
+  fresh.forEach(c => toggleHalo(c, true));
+  $("halo-in").value = ""; hideSugg();
+  setStatus((fresh.length ? `Added ${fresh.length} halo${fresh.length === 1 ? "" : "s"} from the pasted list: ${fresh.join(", ")}.` : "The pasted halos are already in.") +
+    (unknown.length ? ` Enter these yourself: ${unknown.join(", ")}.` : ""), false, !unknown.length);
+});
 
 const known = key => { const m = new Map(); displays.forEach(d => [].concat(d[key] || []).forEach(v => v && m.set(v, (m.get(v) || 0) + 1))); return [...m.entries()].sort((a, b) => b[1] - a[1]).map(x => x[0]); };
 // place and country: suggest from earlier displays; picking a place fills country and coordinates
