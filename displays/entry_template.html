@@ -111,6 +111,9 @@ textarea { resize: vertical; min-height: 54px; }
 .item .acts { margin-left: auto; display: flex; gap: 6px; }
 .item input { background: var(--panel); }
 .item .tokens { background: var(--panel); }
+.imgpick { display: flex; gap: 6px; align-items: center; }
+.imgpick input[data-k=image] { flex: 1; min-width: 0; }
+.ipv { display: block; max-height: 80px; max-width: 140px; margin-top: 6px; border-radius: 3px; border: 1px solid var(--rule); }
 .shows { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 .shows .chip { padding: 2px 6px; }
 .shows .chip code { font-size: 11.5px; }
@@ -447,12 +450,13 @@ function renderItems() {
         <span class="acts"><button class="btn" type="button" data-a="dup">Duplicate</button><button class="btn danger" type="button" data-a="rm" ${rec.items.length < 2 ? "hidden" : ""}>Remove</button></span></div>
       <div class="f"><span class="lab">Observer</span><div class="tokens">${it.by.map((b, j) => `<span class="tok">${obsHTML(b)}<button type="button" class="x" data-rmby="${j}" aria-label="Remove ${esc(b)}">×</button></span>`).join("")}<input placeholder="name, Enter to add" data-k="by" aria-label="Item ${i + 1} observer"></div><div class="sugg" hidden></div></div>
       <div class="row"><div class="f"><span class="lab">Link</span><input data-k="link" value="${esc(it.link)}" placeholder="address of the video, photo or report" aria-label="Item ${i + 1} link"></div>
-        <div class="f"><span class="lab">Image</span><input data-k="image" value="${esc(it.image)}" placeholder="image address or file name" aria-label="Item ${i + 1} image"></div></div>
+        <div class="f"><span class="lab">Image</span><div class="imgpick"><input data-k="image" value="${esc(it.image)}" placeholder="image address or file name" aria-label="Item ${i + 1} image"><button class="btn" type="button" data-a="pick" title="Pick the picture from your folder: only its file name is kept">Choose…</button><input type="file" accept="image/*" data-k="file" hidden></div><img class="ipv" alt="" hidden></div></div>
       <div class="top"><span class="lab">Image permission</span><div class="seg" data-single>${["yes", "asked", "no"].map(v => `<button type="button" data-p="${v}" aria-pressed="${it.perm === v}">${v[0].toUpperCase() + v.slice(1)}</button>`).join("")}</div></div>
       <div class="f"><span class="lab">Shows</span><div class="shows"><button type="button" class="chip" data-all aria-pressed="${showsAll}"><span>All halos</span></button>${rec.halos.map(c =>
         `<button type="button" class="chip" data-c="${esc(c)}" aria-pressed="${itemShows(it, c)}" title="${esc(FORM[c]?.n || "")}"><code>${esc(c)}</code></button>`).join("") || '<span class="hint">add the display\'s halos first</span>'}</div></div>`;
     el.addEventListener("click", e => {
       const b = e.target.closest("button"); if (!b) return;
+      if (b.dataset.a === "pick") { el.querySelector("input[data-k=file]").click(); return; }     // the file dialog; nothing redrawn
       if (b.dataset.p) it.perm = it.perm === b.dataset.p ? "" : b.dataset.p;
       else if (b.hasAttribute("data-all")) it.shows = it.shows === null ? [] : null;
       else if (b.dataset.c) { const c = b.dataset.c; const cur = it.shows === null ? rec.halos.slice() : it.shows; it.shows = cur.includes(c) ? cur.filter(x => x !== c) : [...cur, c]; if (rec.halos.every(x => it.shows.includes(x))) it.shows = null; }
@@ -463,6 +467,11 @@ function renderItems() {
       changed(); renderItems(); renderPreview();
     });
     el.querySelectorAll("input[data-k=link], input[data-k=image]").forEach(inp => inp.addEventListener("input", () => { it[inp.dataset.k] = inp.value.trim(); changed(); }));
+    el.querySelector("input[data-k=file]").addEventListener("change", e => {   // keep the picked picture's name; show it as a check
+      const f = e.target.files[0]; if (!f) return;
+      it.image = f.name; el.querySelector("input[data-k=image]").value = f.name; changed();
+      const pv = el.querySelector(".ipv"); pv.src = URL.createObjectURL(f); pv.hidden = false;
+    });
     el.querySelector("input[data-k=card]").addEventListener("change", e => { it.card = e.target.checked; changed(); });
     el.querySelector("input[data-k=pop]").addEventListener("change", e => { it.pop = e.target.checked; changed(); renderItems(); });
     const byIn = el.querySelector("input[data-k=by]"), sg = el.querySelector(".sugg");
