@@ -372,7 +372,9 @@ const normName = t => t.toLowerCase().replace(/\s*°\s*/g, "° ").replace(/[^a-z
 const TRACKER = new Map(Object.entries(TRACKER_NAMES).map(([n, c]) => [normName(n), c]));
 $("halo-in").addEventListener("paste", e => {
   const text = (e.clipboardData || window.clipboardData)?.getData("text") || "";
-  const parts = text.split(/[\n\r,;•·|]+/).map(t => t.trim()).filter(t => t && !/^\+\s*\d+\s+(more|common)$/i.test(t));
+  // the list copied from a case page can come with no separators at all ("Sun dogs22° haloUpper Lowitz arc..."):
+  // a lower-case letter or ")" running straight into a capital or a digit starts a new name
+  const parts = text.replace(/([a-z)])(?=[A-Z0-9])/g, "$1\n").split(/[\n\r,;•·|]+/).map(t => t.trim()).filter(t => t && !/^\+\s*\d+\s+(more|common)$/i.test(t));
   const codeOf = t => { const f = Object.values(FORM).find(f => f.c.toLowerCase() === t.toLowerCase()); return f ? f.c : null; };
   const added = [], unknown = [];
   parts.forEach(t => {
