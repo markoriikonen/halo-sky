@@ -1691,8 +1691,10 @@ function hexSVG(d, R, opts = {}) {
 }
 function dotSVG(list, R) {
   const lights = new Set(list.map(d => d.light)), col = lights.size === 1 ? (D_LIGHT[[...lights][0]] || D_MIXED) : D_MIXED;
-  const r = R;                                            // same size as a hexagon, whatever the count
-  return `<circle r="${r.toFixed(2)}" fill="${col}"/><text y="${R * 0.33}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * 0.95}" fill="${D_TEXT[col] || "#1c2329"}">${list.length}</text>` + badges(aggFlags(list), r);
+  const r = R, k = R * 0.2;                               // same size as a hexagon, whatever the count
+  // drawn as a small pile of three, so it reads as several displays before the legend is read
+  const rim = (x, y) => `<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${r.toFixed(2)}" fill="${col}" stroke="var(--land)" stroke-width="${(r * 0.12).toFixed(2)}"/>`;
+  return rim(2 * k, -2 * k) + rim(k, -k) + rim(0, 0) + `<text y="${R * 0.33}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="${R * 0.95}" fill="${D_TEXT[col] || "#1c2329"}">${list.length}</text>` + badges(aggFlags(list), r);
 }
 const dLabel = d => `${hCount(d)} halos${d.novel.length ? " ★" : ""}`;      // the marks (R, O, M, E, B) are left out of text for now: O reads as zero
 const dYear = d => +String(d.date || "").slice(0, 4);
@@ -2030,7 +2032,7 @@ function dispLegend() {
   const sw = (fill, stroke) => `<svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><polygon points="${hexPts(7).map(p => p.map(v => v.toFixed(1)).join(",")).join(" ")}" fill="${fill}" ${stroke ? `stroke="${stroke}" stroke-width="1.3"` : ""}/></svg>`;
   document.getElementById("displegend").innerHTML =
     `<span class="k">${hex}<span>One display. The number is how many halos it had. A side is drawn for each crystal orientation that made halos: black when one of them was rare, grey when all were common.</span></span>` +
-    `<span class="k"><svg width="22" height="22" viewBox="-11 -11 22 22" aria-hidden="true"><circle r="10" fill="${D_MIXED}"/><text y="3.5" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" font-weight="600" fill="#1c2329">4</text></svg> several nearby displays; point at it for a closer view, click to zoom in. Grey when their light sources differ.</span>` +
+    `<span class="k"><svg width="26" height="26" viewBox="-11 -15 26 26" aria-hidden="true">${[[4, -4], [2, -2], [0, 0]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="10" fill="${D_MIXED}" stroke="var(--land)" stroke-width="1.2"/>`).join("")}<text y="3.5" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" font-weight="600" fill="#1c2329">4</text></svg> several nearby displays; point at it for a closer view, click to zoom in. Grey when their light sources differ.</span>` +
     `<span class="k"><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><circle r="11" fill="none" stroke="rgb(var(--ink))" stroke-width="1.2" opacity=".7"/>${hexSVG({ light: "sun", items: [{ type: "photo" }], halos: [], doubtful: [], novel: [], nfc: [], nfp: [], lat: 60 }, 7, { nobadge: true }).replace(/>0</, "><")}</svg> the latest display</span>` +
     `<span class="k">${sw(D_LIGHT.sun)} sun</span><span class="k">${sw(D_LIGHT.moon)} moon</span><span class="k">${sw(D_LIGHT.artificial)} artificial light</span>` +
     `<span class="k"><b style="color:#d0306a">★</b> world first</span><span class="k"><svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="#2f7d4f"/></svg> national first <svg width="12" height="14" viewBox="0 0 12 14"><path d="M2 1v12M2 1l8 3-8 3z" stroke="#2f7d4f" stroke-width="1.5" fill="var(--panel)"/></svg> possible; in pop-ups the country's flag, faded with ? when possible</span>` +
