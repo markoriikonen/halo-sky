@@ -1643,7 +1643,7 @@ const obsH = n => /^unknown$/i.test(String(n).trim()) ? "<i>unknown</i>" : esc(n
 const obsList = a => a.map(obsH).join(", ");
 const dName = d => [d.place, d.country].filter(Boolean).join(", ") || "Unknown place";
 const dObs = d => [...new Set(d.items.flatMap(it => it.by))];
-// the card's source lines: items with the same link share one line, their observers combined (each name once)
+// the card's source lines: items with the same link share one line, their observers combined (each name once);
 function dDocs(d) {
   const out = [], byLink = new Map();
   d.items.forEach(it => {
@@ -1653,7 +1653,16 @@ function dDocs(d) {
     if (it.link) byLink.set(it.link, ng);
     out.push(ng);
   });
-  return out.filter(g => g.link || g.by.length);
+  // then lines with the same observers become one, with their links numbered (source 1 · 2 · 3)
+  const merged = [], byObs = new Map();
+  out.filter(g => g.link || g.by.length).forEach(g => {
+    // "unknown" in two lines with different links may be two different people, so such lines stay apart
+    const k = g.by.some(x => /^unknown$/i.test(String(x).trim())) ? null : g.by.slice().sort().join("\u0001"), m = k != null && byObs.get(k);
+    if (m) { if (g.link && !m.links.includes(g.link)) m.links.push(g.link); return; }
+    const ng = { by: g.by, links: g.link ? [g.link] : [] };
+    if (k != null) byObs.set(k, ng); merged.push(ng);
+  });
+  return merged;
 }
 const dShows = (it, c) => it.shows == null || it.shows.includes(c);
 const dCredit = (d, c) => [...new Set(d.items.filter(it => dShows(it, c)).flatMap(it => it.by))];
@@ -2025,7 +2034,8 @@ function dCard(d) {
       <button type="button" class="dx" aria-label="Close this card">×</button></div>` +
     (firsts.length ? `<div class="dfirst">${firsts.map(([k, lab, c]) => `<div><span class="${k}">${k === "wf" ? "★ " : ""}${lab}:</span> ${esc(hName(c))} — ${dCredit(d, c).length ? obsList(dCredit(d, c)) : "no documentation shows it"}</div>`).join("")}</div>` : "") +
     `<div class="dhalos">${d.halos.map(c => `<span class="${d.doubtful.includes(c) ? "doubt" : ""}" title="${esc(c)}">${esc(hName(c))}${d.doubtful.includes(c) ? " (uncertain)" : ""}</span>`).join("")}</div>` +
-    `<div class="ddocs">${dDocs(d).map(g => `<div>${obsList(g.by)}${g.link ? `${g.by.length ? " · " : ""}<a href="${esc(g.link)}" target="_blank" rel="noopener">source</a>` : ""}</div>`).join("")}</div>` +
+    `<div class="ddocs">${dDocs(d).map(g => `<div>${obsList(g.by)}${g.links.length ? (g.by.length ? " · " : "") + (g.links.length === 1 ? `<a href="${esc(g.links[0])}" target="_blank" rel="noopener">source</a>`
+      : `<span style="white-space:nowrap">source ${g.links.map((l, i) => `<a href="${esc(l)}" target="_blank" rel="noopener">${i + 1}</a>`).join(" · ")}</span>`) : ""}</div>`).join("")}</div>` +
     `<div class="gramlinks">${dGram(d) || (d.date < "2017-01-01" ? "No gram: the model data starts in 2017." : d._pos && d._pos.approx ? "No gram: the exact place is not known." : "")}</div>` +
     (d.notes ? noteHTML(d.notes) : "") +
     (thumbs.length ? `<div class="dthumbs">${thumbs.map(it => `<figure>${it.link ? `<a href="${esc(it.link)}" target="_blank" rel="noopener">` : ""}<img src="data/disp/${esc(it.thumb)}" alt="${esc("Picture by " + it.by.join(", "))}" loading="lazy">${it.link ? "</a>" : ""}<figcaption>${obsList(it.by)}</figcaption></figure>`).join("")}</div>` : "");
