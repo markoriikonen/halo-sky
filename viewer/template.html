@@ -1643,6 +1643,18 @@ const obsH = n => /^unknown$/i.test(String(n).trim()) ? "<i>unknown</i>" : esc(n
 const obsList = a => a.map(obsH).join(", ");
 const dName = d => [d.place, d.country].filter(Boolean).join(", ") || "Unknown place";
 const dObs = d => [...new Set(d.items.flatMap(it => it.by))];
+// the card's source lines: items with the same link share one line, their observers combined (each name once)
+function dDocs(d) {
+  const out = [], byLink = new Map();
+  d.items.forEach(it => {
+    const g = it.link ? byLink.get(it.link) : null;
+    if (g) { it.by.forEach(n => { if (!g.by.includes(n)) g.by.push(n); }); return; }
+    const ng = { link: it.link, by: [...new Set(it.by)] };
+    if (it.link) byLink.set(it.link, ng);
+    out.push(ng);
+  });
+  return out.filter(g => g.link || g.by.length);
+}
 const dShows = (it, c) => it.shows == null || it.shows.includes(c);
 const dCredit = (d, c) => [...new Set(d.items.filter(it => dShows(it, c)).flatMap(it => it.by))];
 const hName = c => (DFORMS[c] || [c])[0];
@@ -2013,7 +2025,7 @@ function dCard(d) {
       <button type="button" class="dx" aria-label="Close this card">×</button></div>` +
     (firsts.length ? `<div class="dfirst">${firsts.map(([k, lab, c]) => `<div><span class="${k}">${k === "wf" ? "★ " : ""}${lab}:</span> ${esc(hName(c))} — ${dCredit(d, c).length ? obsList(dCredit(d, c)) : "no documentation shows it"}</div>`).join("")}</div>` : "") +
     `<div class="dhalos">${d.halos.map(c => `<span class="${d.doubtful.includes(c) ? "doubt" : ""}" title="${esc(c)}">${esc(hName(c))}${d.doubtful.includes(c) ? " (uncertain)" : ""}</span>`).join("")}</div>` +
-    `<div class="ddocs">${d.items.map(it => `<div>${obsList(it.by)}${it.link ? ` · <a href="${esc(it.link)}" target="_blank" rel="noopener">source</a>` : ""}</div>`).join("")}</div>` +
+    `<div class="ddocs">${dDocs(d).map(g => `<div>${obsList(g.by)}${g.link ? `${g.by.length ? " · " : ""}<a href="${esc(g.link)}" target="_blank" rel="noopener">source</a>` : ""}</div>`).join("")}</div>` +
     `<div class="gramlinks">${dGram(d) || (d.date < "2017-01-01" ? "No gram: the model data starts in 2017." : d._pos && d._pos.approx ? "No gram: the exact place is not known." : "")}</div>` +
     (d.notes ? noteHTML(d.notes) : "") +
     (thumbs.length ? `<div class="dthumbs">${thumbs.map(it => `<figure>${it.link ? `<a href="${esc(it.link)}" target="_blank" rel="noopener">` : ""}<img src="data/disp/${esc(it.thumb)}" alt="${esc("Picture by " + it.by.join(", "))}" loading="lazy">${it.link ? "</a>" : ""}<figcaption>${obsList(it.by)}</figcaption></figure>`).join("")}</div>` : "");
