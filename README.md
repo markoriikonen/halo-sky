@@ -1,9 +1,11 @@
 # Halo Sky
 
+Starting work in a new session? Read [HANDOVER.md](HANDOVER.md) first.
+
 Tools for finding where and when the sky favours ice-crystal halos, from ECMWF model data served by [Open-Meteo](https://open-meteo.com/).
 
 - **Halo Sky Gram** (`gram/`): a web page that draws a cloud-by-height gram (with the 0, −15 and −40 °C isotherms) or a low/mid/high cloud gram for any place and period. It runs in the visitor's browser and fetches from Open-Meteo's free, non-commercial API; no key is involved. Live at <https://haloskyatlas.com/gram/>.
-- **Halo Sky Fingerprints** (`viewer/`): a world map of about 2,500 sites showing how often each combination of cloud layers occurs, the elliptical-halo "mid layer" search, high-cloud seasons, and photographed halo displays (from the Halo Display Log, `displays/`). Built from a multi-year pull of hourly data (see below). Live at <https://haloskyatlas.com/fingerprints/>.
+- **Halo Sky Fingerprints** (`viewer/`): a world map of about 2,600 sites showing how often each combination of cloud layers occurs, the elliptical-halo "mid layer" search, high-cloud seasons, and photographed halo displays (from the Halo Display Log, `displays/`). Built from a multi-year pull of hourly data (see below). Live at <https://haloskyatlas.com/fingerprints/>.
 
 ## Publishing
 
