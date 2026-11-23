@@ -1,15 +1,15 @@
-# Halo Sky
+# Halo Sky Atlas
 
 Starting work in a new session? Read [HANDOVER.md](HANDOVER.md) first.
 
 Tools for finding where and when the sky favours ice-crystal halos, from ECMWF model data served by [Open-Meteo](https://open-meteo.com/).
 
 - **Halo Sky Gram** (`gram/`): a web page that draws a cloud-by-height gram (with the 0, −15 and −40 °C isotherms) or a low/mid/high cloud gram for any place and period. It runs in the visitor's browser and fetches from Open-Meteo's free, non-commercial API; no key is involved. Live at <https://haloskyatlas.com/gram/>.
-- **Halo Sky Fingerprints** (`viewer/`): a world map of about 2,600 sites showing how often each combination of cloud layers occurs, the elliptical-halo "mid layer" search, high-cloud seasons, and photographed halo displays (from the Halo Display Log, `displays/`). Built from a multi-year pull of hourly data (see below). Live at <https://haloskyatlas.com/fingerprints/>.
+- **Halo Sky Atlas** (`viewer/`), the front page: a world map of about 2,600 sites. Its cloud modes (the Fingerprints: High cloud, Mid layer, Seasons) show how often each combination of cloud layers occurs, the elliptical-halo "mid layer" search and high-cloud seasons; its Displays mode maps photographed halo displays (from the Halo Display Log, `displays/`). Built from a multi-year pull of hourly data (see below). Live at <https://haloskyatlas.com/>; the old address `/fingerprints/` forwards there.
 
 ## Publishing
 
-GitHub Pages serves the `site` branch. `viewer/deploy_site.sh <built viewer folder>` assembles the landing page, the gram, the location lists and the built viewer and force-pushes them there as a single commit, so the viewer's data (about 280 MB) never accumulates in the history. The code lives on `main`.
+GitHub Pages serves the `site` branch. `viewer/deploy_site.sh <built viewer folder>` puts the built viewer at the root as the front page, adds the gram, the methods page, the location lists and the `/fingerprints/` forwarding page, and force-pushes them there as a single commit, so the viewer's data (about 280 MB) never accumulates in the history. The code lives on `main`.
 - **Scripts** (`scripts/`): the Python pipeline that pulls the data and builds the viewer's files.
 - **Locations** (`locations/`): the site lists (name, latitude, longitude, elevation).
 

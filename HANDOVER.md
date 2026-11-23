@@ -1,4 +1,4 @@
-# Handover: Halo Sky (haloskyatlas.com)
+# Handover: Halo Sky Atlas (haloskyatlas.com)
 
 Written 23 November 2026 at the end of a long working thread, so that a new session can pick up the work. Read this first, then `README.md` for the data pipeline.
 
@@ -8,17 +8,16 @@ Marko Riikonen drives the science and the design; the assistant implements. He d
 
 | Part | Where | Notes |
 |---|---|---|
-| Front page | `index.html` | Cards for the Gram, Fingerprints and Methods |
 | Halo Sky Gram | `gram/index.html` | Height gram and low/mid/high gram for any place and period; **5-day forecast** (yesterday, today, four days ahead, past hours shaded, red "now" line); **Humidity** style (relative humidity 50–100 %, dashed 70 % line) |
-| Fingerprints (viewer) | `viewer/template.html` → built to `fingerprints/` | Modes: High cloud, Mid layer, Seasons, Displays. 2,630 sites |
+| Halo Sky Atlas (viewer), the front page | `viewer/template.html` → built to the site root | Modes: High cloud, Mid layer, Seasons (together "the Fingerprints"), Displays. 2,630 sites. Header links to the Gram and Methods; credits in the footer. The old address `/fingerprints/` is a forwarding page (`viewer/forward.html`) |
 | Methods page | `methods/index.html` | Data sources, humidity-derived level cloud (Sundqvist, critical humidity 70 %), why the two grams disagree, IFS upgrades 47r3 (12 Oct 2021) and 50r1 (12 May 2026) |
 | Display Log | private Claude artifact `https://claude.ai/artifact/9Fwcbt5GUmJ3oq4N8Lbr9P`; source `displays/entry_template.html` + `displays/forms.json` | Marko enters halo displays here. Data in its database, collection `displays`, document id = running number |
-| Old viewer address | Claude artifact `QLgEuMgeaU1XYKTv3nErfs` | A "has moved" page pointing to haloskyatlas.com |
+| Old viewer address | Claude artifact `QLgEuMgeaU1XYKTv3nErfs` (public) | A "has moved" page pointing to haloskyatlas.com |
 
 ## Hosting and domain
 
 - GitHub Pages serves the **`site`** branch of `markoriikonen/halo-sky`. Code lives on **`main`**.
-- `viewer/deploy_site.sh <built viewer folder>` assembles the front page, gram, methods, location lists and the built viewer, writes `CNAME` (haloskyatlas.com) and `.nojekyll`, and force-pushes `site` as a single commit (about 570 MB). Always deploy with this script: a push without the `CNAME` file drops the domain.
+- `viewer/deploy_site.sh <built viewer folder>` puts the built viewer at the root as the front page, adds the gram, methods, location lists and the `/fingerprints/` forwarding page, writes `CNAME` (haloskyatlas.com) and `.nojekyll`, and force-pushes `site` as a single commit (about 570 MB). Always deploy with this script: a push without the `CNAME` file drops the domain. `DRY=1 sh viewer/deploy_site.sh site` assembles the site in a temporary folder without pushing, for a local test (serve it with `python -m http.server`).
 - Domain **haloskyatlas.com** is registered at Porkbun: four A records to GitHub (185.199.108–111.153) and `www` CNAME to `markoriikonen.github.io`. The domain is verified in GitHub (a TXT record `_github-pages-challenge-markoriikonen`; keep it). HTTPS is enforced. The Porkbun MX and SPF records are kept for email forwarding later.
 
 ## Getting a working copy in a new session
@@ -28,7 +27,7 @@ The built viewer (page plus about 300 MB of data) is not on `main`. Take it from
 ```
 git clone https://github.com/markoriikonen/halo-sky.git halo-sky
 git clone --depth 1 -b site https://github.com/markoriikonen/halo-sky.git sitecopy
-cp -r sitecopy/fingerprints site          # this "site" folder is the built viewer folder used below
+mkdir site && cp -r sitecopy/index.html sitecopy/data site/   # this "site" folder is the built viewer folder used below
 ```
 
 For browser tests, Playwright and Chromium are preinstalled; the page loads d3 and topojson from a CDN the sandbox cannot reach, so `npm install d3@7 topojson-client@3` in a scratch folder and route those requests to the local files.
@@ -77,7 +76,7 @@ For browser tests, Playwright and Chromium are preinstalled; the page loads d3 a
 
 ## Open items and plans
 
-- **Rename to "Halo Sky Atlas"**: the domain is bought and live, but the pages still say "Halo Sky". Plan: the Atlas as the front page, Fingerprints stays the name of the first mode, new intro text, credits in the footer, a forwarding page at `/fingerprints/`. Show Marko the text before it goes live.
+- **Rename to "Halo Sky Atlas"**: done on 23 November 2026 (the Atlas is the front page, new intro, credits in the footer, `/fingerprints/` forwards). Still open: whether to invite visitors to send in displays once email forwarding at Porkbun is set up.
 - **Numeric halo codes**: Marko will replace the letter codes with numbers before adding alternative nomenclatures, still-theoretical halos, blue-edge effects and halo diffraction features (diffraction needs its own group symbol). When he has the old-to-new list, convert the Log records, `forms.json`, the paste table and the site in one go.
 - **Spanish version**: deferred until the Spanish halo names are worked out (possibly with Franklin Fernández).
 - **Display places as Fingerprints sites**: done for five places while the subscription lasted; later ones would need the free API.

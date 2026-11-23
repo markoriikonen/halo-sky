@@ -1,4 +1,5 @@
-<title>Halo Sky Fingerprints</title>
+<title>Halo Sky Atlas</title>
+<meta name="description" content="Where and when the sky favours ice-crystal halos, and where halo displays have been photographed: cloud fingerprints for about 2,600 sites from ECMWF model data, and a world map of photographed halo displays.">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,6 +37,13 @@ body {
 h1 { font-family: var(--f-display); font-weight: 500; font-size: clamp(26px, 3.2vw, 36px); margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
 h2 { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
 .lede { margin: 6px 0 0; color: var(--muted); max-width: 72ch; }
+.mast { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; }
+.sitenav { display: flex; gap: 18px; font-size: 14px; }
+.sitenav a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
+.sitenav a:hover { text-decoration-color: var(--muted); }
+.tagline { margin: 4px 0 0; font-size: 16.5px; max-width: 72ch; }
+#credits { margin-top: -10px; }
+#foot a, #credits a { color: inherit; }
 .panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px; min-width: 0; }
 .controls { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: end; }
 .months { display: flex; flex-wrap: wrap; gap: 4px; }
@@ -238,8 +246,12 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 
 <div class="wrap">
   <header>
-    <h1>Halo Sky Fingerprints</h1>
-    <p class="lede">How often each combination of cloud layers occurs in daylight, from hourly ECMWF data. Set a window with the sliders: the map colours every site by the share of the hours counted that fall inside it. <b>High cloud</b> mode looks for cirrus with a clear view; <b>Mid layer</b> mode looks for an isolated middle layer, either ECMWF's mid-cloud band or cloud in a chosen temperature range.</p>
+    <div class="mast">
+      <h1>Halo Sky Atlas</h1>
+      <nav class="sitenav" aria-label="Site"><a href="gram/">Halo Sky Gram</a><a href="methods/">Methods</a></nav>
+    </div>
+    <p class="tagline">Where and when the sky favours ice-crystal halos, and where halo displays have been photographed.</p>
+    <p class="lede">The cloud modes are fingerprints of about 2,600 sites from hourly ECMWF model data: set a window with the sliders, and the map colours every site by the share of the hours counted that fall inside it. <b>High cloud</b> looks for cirrus with a clear view; <b>Mid layer</b> for an isolated middle layer, either ECMWF's mid-cloud band or cloud in a chosen temperature range; <b>Seasons</b> for the time of year when high cloud is commonest. <b>Displays</b> maps photographed halo displays: who, where and when, with world and national firsts.</p>
   </header>
 
   <div class="panel controls">
@@ -412,6 +424,7 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
   </div>
 
   <p class="note" id="foot"></p>
+  <p class="note" id="credits">Credits: cloud data ECMWF IFS via <a href="https://open-meteo.com/">Open-Meteo</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>); Köppen–Geiger classes from Beck et al. (2023), <i>Scientific Data</i> 10, 724 (CC BY 4.0); coastlines and borders from <a href="https://www.naturalearthdata.com/">Natural Earth</a>; flags from <a href="https://github.com/lipis/flag-icons">flag-icons</a> (MIT). Display pictures © their observers, who are named with each display. Compiled by Marko Riikonen. Source code: <a href="https://github.com/markoriikonen/halo-sky">github.com/markoriikonen/halo-sky</a>.</p>
   <div class="ymodal" id="ymodal" hidden role="dialog" aria-modal="true" aria-labelledby="ytitle">
     <div class="ypanel">
       <div class="yhead"><div><div class="name" id="ytitle"></div><div class="meta" id="ymeta"></div></div>
@@ -980,7 +993,7 @@ function update() {
 
 
 // ---- links to the Halo Sky Gram page (GitHub Pages; it fetches from Open-Meteo's free API)
-const GRAM_URL = "../gram/";   // the gram sits next to the viewer on the site
+const GRAM_URL = "gram/";   // the gram sits in a folder under the Atlas front page
 function gramLink(s, year, month, months, label, extra = {}) {
   const q = new URLSearchParams({ name: s.n, lat: s.la, lon: s.lo, type: year >= 2024 ? "height" : "lmh", year, month, months, ...extra });
   return `<a class="gramlink" href="${GRAM_URL}?${q}" target="_blank" rel="noopener">${label}</a>`;
@@ -1516,7 +1529,7 @@ async function openYears(s) {
   body.innerHTML = `<div class="ysec">Average ${years[0]}–${years[years.length - 1] - (rows.length > whole.length ? 1 : 0)}</div>${yearCurve(s, { wide: true, season: mode === "season" }) || ""}
     <div class="ysec">Year by year</div>${heat}<div class="yrows" style="margin-top:8px">${mult}</div>
     <div class="ysec">Variability</div><div class="ystats">${stats}</div>
-    <p class="note" style="margin:10px 0 0">Year panels share one scale, 0 to ${Math.round(ymax * 100)}%. Thin grey line in each year: the multi-year average. Shaded: that year's spells above ${clear ? "the average curve's break value" : "the average curve's median (it has no clear season)"}${thr != null ? ` (${pct(thr)})` : ""}, gaps under 30 days closed. Shading that wanders from year to year means the season is not reliable. <span style="color:#c4402f">Red marks</span>: ECMWF model upgrades that changed how the model makes cloud (12 Oct 2021, IFS cycle 47r3; 12 May 2026, cycle 50r1), so years on either side are not fully comparable; see <a href="../methods/#upgrades" target="_blank" rel="noopener">Methods</a>.</p>`;
+    <p class="note" style="margin:10px 0 0">Year panels share one scale, 0 to ${Math.round(ymax * 100)}%. Thin grey line in each year: the multi-year average. Shaded: that year's spells above ${clear ? "the average curve's break value" : "the average curve's median (it has no clear season)"}${thr != null ? ` (${pct(thr)})` : ""}, gaps under 30 days closed. Shading that wanders from year to year means the season is not reliable. <span style="color:#c4402f">Red marks</span>: ECMWF model upgrades that changed how the model makes cloud (12 Oct 2021, IFS cycle 47r3; 12 May 2026, cycle 50r1), so years on either side are not fully comparable; see <a href="methods/#upgrades" target="_blank" rel="noopener">Methods</a>.</p>`;
   // paint the heat strip
   const cv = document.getElementById("yheat"), ctx = cv.getContext("2d"), fg = getComputedStyle(document.documentElement).getPropertyValue("--muted").trim() || "#666";
   ctx.scale(dpr, dpr);
@@ -2121,12 +2134,12 @@ load().catch(e => { document.getElementById('status').textContent = 'Could not l
     .on("click", (ev, s) => addSite(s.n));
   document.getElementById("status").textContent = `${SITES.length} sites`;
   document.getElementById("foot").textContent =
-    `Data: ECMWF IFS via Open-Meteo (CC BY 4.0). High cloud and mid-band modes: 9 km low/mid/high cloud cover, hourly, ${SETTINGS.years[0]}–${SETTINGS.years[1]}. ` +
+    `High cloud and mid-band modes: 9 km low/mid/high cloud cover, hourly, ${SETTINGS.years[0]}–${SETTINGS.years[1]}. ` +
     `ECMWF splits low/mid/high by pressure relative to the surface (0.8 and 0.45 of surface pressure), so at high-altitude sites its "mid" band reaches cirrus heights; those sites are hidden in mid-band mode unless included. ` +
     (LSET ? `Temperature-range mode: 25 km pressure-level temperature and cloud cover (cloud derived from humidity), interpolated between 13 levels, from ${LSET.start}` +
       (LSET.aloft_only ? "; a range that reaches the ground (surface air no warmer than its warm edge) counts as no layer. " : ". ") : "") +
     `Daylight: sun at least ${SETTINGS.sun_min_deg}° above the horizon. `;
-  document.getElementById("foot").append(Object.assign(document.createElement("a"), { href: "../methods/", textContent: "How the data are made: Methods" }));
+  document.getElementById("foot").append(Object.assign(document.createElement("a"), { href: "methods/", textContent: "How the data are made: Methods" }));
   update();
   bordersLoad().then(() => { if (mode === "displays") update(); });
   kgLoad().then(() => update());

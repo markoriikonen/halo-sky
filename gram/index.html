@@ -49,11 +49,14 @@ canvas#gram { display: block; background: #fff; border-radius: 3px; }
 .note { font-size: 13px; color: var(--muted); margin: 0; }
 [hidden] { display: none !important; }
 .note a { color: inherit; }
+nav { font-size: 14px; margin-bottom: 10px; }
+nav a { color: inherit; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
+    <nav><a href="../">Halo Sky Atlas</a> · <a href="../methods/">Methods</a></nav>
     <h1>Halo Sky Gram</h1>
     <p class="lede">Cloud by height and time for any place, from ECMWF model data via Open-Meteo, in local time. The height gram shades cloud cover on 13 pressure levels with the 0, −15 and −40 °C isotherms; the low/mid/high gram shows ECMWF's own three cloud bands. The 5-day forecast shows yesterday, today and the next four days from the latest ECMWF run.</p>
   </header>
@@ -77,7 +80,7 @@ canvas#gram { display: block; background: #fff; border-radius: 3px; }
       <button class="go alt" id="fc" type="button" title="Yesterday, today and the next four days, from the latest ECMWF run">5-day forecast</button>
     </div>
     <p class="hint" id="avail"></p>
-    <p class="hint">Pick one of the 2,500 Fingerprints sites from the Place list to fill in its coordinates, or type any place with its own latitude and longitude.</p>
+    <p class="hint">Pick one of the 2,600 or so Atlas sites from the Place list to fill in its coordinates, or type any place with its own latitude and longitude.</p>
     <p class="hint" id="seasonnote" hidden></p>
   </div>
 
@@ -196,7 +199,7 @@ if (RANGE) {
 }
 if (P.get("season")) {
   $("seasonnote").hidden = false;
-  $("seasonnote").textContent = `Period set from the Fingerprints viewer: the site's ${P.get("season") === "worst" ? "quiet" : "active"} high-cloud season${P.get("sdates") ? " (" + P.get("sdates") + ")" : ""}, rounded to whole months.`;
+  $("seasonnote").textContent = `Period set from the Atlas: the site's ${P.get("season") === "worst" ? "quiet" : "active"} high-cloud season${P.get("sdates") ? " (" + P.get("sdates") + ")" : ""}, rounded to whole months.`;
 }
 
 // ---------- site list (the Fingerprints sites, from this repository)
