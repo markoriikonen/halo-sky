@@ -1,5 +1,5 @@
 <title>Halo Sky Atlas</title>
-<meta name="description" content="Where and when the sky favours ice-crystal halos, and where halo displays have been photographed: cloud fingerprints for about 2,600 sites from ECMWF model data, and a world map of photographed halo displays.">
+<meta name="description" content="Where and when the sky favours ice-crystal halos, and where halo displays have been photographed: cloud fingerprints for about 2,600 sites from ECMWF model data, and a world map of actual halo displays.">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -251,17 +251,17 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
       <nav class="sitenav" aria-label="Site"><a href="gram/">Halo Sky Gram</a><a href="methods/">Methods</a></nav>
     </div>
     <p class="tagline">Where and when the sky favours ice-crystal halos, and where halo displays have been photographed.</p>
-    <p class="lede">The cloud modes are fingerprints of about 2,600 sites from hourly ECMWF model data: set a window with the sliders, and the map colours every site by the share of the hours counted that fall inside it. <b>High cloud</b> looks for cirrus with a clear view; <b>Mid layer</b> for an isolated middle layer, either ECMWF's mid-cloud band or cloud in a chosen temperature range; <b>Seasons</b> for the time of year when high cloud is commonest. <b>Displays</b> maps photographed halo displays: who, where and when, with world and national firsts.</p>
+    <p class="lede">The cloud modes are fingerprints of about 2,600 sites from hourly ECMWF model data: set a window with the sliders, and the map colours every site by the share of the hours counted that fall inside it. <b>High cloud</b> looks for cirrus with a clear view; <b>Mid layer</b> for an isolated middle layer, either ECMWF's mid-cloud band or cloud in a chosen temperature range; <b>Seasons</b> for the time of year when high cloud is commonest. <b>Displays</b> maps actual halo displays: who, where and when, with world and national firsts.</p>
   </header>
 
   <div class="panel controls">
     <div>
       <h2>Mode</h2>
       <div class="months" id="modes" role="group" aria-label="Mode">
-        <button type="button" data-mode="halo" aria-pressed="true">High cloud</button>
+        <button type="button" data-mode="halo" aria-pressed="false">High cloud</button>
         <button type="button" data-mode="layer" aria-pressed="false">Mid layer</button>
         <button type="button" data-mode="season" aria-pressed="false" disabled>Seasons</button>
-        <button type="button" data-mode="displays" aria-pressed="false">Displays</button>
+        <button type="button" data-mode="displays" aria-pressed="true">Displays</button>
       </div>
     </div>
     <label class="slider" id="srcwrap" for="src" hidden>Layer source
@@ -424,7 +424,7 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
   </div>
 
   <p class="note" id="foot"></p>
-  <p class="note" id="credits">Credits: cloud data ECMWF IFS via <a href="https://open-meteo.com/">Open-Meteo</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>); Köppen–Geiger classes from Beck et al. (2023), <i>Scientific Data</i> 10, 724 (CC BY 4.0); coastlines and borders from <a href="https://www.naturalearthdata.com/">Natural Earth</a>; flags from <a href="https://github.com/lipis/flag-icons">flag-icons</a> (MIT). Display pictures © their observers, who are named with each display. Compiled by Marko Riikonen. Source code: <a href="https://github.com/markoriikonen/halo-sky">github.com/markoriikonen/halo-sky</a>.</p>
+  <p class="note" id="credits">Credits: cloud data ECMWF IFS via <a href="https://open-meteo.com/">Open-Meteo</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>); Köppen–Geiger classes from Beck et al. (2023), <i>Scientific Data</i> 10, 724 (CC BY 4.0); coastlines and borders from <a href="https://www.naturalearthdata.com/">Natural Earth</a>; flags from <a href="https://github.com/lipis/flag-icons">flag-icons</a> (MIT). Display pictures © their observers, who are named with each display. Source code: <a href="https://github.com/markoriikonen/halo-sky">github.com/markoriikonen/halo-sky</a>.</p>
   <div class="ymodal" id="ymodal" hidden role="dialog" aria-modal="true" aria-labelledby="ytitle">
     <div class="ypanel">
       <div class="yhead"><div><div class="name" id="ytitle"></div><div class="meta" id="ymeta"></div></div>
@@ -581,9 +581,9 @@ mPlay.addEventListener("click", () => {
   mPlay.textContent = "❚❚"; mPlay.setAttribute("aria-label", "Pause");
   playTimer = setInterval(() => setMonth(month % 12 + 1), 900);
 });
-document.querySelectorAll("#modes button").forEach(b => b.addEventListener("click", () => {
-  mode = b.dataset.mode;
-  document.querySelectorAll("#modes button").forEach(x => x.setAttribute("aria-pressed", x === b));
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll("#modes button").forEach(x => x.setAttribute("aria-pressed", x.dataset.mode === m));
   document.getElementById("haloSliders").hidden = mode !== "halo";
   document.getElementById("layerSliders").hidden = mode !== "layer";
   document.getElementById("srcwrap").hidden = mode !== "layer";
@@ -605,7 +605,8 @@ document.querySelectorAll("#modes button").forEach(b => b.addEventListener("clic
   gDots.attr("hidden", dm ? true : null); gDisp.attr("hidden", dm ? null : true);
   if (mode !== "season") { document.getElementById("toph").textContent = "Most hours in the window"; document.getElementById("both").textContent = "Fewest hours in the window"; document.getElementById("lgnote").textContent = "Click a dot to add its fingerprint below."; }
   update();
-}));
+}
+document.querySelectorAll("#modes button").forEach(b => b.addEventListener("click", () => setMode(b.dataset.mode)));
 const srcEl = document.getElementById("src");
 const warmEl = document.getElementById("wwarm"), coldEl = document.getElementById("wcold");
 const edgeLab = v => `${v < 0 ? "−" + (-v) : v} °C`;
@@ -2146,6 +2147,8 @@ load().catch(e => { document.getElementById('status').textContent = 'Could not l
   loadSeason().then(loadChecks);
 }).catch(e => { document.getElementById("status").textContent = "Could not load the data: " + e.message; });
 }
+// the Atlas opens on the live map of displays; their small data file loads at once, the cloud data after the page
+setMode("displays");
 // fetch the data only after the page itself has loaded, so it shows at once
 if (document.readyState === "complete") setTimeout(start, 0); else window.addEventListener("load", () => setTimeout(start, 0));
 </script>
