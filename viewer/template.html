@@ -1800,7 +1800,9 @@ function placeGroups() {
   });
 }
 const dScale = () => 1 / Math.pow(zk, 0.7);
-function clusters(list, near = 26 * dScale()) {
+// dots closer than this (map units) merge; at the deepest zoom only dots that would overlap merge (a dot is 20 across)
+const dNear = () => (zk >= 15.9 ? 20 : 26) * dScale();
+function clusters(list, near = dNear()) {
   const byPlace = [...d3.group(list.filter(d => d._pos), d => d._place).values()].map(m => ({ m, xy: proj(m[0]._pos.ll) }));
   byPlace.sort((a, b) => b.m.length - a.m.length);
   const out = [];
