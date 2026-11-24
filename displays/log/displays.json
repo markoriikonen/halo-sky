@@ -1,0 +1,2041 @@
+{
+ "source": "Halo Display Log (Claude artifact 9Fwcbt5GUmJ3oq4N8Lbr9P), collection 'displays'",
+ "exported": "2026-11-24",
+ "count": 31,
+ "records": [
+  {
+   "cloud": [
+    "Mid"
+   ],
+   "country": "Finland",
+   "date": "2025-12-14",
+   "docu": [
+    "photo"
+   ],
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "RFH"
+   ],
+   "id": "1",
+   "items": [
+    {
+     "by": [
+      "Petri Martikainen"
+     ],
+     "card": true,
+     "image": "20251214_Juva_Finland_Martikainen.jpg",
+     "link": "https://www.taivaanvahti.fi/observations/show/140318",
+     "perm": "yes",
+     "pop": true,
+     "shows": null,
+     "type": "photo"
+    }
+   ],
+   "lat": 61.9,
+   "light": "sun",
+   "lon": 27.85,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Petri Martikainen"
+   ],
+   "place": "Juva",
+   "time": "11:19-11:27",
+   "updated": "2026-11-15T07:00:09.512Z",
+   "_version": 6,
+   "_updatedAt": "2026-11-15T07:00:08.701541Z"
+  },
+  {
+   "cloud": [
+    "Ice fog"
+   ],
+   "country": "Finland",
+   "date": "2025-11-26",
+   "docu": [
+    "photo"
+   ],
+   "doubtful": [],
+   "enddate": "2025-11-27",
+   "halos": [
+    "22H",
+    "46H",
+    "TA",
+    "SA",
+    "IA",
+    "FHA",
+    "T",
+    "DAG",
+    "DAT",
+    "FIA",
+    "FASA",
+    "FSA",
+    "FAIA",
+    "CPC",
+    "UCFH",
+    "FLST",
+    "PPH"
+   ],
+   "id": "2",
+   "items": [
+    {
+     "by": [
+      "Marko Riikonen"
+     ],
+     "card": true,
+     "image": "G7OgNKgX0AAtLGg.jpg",
+     "link": "https://github.com/markoriikonen/halo-archive/blob/b0ed2b81c4d393952491510f75ae7bbc03a4111c/posts/2025-11-27_race_track_big_counter_Tape_Parry_phc_25112627.md",
+     "perm": "yes",
+     "pop": true,
+     "shows": null,
+     "type": "photo"
+    }
+   ],
+   "lat": 66.5,
+   "light": "artificial",
+   "lon": 25.69,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [
+    "FAIA"
+   ],
+   "observers": [
+    "Marko Riikonen"
+   ],
+   "place": "Rovaniemi",
+   "time": "22:00-03:00",
+   "updated": "2026-11-15T06:56:48.496Z",
+   "_version": 7,
+   "_updatedAt": "2026-11-15T06:56:47.604141Z"
+  },
+  {
+   "cloud": [
+    "High"
+   ],
+   "country": "Zimbabwe",
+   "date": "2018-11-09",
+   "docu": [
+    "video"
+   ],
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "MPC",
+    "PH",
+    "TA",
+    "IA",
+    "W",
+    "USP",
+    "LDP"
+   ],
+   "id": "3",
+   "items": [
+    {
+     "by": [
+      "Laura"
+     ],
+     "card": true,
+     "image": "Zimbawe-Wegener.png",
+     "link": "https://www.pond5.com/stock-footage/item/105830893-magical-halo-phenomenon-over-zimbabwe?dd_referrer=",
+     "perm": "no",
+     "pop": true,
+     "shows": null,
+     "type": "video"
+    }
+   ],
+   "lat": "",
+   "light": "sun",
+   "lon": "",
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [
+    "LDP",
+    "USP"
+   ],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Laura"
+   ],
+   "place": "",
+   "time": "10:00-10:30",
+   "updated": "2026-11-15T06:56:39.036Z",
+   "_version": 8,
+   "_updatedAt": "2026-11-15T06:56:38.13849Z"
+  },
+  {
+   "cloud": [
+    "High"
+   ],
+   "country": "Russia",
+   "date": "1790-06-18",
+   "docu": [
+    "description"
+   ],
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "MPC",
+    "22H",
+    "46H",
+    "PH",
+    "TA",
+    "IA",
+    "W",
+    "WA",
+    "ZA",
+    "120PH",
+    "PLLOB"
+   ],
+   "id": "4",
+   "items": [
+    {
+     "by": [
+      "Tobias Lowitz"
+     ],
+     "card": true,
+     "image": "Lowitz-st-Petersburg.png",
+     "link": "https://www.atoptics.org.uk/halo/lowpete.htm",
+     "perm": "",
+     "pop": true,
+     "shows": null,
+     "type": "description"
+    }
+   ],
+   "lat": 59.94,
+   "light": "sun",
+   "lon": 30.31,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [
+    "PLLOB"
+   ],
+   "observers": [
+    "Tobias Lowitz"
+   ],
+   "place": "St. Petersburg",
+   "time": "",
+   "updated": "2026-11-15T06:56:32.036Z",
+   "_version": 6,
+   "_updatedAt": "2026-11-15T06:56:31.128902Z"
+  },
+  {
+   "cloud": [
+    "High"
+   ],
+   "country": "Paraguay",
+   "date": "2026-10-01",
+   "docu": [
+    "video"
+   ],
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "TA",
+    "WA",
+    "9CA",
+    "9CB",
+    "22H",
+    "USP",
+    "CPC",
+    "IA",
+    "W"
+   ],
+   "id": "5",
+   "items": [
+    {
+     "by": [
+      "ranoniana_"
+     ],
+     "card": true,
+     "image": "Paraguay-ranoniana_.png",
+     "link": "https://x.com/brossamadoz/status/2105720901132001394/video/1",
+     "perm": "no",
+     "shows": [
+      "TA",
+      "WA",
+      "22H",
+      "USP",
+      "CPC",
+      "IA",
+      "W"
+     ],
+     "type": "video"
+    },
+    {
+     "by": [
+      "unknown"
+     ],
+     "card": true,
+     "image": "Paraguay-20261001.png",
+     "link": "https://x.com/brossamadoz/status/2105720901132001394",
+     "perm": "no",
+     "shows": [
+      "TA",
+      "WA",
+      "22H",
+      "USP",
+      "CPC",
+      "IA",
+      "W"
+     ],
+     "type": "video"
+    },
+    {
+     "by": [
+      "miltonedwardscast"
+     ],
+     "card": true,
+     "image": "Paraguay-20261001-2.png",
+     "link": "https://x.com/brossamadoz/status/2105720901132001394",
+     "perm": "no",
+     "pop": true,
+     "shows": [
+      "TA",
+      "22H",
+      "USP",
+      "CPC",
+      "IA",
+      "9CB",
+      "9CA"
+     ],
+     "type": "video"
+    }
+   ],
+   "lat": -25.29,
+   "light": "sun",
+   "lon": -57.6,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [
+    "9CB",
+    "9CA",
+    "WA",
+    "W"
+   ],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "ranoniana_",
+    "unknown",
+    "miltonedwardscast"
+   ],
+   "place": "Asunción",
+   "time": "",
+   "updated": "2026-11-15T06:56:24.562Z",
+   "_version": 11,
+   "_updatedAt": "2026-11-15T06:56:23.671724Z"
+  },
+  {
+   "cloud": [
+    "Ice fog"
+   ],
+   "country": "Finland",
+   "date": "2016-01-06",
+   "docu": [
+    "photo"
+   ],
+   "doubtful": [],
+   "enddate": "2016-01-07",
+   "halos": [
+    "22H",
+    "46H",
+    "PH",
+    "UFPH",
+    "UFLP",
+    "UFPC",
+    "FDUT",
+    "FNA",
+    "FNDU",
+    "PPC",
+    "UF120PH",
+    "CLA",
+    "VLA",
+    "LP",
+    "UHA",
+    "UFH",
+    "LBA",
+    "18H",
+    "35H",
+    "9H",
+    "20L",
+    "35U",
+    "L24A",
+    "L9A",
+    "18B"
+   ],
+   "id": "6",
+   "items": [
+    {
+     "by": [
+      "Nicolas Lefaudeux",
+      "Marko Mikkilä",
+      "Jarmo Moilanen",
+      "Marko Riikonen"
+     ],
+     "card": true,
+     "image": "2016010607_Rovaniemi_tears.png",
+     "link": "https://www.haloblog.net/2016/03/07/an-unknown-halo-next-to-the-sub-kern-arc/",
+     "perm": "yes",
+     "pop": true,
+     "shows": null,
+     "type": "photo"
+    },
+    {
+     "by": [
+      "Nicolas Lefaudeux",
+      "Marko Mikkilä",
+      "Jarmo Moilanen",
+      "Marko Riikonen"
+     ],
+     "card": true,
+     "image": "2016010607_Rovaniemi_upper_HA.png",
+     "link": "https://www.haloblog.net/2016/03/05/circumhorizon-arc-in-spotlight-beam/",
+     "perm": "yes",
+     "shows": null,
+     "type": "photo"
+    },
+    {
+     "by": [
+      "Nicolas Lefaudeux",
+      "Marko Mikkilä",
+      "Jarmo Moilanen",
+      "Marko Riikonen"
+     ],
+     "card": true,
+     "image": "2016010607_Rovaniemi_lower9_23-6.png",
+     "link": "https://www.haloblog.net/2016/03/02/odd-radius-display-in-spotlight-beam/",
+     "perm": "yes",
+     "shows": null,
+     "type": "photo"
+    },
+    {
+     "by": [
+      "Nicolas Lefaudeux",
+      "Marko Mikkilä",
+      "Jarmo Moilanen",
+      "Marko Riikonen"
+     ],
+     "card": true,
+     "image": "2016010607_Rovaniemi_Lefaudeux_balls.png",
+     "link": "https://www.haloblog.net/2016/03/03/catching-a-divergent-light-halo-effect-predicted-by-simulations/",
+     "perm": "yes",
+     "shows": null,
+     "type": "photo"
+    }
+   ],
+   "lat": 66.5,
+   "light": "artificial",
+   "lon": 25.69,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [
+    "18B",
+    "L9A",
+    "FDUT"
+   ],
+   "observers": [
+    "Nicolas Lefaudeux",
+    "Marko Mikkilä",
+    "Jarmo Moilanen",
+    "Marko Riikonen"
+   ],
+   "place": "Rovaniemi",
+   "time": "18-06",
+   "updated": "2026-11-15T06:55:39.907Z",
+   "_version": 5,
+   "_updatedAt": "2026-11-15T06:55:39.275076Z"
+  },
+  {
+   "cloud": [
+    "High"
+   ],
+   "country": "Brazil",
+   "date": "2026-11-01",
+   "docu": [
+    "video"
+   ],
+   "doubtful": [
+    "24CA",
+    "24CB"
+   ],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "IA",
+    "9CA",
+    "9CB",
+    "20C",
+    "24CA",
+    "24CB"
+   ],
+   "id": "7",
+   "items": [
+    {
+     "by": [
+      "Waldemir Klebson"
+     ],
+     "card": true,
+     "image": "20261101_Ruropoli_Klebson.jpg",
+     "link": "https://x.com/brossamadoz/status/2117326306677277139",
+     "perm": "no",
+     "pop": true,
+     "shows": null,
+     "type": "video"
+    }
+   ],
+   "lat": -4.09473,
+   "light": "sun",
+   "lon": -54.91053,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Waldemir Klebson"
+   ],
+   "place": "Rurópolis, Pará",
+   "time": "",
+   "updated": "2026-11-16T11:30:04.258Z",
+   "_version": 5,
+   "_updatedAt": "2026-11-16T11:30:04.037422Z"
+  },
+  {
+   "cloud": [
+    "High"
+   ],
+   "country": "México",
+   "date": "2026-10-29",
+   "docu": [
+    "video"
+   ],
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "LIT",
+    "USP",
+    "TA",
+    "IA",
+    "W",
+    "120PH",
+    "PH",
+    "22H",
+    "46H",
+    "MPC",
+    "HA"
+   ],
+   "id": "8",
+   "items": [
+    {
+     "by": [
+      "_irene .t_"
+     ],
+     "card": true,
+     "image": "20261030_Guadalajara_irenet_5.png",
+     "link": "https://x.com/brossamadoz/status/2115939015564157037",
+     "perm": "no",
+     "shows": null,
+     "type": "video"
+    },
+    {
+     "by": [
+      "_irene .t_"
+     ],
+     "card": true,
+     "image": "20261030_Guadalajara_irenet_2.png",
+     "link": "https://x.com/brossamadoz/status/2115939015564157037",
+     "perm": "no",
+     "shows": null,
+     "type": "video"
+    },
+    {
+     "by": [
+      "_irene .t_"
+     ],
+     "card": true,
+     "image": "20261030_Guadalajara_irenet_4.png",
+     "link": "https://x.com/brossamadoz/status/2115939015564157037",
+     "perm": "no",
+     "pop": true,
+     "shows": null,
+     "type": "video"
+    }
+   ],
+   "lat": 20.67517,
+   "light": "sun",
+   "lon": -103.34733,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [
+    "HA",
+    "LIT"
+   ],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "_irene .t_"
+   ],
+   "place": "Guadalajara",
+   "time": "14:00",
+   "updated": "2026-11-15T06:55:20.286Z",
+   "_version": 8,
+   "_updatedAt": "2026-11-15T06:55:19.394836Z"
+  },
+  {
+   "auto": false,
+   "cloud": [
+    "High"
+   ],
+   "country": "Venezuela",
+   "date": "2026-09-16",
+   "docu": [
+    "photo",
+    "video"
+   ],
+   "doubtful": [
+    "LDP"
+   ],
+   "enddate": "",
+   "halos": [
+    "TA",
+    "IA",
+    "W",
+    "PCLFH",
+    "22H",
+    "USP",
+    "PH",
+    "LDP"
+   ],
+   "id": "9",
+   "items": [
+    {
+     "by": [
+      "unknown"
+     ],
+     "card": true,
+     "image": "20260916_Carora_Venezuela_2.jpg",
+     "link": "https://x.com/brossamadoz/status/2100061093800313152",
+     "perm": "no",
+     "shows": [
+      "TA",
+      "IA",
+      "W",
+      "PCLFH",
+      "22H",
+      "USP",
+      "PH"
+     ],
+     "type": "photo"
+    },
+    {
+     "by": [
+      "unknown"
+     ],
+     "card": true,
+     "image": "20260916_Carora_Venezuela_1.jpg",
+     "link": "https://x.com/brossamadoz/status/2100061093800313152",
+     "perm": "no",
+     "shows": [
+      "TA",
+      "IA",
+      "W",
+      "PCLFH",
+      "22H",
+      "USP",
+      "PH"
+     ],
+     "type": "photo"
+    },
+    {
+     "by": [
+      "juliomedicinas"
+     ],
+     "card": true,
+     "image": "20260916_Carora_Venezuela_10.png",
+     "link": "https://x.com/brossamadoz/status/2100225072682197344",
+     "perm": "no",
+     "pop": true,
+     "shows": null,
+     "type": "video"
+    }
+   ],
+   "lat": 10.18143,
+   "light": "sun",
+   "lon": -70.07376,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "A suggestion of lower deepcave Parry in videos of juliomedicinas and enriquegomezradio.",
+   "novel": [],
+   "observers": [
+    "unknown",
+    "juliomedicinas"
+   ],
+   "place": "Carora",
+   "time": "",
+   "updated": "2026-11-23T14:17:08.138Z",
+   "_version": 9,
+   "_updatedAt": "2026-11-23T14:17:08.703565Z"
+  },
+  {
+   "cloud": [
+    "High"
+   ],
+   "country": "Peru",
+   "date": "2026-10-25",
+   "docu": [
+    "video",
+    "photo"
+   ],
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "9H",
+    "20H",
+    "24H",
+    "TA",
+    "9CA",
+    "9CB"
+   ],
+   "id": "10",
+   "items": [
+    {
+     "by": [
+      "Liztap96"
+     ],
+     "card": true,
+     "image": "20261025_Nuevo_Progreso_Peru_Liztap96_odd_radii.png",
+     "link": "https://x.com/brossamadoz/status/2114816466868719889",
+     "perm": "no",
+     "pop": true,
+     "shows": [
+      "22H",
+      "9H",
+      "20H",
+      "24H"
+     ],
+     "type": "video"
+    },
+    {
+     "by": [
+      "unknown"
+     ],
+     "card": true,
+     "image": "20261025_Nuevo_Progreso_Peru_unknown_odd_radii",
+     "link": "https://x.com/brossamadoz/status/2114907017902968883",
+     "perm": "no",
+     "shows": [
+      "22H",
+      "TA",
+      "9CA",
+      "9CB"
+     ],
+     "type": "photo"
+    }
+   ],
+   "lat": -8.44816,
+   "light": "sun",
+   "lon": -76.3242,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [
+    "20H",
+    "9H",
+    "24H"
+   ],
+   "notes": "For Liztap96, at 10:00 sun 63° in Nuevo Progreso. 20° is clear but is there also 24°? The photo by unknown has better column orientation contribution. Is 9° slightly elliptical? Marked it as column arc. Sun elev would seem to be for about 60°, too. ",
+   "novel": [],
+   "observers": [
+    "Liztap96",
+    "unknown"
+   ],
+   "place": "Nuevo Progreso",
+   "time": "10:00",
+   "updated": "2026-11-15T07:36:02.353Z",
+   "_version": 10,
+   "_updatedAt": "2026-11-15T07:36:01.443073Z"
+  },
+  {
+   "cloud": [
+    "High"
+   ],
+   "country": "Argentina",
+   "date": "2026-10-01",
+   "docu": [
+    "photo",
+    "video"
+   ],
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "CPC",
+    "TA",
+    "IA",
+    "W",
+    "WA",
+    "USP",
+    "LDP"
+   ],
+   "id": "11",
+   "items": [
+    {
+     "by": [
+      "unknown"
+     ],
+     "card": true,
+     "image": "20261001_Posadas_argentina_unknown.jpg",
+     "link": "https://x.com/brossamadoz/status/2108233480467361918",
+     "perm": "no",
+     "shows": [
+      "22H",
+      "CPC",
+      "TA",
+      "IA"
+     ],
+     "type": "photo"
+    },
+    {
+     "by": [
+      "juanchotejada83"
+     ],
+     "card": true,
+     "image": "20261001_Posadas_argentina_juanchotejada83.jpg",
+     "link": "https://x.com/brossamadoz/status/2108230279118692373",
+     "perm": "no",
+     "pop": true,
+     "shows": null,
+     "type": "video"
+    }
+   ],
+   "lat": -27.37888,
+   "light": "sun",
+   "lon": -55.92566,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [
+    "LDP"
+   ],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "unknown",
+    "juanchotejada83"
+   ],
+   "place": "Posadas",
+   "time": "",
+   "updated": "2026-11-15T06:51:27.097Z",
+   "_version": 6,
+   "_updatedAt": "2026-11-15T06:51:26.222999Z"
+  },
+  {
+   "cloud": [
+    "High"
+   ],
+   "country": "US",
+   "date": "2026-10-10",
+   "docu": [
+    "photo"
+   ],
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "PH",
+    "ZA",
+    "22H",
+    "TA",
+    "SA",
+    "USP",
+    "PALOA",
+    "HA",
+    "MPC",
+    "46H"
+   ],
+   "id": "12",
+   "items": [
+    {
+     "by": [
+      "Cora A. Harris"
+     ],
+     "card": true,
+     "image": "20261010_Virginia_CoraAHarris.jpg",
+     "link": "https://x.com/CoraAHarris/status/2108933103951757769",
+     "perm": "no",
+     "pop": true,
+     "shows": null,
+     "type": "photo"
+    }
+   ],
+   "lat": "",
+   "light": "sun",
+   "lon": "",
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "This display was reported widely in social media. Harris seems to got the best out of it with Lowitz arc and in particular the helic arc.  ",
+   "novel": [],
+   "observers": [
+    "Cora A. Harris"
+   ],
+   "place": "Virginia",
+   "time": "",
+   "updated": "2026-11-15T06:50:34.760Z",
+   "_version": 2,
+   "_updatedAt": "2026-11-15T06:50:33.881403Z"
+  },
+  {
+   "cloud": [
+    "High"
+   ],
+   "country": "Brazil",
+   "date": "2026-10-20",
+   "docu": [
+    "video"
+   ],
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "TA",
+    "W",
+    "WA",
+    "CPC"
+   ],
+   "id": "13",
+   "items": [
+    {
+     "by": [
+      "ana_cllarak"
+     ],
+     "card": true,
+     "image": "20261020_Novo_Progresso_Brazil.png",
+     "link": "https://x.com/brossamadoz/status/2112663826156130742",
+     "perm": "no",
+     "pop": true,
+     "shows": null,
+     "type": "video"
+    }
+   ],
+   "lat": -7.04128,
+   "light": "sun",
+   "lon": -55.41971,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "ana_cllarak"
+   ],
+   "place": "Novo Progresso",
+   "time": "",
+   "updated": "2026-11-15T06:49:59.953Z",
+   "_version": 3,
+   "_updatedAt": "2026-11-15T06:49:59.061503Z"
+  },
+  {
+   "cloud": [
+    "High"
+   ],
+   "country": "Brazil",
+   "date": "2026-09-25",
+   "docu": [
+    "video"
+   ],
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "TA",
+    "W",
+    "WA",
+    "IA",
+    "CPC",
+    "USP",
+    "9CA",
+    "9CB",
+    "22H"
+   ],
+   "id": "14",
+   "items": [
+    {
+     "by": [
+      "silva.santos8597"
+     ],
+     "card": true,
+     "image": "20260925_silva.santos8597_Brazil.png",
+     "link": "https://x.com/brossamadoz/status/2103814764627362067",
+     "perm": "no",
+     "pop": true,
+     "shows": null,
+     "type": "video"
+    },
+    {
+     "by": [],
+     "card": true,
+     "image": "20260925_kennedlages1_Brazil.png",
+     "link": "https://x.com/brossamadoz/status/2103814764627362067",
+     "perm": "no",
+     "shows": [
+      "TA",
+      "W",
+      "WA",
+      "IA",
+      "CPC",
+      "USP"
+     ],
+     "type": "video"
+    }
+   ],
+   "lat": -1.94722,
+   "light": "sun",
+   "lon": -54.7365,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "The location is for kennedlages1. Location unknown for silva.santos859",
+   "novel": [],
+   "observers": [
+    "silva.santos8597"
+   ],
+   "place": "Alenquer, Para",
+   "time": "",
+   "updated": "2026-11-16T05:19:28.267Z",
+   "_version": 7,
+   "_updatedAt": "2026-11-16T05:19:28.558836Z"
+  },
+  {
+   "cloud": [
+    "High"
+   ],
+   "country": "Japan",
+   "date": "2026-11-12",
+   "docu": [
+    "photo"
+   ],
+   "doubtful": [
+    "9H"
+   ],
+   "enddate": "",
+   "halos": [
+    "9H",
+    "24H",
+    "35H",
+    "USP",
+    "22H",
+    "46H",
+    "TA",
+    "PH",
+    "MPC",
+    "IA",
+    "ZA"
+   ],
+   "id": "15",
+   "items": [
+    {
+     "by": [
+      "Hoshikinuta"
+     ],
+     "card": true,
+     "image": "20261112_Kuwana_Hoshikinuta_1.jpg",
+     "link": "https://x.com/hoshi_kinuta/status/2121530607167807663",
+     "perm": "no",
+     "pop": true,
+     "shows": null,
+     "type": "photo"
+    },
+    {
+     "by": [
+      "Hoshikinuta"
+     ],
+     "card": false,
+     "image": "20261112_Kuwana_Hoshikinuta_2.jpg",
+     "link": "https://x.com/hoshi_kinuta/status/2121530607167807663",
+     "perm": "no",
+     "shows": null,
+     "type": "photo"
+    }
+   ],
+   "lat": 35.06351,
+   "light": "sun",
+   "lon": 136.68326,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "9° halo marked uncertain because of ghosting in the same location.",
+   "novel": [],
+   "observers": [
+    "Hoshikinuta"
+   ],
+   "place": "Kuwana, Mie",
+   "time": "",
+   "updated": "2026-11-18T04:50:23.048Z",
+   "_version": 6,
+   "_updatedAt": "2026-11-18T04:50:22.848081Z"
+  },
+  {
+   "cloud": [
+    "High"
+   ],
+   "country": "Spain",
+   "date": "2026-10-29",
+   "docu": [
+    "video"
+   ],
+   "doubtful": [
+    "PLLOA",
+    "PLLOB"
+   ],
+   "enddate": "",
+   "halos": [
+    "MPC",
+    "PH",
+    "ZA",
+    "120PH",
+    "W",
+    "USP",
+    "HA",
+    "LIT",
+    "PLLOA",
+    "PLLOB",
+    "PLLOC",
+    "T"
+   ],
+   "id": "16",
+   "items": [
+    {
+     "by": [
+      "unknown"
+     ],
+     "card": true,
+     "image": "20261029_Spain_infralatTape_unknown.jpg",
+     "link": "",
+     "perm": "no",
+     "shows": [
+      "MPC",
+      "PH",
+      "ZA",
+      "120PH",
+      "W",
+      "USP",
+      "HA",
+      "LIT",
+      "PLLOA",
+      "PLLOB",
+      "PLLOC"
+     ],
+     "type": "video"
+    },
+    {
+     "by": [
+      "coco30177"
+     ],
+     "card": true,
+     "image": "20261029_Spain_helicarc_coco30177.jpg",
+     "link": "https://x.com/brossamadoz/status/2121793374134911132",
+     "perm": "no",
+     "shows": [
+      "MPC",
+      "PH",
+      "ZA",
+      "120PH",
+      "W",
+      "USP",
+      "HA",
+      "LIT",
+      "PLLOA",
+      "PLLOB"
+     ],
+     "type": "video"
+    },
+    {
+     "by": [
+      "unknown"
+     ],
+     "card": true,
+     "image": "20261029_Spain_Tricker_unknown II.jpg",
+     "link": "https://x.com/brossamadoz/status/2121816402021491151",
+     "perm": "no",
+     "pop": true,
+     "shows": [
+      "MPC",
+      "PH",
+      "ZA",
+      "120PH",
+      "W",
+      "USP",
+      "HA",
+      "LIT",
+      "PLLOA",
+      "PLLOB",
+      "T"
+     ],
+     "type": "video"
+    }
+   ],
+   "lat": 40.41672,
+   "light": "sun",
+   "lon": -3.70329,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "unknown",
+    "coco30177"
+   ],
+   "place": "Madrid",
+   "time": "14:10",
+   "updated": "2026-11-16T05:41:20.936Z",
+   "_version": 6,
+   "_updatedAt": "2026-11-16T05:41:21.128848Z"
+  },
+  {
+   "cloud": [
+    "High"
+   ],
+   "country": "China",
+   "date": "2026-11-15",
+   "doubtful": [
+    "24H",
+    "18H"
+   ],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "46H",
+    "MPC",
+    "PH",
+    "ZA",
+    "TA",
+    "SA",
+    "IA",
+    "W",
+    "FHA",
+    "9H",
+    "35H",
+    "24H",
+    "18H",
+    "USP",
+    "UST"
+   ],
+   "id": "17",
+   "items": [
+    {
+     "by": [
+      "Sufflection_sub"
+     ],
+     "card": true,
+     "image": "20261115_Beijing_Sufflection_sub_1.jpg",
+     "link": "https://x.com/Sufflection_sub/status/2121988792152449477",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    },
+    {
+     "by": [
+      "Sufflection_sub"
+     ],
+     "card": true,
+     "image": "20261115_Beijing_Sufflection_sub_2.jpg",
+     "link": "https://x.com/Sufflection_sub/status/2121988792152449477",
+     "perm": "no",
+     "pop": false,
+     "shows": null
+    }
+   ],
+   "lat": 39.9999,
+   "light": "sun",
+   "lon": 116.31505,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Sufflection_sub"
+   ],
+   "place": "Beijing",
+   "time": "",
+   "updated": "2026-11-17T05:36:48.605Z",
+   "_version": 1,
+   "_updatedAt": "2026-11-17T05:36:48.059813Z"
+  },
+  {
+   "auto": true,
+   "cloud": [
+    "High"
+   ],
+   "country": "Canada",
+   "date": "2026-10-04",
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "46H",
+    "PH",
+    "ZA",
+    "PALOA",
+    "PLLOB",
+    "PLLOC",
+    "USP",
+    "HA",
+    "MPC",
+    "TA",
+    "W",
+    "120PH"
+   ],
+   "id": "18",
+   "items": [
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261004_Vancouver_Runnan_Lin.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-04-helic-arc-display-over-vancouver",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    }
+   ],
+   "lat": 49.26,
+   "light": "sun",
+   "lon": -123.25,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Runnan Lin"
+   ],
+   "place": "Vancouver",
+   "time": "09:48-18:36",
+   "updated": "2026-11-18T04:37:53.221Z",
+   "_version": 2,
+   "_updatedAt": "2026-11-19T14:40:45.396888Z"
+  },
+  {
+   "auto": true,
+   "cloud": [
+    "High"
+   ],
+   "country": "Canada",
+   "date": "2026-10-05",
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "46H",
+    "ZA",
+    "PH",
+    "MPC",
+    "TA",
+    "LOA",
+    "LOB",
+    "LOC",
+    "USP",
+    "120PH"
+   ],
+   "id": "19",
+   "items": [
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261005_Vancouver_Runnan_Lin.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-05-parhelic-circle-over-vancouver",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    }
+   ],
+   "lat": 49.26,
+   "light": "sun",
+   "lon": -123.25,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Runnan Lin"
+   ],
+   "place": "Vancouver",
+   "time": "07:30-18:15",
+   "updated": "2026-11-18T04:48:11.436Z",
+   "_version": 2,
+   "_updatedAt": "2026-11-19T14:40:45.403487Z"
+  },
+  {
+   "auto": true,
+   "cloud": [
+    "High"
+   ],
+   "country": "Canada",
+   "date": "2026-10-06",
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "PH",
+    "22H",
+    "46H",
+    "120PH",
+    "TA",
+    "ZA",
+    "SA",
+    "PLLOB",
+    "PLLOC",
+    "PALOA",
+    "MPC"
+   ],
+   "id": "20",
+   "items": [
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261006_Vancouver_Runnan_Lin_2.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-06-lowitz-arcs-and-parhelic-circle-over-vancouver",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    },
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261006_Vancouver_Runnan_Lin.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-06-lowitz-arcs-and-parhelic-circle-over-vancouver",
+     "perm": "no",
+     "pop": false,
+     "shows": null
+    }
+   ],
+   "lat": 49.26,
+   "light": "sun",
+   "lon": -123.25,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Runnan Lin"
+   ],
+   "place": "Vancouver",
+   "time": "12:11-18:47",
+   "updated": "2026-11-19T14:33:01.454Z",
+   "_version": 3,
+   "_updatedAt": "2026-11-19T14:40:45.410125Z"
+  },
+  {
+   "auto": true,
+   "cloud": [
+    "High"
+   ],
+   "country": "Canada",
+   "date": "2026-10-07",
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "USP",
+    "TA"
+   ],
+   "id": "21",
+   "items": [
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261007_Vancouver_Runnan_Lin.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-07-short-lived-parry-arc-over-vancouver",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    }
+   ],
+   "lat": 49.26,
+   "light": "sun",
+   "lon": -123.25,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Runnan Lin"
+   ],
+   "place": "Vancouver",
+   "time": "14:54-17:18",
+   "updated": "2026-11-19T04:46:19.895Z",
+   "_version": 3,
+   "_updatedAt": "2026-11-19T14:40:45.419085Z"
+  },
+  {
+   "auto": true,
+   "cloud": [
+    "High"
+   ],
+   "country": "Canada",
+   "date": "2026-10-08",
+   "doubtful": [
+    "13H"
+   ],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "TA",
+    "46H",
+    "PH",
+    "ZA",
+    "18H",
+    "35H",
+    "US23",
+    "18B",
+    "USP",
+    "13H"
+   ],
+   "id": "22",
+   "items": [
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261008_Vancouver_Runnan_Lin.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-08-odd-radius-halos-over-vancouver",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    }
+   ],
+   "lat": 49.26,
+   "light": "sun",
+   "lon": -123.25,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Runnan Lin"
+   ],
+   "place": "Vancouver",
+   "time": "07:39-18:25",
+   "updated": "2026-11-19T14:34:02.038Z",
+   "_version": 3,
+   "_updatedAt": "2026-11-19T14:40:45.426571Z"
+  },
+  {
+   "auto": true,
+   "cloud": [
+    "High"
+   ],
+   "country": "Canada",
+   "date": "2026-10-15",
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "TA",
+    "PH",
+    "ZA",
+    "46H",
+    "IA",
+    "PALOA"
+   ],
+   "id": "23",
+   "items": [
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261015_Vancouver_Runnan_Lin.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-15-lowitz-arc-over-vancouver",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    }
+   ],
+   "lat": 49.26,
+   "light": "sun",
+   "lon": -123.25,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Runnan Lin"
+   ],
+   "place": "Vancouver",
+   "time": "07:51-17:40",
+   "updated": "2026-11-19T06:03:58.082Z",
+   "_version": 3,
+   "_updatedAt": "2026-11-19T14:40:45.434015Z"
+  },
+  {
+   "auto": true,
+   "cloud": [
+    "High",
+    "Contrail"
+   ],
+   "country": "Canada",
+   "date": "2026-10-16",
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "46H",
+    "TA",
+    "PH",
+    "SA",
+    "IA",
+    "ZA",
+    "PCUFH",
+    "PALOA",
+    "PLLOB",
+    "PLLOC"
+   ],
+   "id": "24",
+   "items": [
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261016_Vancouver_Runnan_Lin.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-16-lowitz-arc-with-contrails-over-vancouver",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    }
+   ],
+   "lat": 49.26,
+   "light": "sun",
+   "lon": -123.25,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Runnan Lin"
+   ],
+   "place": "Vancouver",
+   "time": "07:40-18:21",
+   "updated": "2026-11-19T14:17:32.481Z",
+   "_version": 3,
+   "_updatedAt": "2026-11-19T14:40:45.441644Z"
+  },
+  {
+   "auto": true,
+   "cloud": [
+    "High"
+   ],
+   "country": "Canada",
+   "date": "2026-10-18",
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "46H",
+    "TA",
+    "IA",
+    "SA",
+    "PH",
+    "ZA",
+    "18H",
+    "35H",
+    "18B",
+    "USP",
+    "MPC",
+    "PALOA"
+   ],
+   "id": "25",
+   "items": [
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261018_Vancouver_Runnan_Lin.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-18-parry-arc-and-odd-radii-over-vancouver",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    },
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261018_Vancouver_Runnan_Lin2.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-18-parry-arc-and-odd-radii-over-vancouver",
+     "perm": "no",
+     "pop": false,
+     "shows": null
+    }
+   ],
+   "lat": 49.26,
+   "light": "sun",
+   "lon": -123.25,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Runnan Lin"
+   ],
+   "place": "Vancouver",
+   "time": "07:26-18:07",
+   "updated": "2026-11-19T14:35:49.720Z",
+   "_version": 3,
+   "_updatedAt": "2026-11-19T14:40:45.449491Z"
+  },
+  {
+   "auto": true,
+   "cloud": [
+    "High"
+   ],
+   "country": "Canada",
+   "date": "2026-10-19",
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "PH",
+    "USP",
+    "46H",
+    "TA",
+    "ZA",
+    "PLLOB",
+    "PLLOC"
+   ],
+   "id": "26",
+   "items": [
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261019_Vancouver_Runnan_Lin2.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-19-isolated-parry-arc-with-basic-display-over-vancouver",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    }
+   ],
+   "lat": 49.26,
+   "light": "sun",
+   "lon": -123.25,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Runnan Lin"
+   ],
+   "place": "Vancouver",
+   "time": "08:27-18:20",
+   "updated": "2026-11-19T06:15:11.979Z",
+   "_version": 2,
+   "_updatedAt": "2026-11-19T14:40:45.457141Z"
+  },
+  {
+   "auto": true,
+   "cloud": [
+    "High"
+   ],
+   "country": "Canada",
+   "date": "2026-10-21",
+   "doubtful": [
+    "PLLOC",
+    "PLLOB"
+   ],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "46H",
+    "ZA",
+    "PH",
+    "TA",
+    "PLLOB",
+    "PLLOC"
+   ],
+   "id": "27",
+   "items": [
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261021_Vancouver_Runnan_Lin.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-21-high-elevation-zenith-arc-over-vancouver",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    }
+   ],
+   "lat": 49.26,
+   "light": "sun",
+   "lon": -123.25,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Runnan Lin"
+   ],
+   "place": "Vancouver",
+   "time": "10:01-17:59",
+   "updated": "2026-11-19T14:23:06.922Z",
+   "_version": 4,
+   "_updatedAt": "2026-11-19T14:40:45.466407Z"
+  },
+  {
+   "auto": true,
+   "cloud": [
+    "High"
+   ],
+   "country": "Canada",
+   "date": "2026-10-31",
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "PH",
+    "TA",
+    "46H",
+    "SA",
+    "USP",
+    "ZA",
+    "120PH",
+    "MPC",
+    "PLLOC",
+    "UST",
+    "PLLOB",
+    "PLLOA"
+   ],
+   "id": "28",
+   "items": [
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261031_Vancouver_Runnan_Lin_1.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-31-tape-parry-lowitz-display-over-vancouver",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    },
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261031_Vancouver_Runnan_Lin_2.jpg",
+     "link": "https://icehalotracker.com/cases/2026-10-31-tape-parry-lowitz-display-over-vancouver",
+     "perm": "no",
+     "pop": false,
+     "shows": null
+    }
+   ],
+   "lat": 49.26,
+   "light": "sun",
+   "lon": -123.25,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Runnan Lin"
+   ],
+   "place": "Vancouver",
+   "time": "13:13-15:56",
+   "updated": "2026-11-19T14:07:09.000Z",
+   "_version": 2,
+   "_updatedAt": "2026-11-19T14:40:45.474676Z"
+  },
+  {
+   "auto": true,
+   "cloud": [
+    "High",
+    "Contrail"
+   ],
+   "country": "Canada",
+   "date": "2026-11-01",
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "120PH",
+    "ZA",
+    "46H",
+    "SA",
+    "USP",
+    "TA",
+    "22H",
+    "PH",
+    "MPC",
+    "PLLOA",
+    "PLLOB",
+    "PLLOC"
+   ],
+   "id": "29",
+   "items": [
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261101_Vancouver_Runnan_Lin.jpg",
+     "link": "https://icehalotracker.com/cases/2026-11-01-parry-lowitz-display-over-vancouver",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    }
+   ],
+   "lat": 49.26,
+   "light": "sun",
+   "lon": -123.25,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Runnan Lin"
+   ],
+   "place": "Vancouver",
+   "time": "12:51-16:22",
+   "updated": "2026-11-19T14:15:56.116Z",
+   "_version": 3,
+   "_updatedAt": "2026-11-19T14:40:45.482186Z"
+  },
+  {
+   "auto": true,
+   "cloud": [
+    "High"
+   ],
+   "country": "Canada",
+   "date": "2026-11-04",
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "22H",
+    "PH",
+    "46H",
+    "TA",
+    "ZA",
+    "USP",
+    "PALOA"
+   ],
+   "id": "30",
+   "items": [
+    {
+     "by": [
+      "Runnan Lin"
+     ],
+     "card": true,
+     "image": "20261104_Vancouver_Runnan_Lin_1.jpg",
+     "link": "https://icehalotracker.com/cases/2026-11-04-parry-lowitz-arcs-over-vancouver",
+     "perm": "yes",
+     "pop": true,
+     "shows": null
+    }
+   ],
+   "lat": 49.26,
+   "light": "sun",
+   "lon": -123.25,
+   "maxsim": "",
+   "nfc": [],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Runnan Lin"
+   ],
+   "place": "Vancouver",
+   "time": "08:32-16:08",
+   "updated": "2026-11-19T14:22:26.214Z",
+   "_version": 2,
+   "_updatedAt": "2026-11-19T14:40:45.489928Z"
+  },
+  {
+   "auto": false,
+   "cloud": [
+    "High"
+   ],
+   "country": "Venezuela",
+   "date": "2026-11-20",
+   "doubtful": [],
+   "enddate": "",
+   "halos": [
+    "PH",
+    "ZA",
+    "ZDU",
+    "46H",
+    "MPC",
+    "TA",
+    "USP"
+   ],
+   "id": "31",
+   "items": [
+    {
+     "by": [
+      "Fray Caroly"
+     ],
+     "card": true,
+     "image": "20261120_Bachaquero_Fray_Caroly.jpg",
+     "link": "https://x.com/brossamadoz/status/2124906773228237106",
+     "perm": "no",
+     "pop": true,
+     "shows": null
+    }
+   ],
+   "lat": 10.0725002,
+   "light": "sun",
+   "lon": -71.3140717,
+   "maxsim": "",
+   "nfc": [
+    "ZDU"
+   ],
+   "nfp": [],
+   "notes": "",
+   "novel": [],
+   "observers": [
+    "Fray Caroly"
+   ],
+   "place": "Bachaquero",
+   "time": "",
+   "updated": "2026-11-24T10:46:07.319Z",
+   "_version": 2,
+   "_updatedAt": "2026-11-24T10:46:08.279784Z"
+  }
+ ]
+}

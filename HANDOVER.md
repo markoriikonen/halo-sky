@@ -81,3 +81,7 @@ For browser tests, Playwright and Chromium are preinstalled; the page loads d3 a
 - **Spanish version**: deferred until the Spanish halo names are worked out (possibly with Franklin Fernández).
 - **Display places as Fingerprints sites**: done for five places while the subscription lasted; later ones would need the free API.
 - Ideas not started: ENSO colouring in the Seasons year-by-year pop-up; Virginia display coordinates awaited from the observer; Marko may reconsider whether some random-orientation halos (such as the 46° halo) count as rare; a GitHub organisation for the repo if someone else takes the site over.
+
+## Display Log backup
+
+The Log's records live only in the Claude artifact's database, so a copy is kept in the repository: `displays/log/displays.json` (every record as stored, with its version and save time). Refresh it whenever displays are published: read the `displays` collection (db_list on the Log artifact, limit 1000), write all records to that file, check them against the built `data/displays.js`, and commit. It is also the starting point if the Log ever moves to another home.
