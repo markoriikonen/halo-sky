@@ -1799,7 +1799,7 @@ function placeGroups() {
     if (h) d._place = h.id; else { d._place = heads.length; heads.push({ id: heads.length, ll: d._pos.ll }); }
   });
 }
-const dScale = () => 1 / Math.pow(zk, 0.7);
+const dScale = () => 1 / zk;                     // display marks keep their zoomed-out size at any zoom
 // dots closer than this (map units) merge; at the deepest zoom only dots that would overlap merge (a dot is 20 across)
 const dNear = () => (zk >= 15.9 ? 20 : 26) * dScale();
 function clusters(list, near = dNear()) {
@@ -1834,7 +1834,7 @@ function zoomToCluster(c) {                  // zoom the main map so the merged 
   const pts = [...d3.group(c.m, d => d._place).values()].map(g => proj(g[0]._pos.ll));
   let dmin = Infinity; pts.forEach((p, i) => pts.forEach((q, j) => { if (j > i) dmin = Math.min(dmin, Math.hypot(p[0] - q[0], p[1] - q[1])); }));
   const kFit = Math.min(16, W / (b.w * 1.8 + 1e-6), H / (b.h * 1.8 + 1e-6));          // deepest zoom that still shows them all
-  const kSep = Math.pow(26 / dmin, 1 / 0.7) * 1.5;                                    // just enough to pull the nearest two apart
+  const kSep = 26 / dmin * 1.5;                                                    // just enough to pull the nearest two apart
   const k = Math.min(16, Math.max(Math.min(kSep, kFit), zk * 1.5));
   svg.transition().duration(650).call(zoom.transform, d3.zoomIdentity.translate(W / 2 - k * b.cx, H / 2 - k * b.cy).scale(k));
 }
