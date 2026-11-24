@@ -2008,7 +2008,7 @@
    "items": [
     {
      "by": [
-      "Fray Caroly"
+      "Fraymar Caroly Carrasco Sánchez"
      ],
      "card": true,
      "image": "20261120_Bachaquero_Fray_Caroly.jpg",
@@ -2026,16 +2026,16 @@
     "ZDU"
    ],
    "nfp": [],
-   "notes": "",
+   "notes": "sun elevation 22° at 0822",
    "novel": [],
    "observers": [
-    "Fray Caroly"
+    "Fraymar Caroly Carrasco Sánchez"
    ],
    "place": "Bachaquero",
-   "time": "",
-   "updated": "2026-11-24T10:46:07.319Z",
-   "_version": 2,
-   "_updatedAt": "2026-11-24T10:46:08.279784Z"
+   "time": "08:22",
+   "updated": "2026-11-24T15:00:20.411Z",
+   "_version": 3,
+   "_updatedAt": "2026-11-24T15:00:21.415806Z"
   }
  ]
 }
