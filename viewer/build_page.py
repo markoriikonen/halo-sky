@@ -16,7 +16,7 @@ t = (here / "template.html").read_text(encoding="utf-8").replace("__LAND__", (he
 news = json.loads((here / "news.json").read_text(encoding="utf-8"))
 news.sort(key=lambda it: it["date"], reverse=True)
 for it in news:
-    if len(it["text"]) > 600: print(f"note: news '{it['title']}' is {len(it['text'])} characters; the limit is 600")
+    if len(it["text"]) > 1000: print(f"note: news '{it['title']}' is {len(it['text'])} characters; the limit is 1000")
     for ph in it.get("photos", []):
         src = here / "news" / ph["file"]
         if not src.exists(): sys.exit(f"news photo missing: {src}")
