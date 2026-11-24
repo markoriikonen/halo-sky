@@ -7,6 +7,11 @@
 set -e
 REPO=$(cd "$(dirname "$0")/.." && pwd)
 VIEW=${1:-/home/claude/site}
+# refuse to deploy from an out-of-date copy of the code: an old checkout would overwrite newer pages on the live site
+git -C "$REPO" fetch -q --depth=50 origin main
+if ! git -C "$REPO" merge-base --is-ancestor origin/main HEAD; then
+  echo "This copy of the code is behind GitHub's main branch. Run 'git pull' first, then rebuild and deploy."; exit 1
+fi
 OUT=$(mktemp -d)
 # the Atlas (the built viewer) is the front page
 cp -r "$VIEW/index.html" "$VIEW/data" "$OUT/"
