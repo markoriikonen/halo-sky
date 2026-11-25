@@ -45,16 +45,21 @@ h2 { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: u
 .sitenav button { font: inherit; color: var(--fg); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
 .sitenav button:hover, .sitenav button[aria-expanded="true"] { text-decoration-color: var(--muted); }
 #about { margin-top: 6px; }
-/* News: one quiet line between the header and the controls; the map stays the main thing */
-.news { display: flex; gap: 16px; align-items: center; margin: 12px 0 2px; padding: 8px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); font-size: 14px; color: var(--muted); cursor: pointer; }
+/* News: a strip between the header and the controls (or below the map): flag of a national first | text | photo */
+.news { display: flex; gap: 16px; align-items: center; margin: 12px 0 2px; padding: 10px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); font-size: 14.5px; color: var(--muted); cursor: pointer; }
+.news.below { margin: -6px 0 18px; }
 .news:hover .ntitle, .news:focus-visible .ntitle { text-decoration: underline; text-underline-offset: 3px; }
 .news:focus-visible { outline: 2px solid var(--muted); outline-offset: 2px; }
-.ntext { flex: 1; min-width: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.nflag { flex: none; position: relative; width: 52px; }
+.nflag img { width: 52px; height: 39px; border-radius: 3px; box-shadow: 0 0 0 1px var(--rule); display: block; }
+.nflag.poss img { opacity: .4; box-shadow: none; outline: 1px dashed var(--muted); outline-offset: 2px; }
+.nflag.poss b { position: absolute; right: -9px; top: -9px; font-size: 15px; color: var(--fg); }
+.ntext { flex: 1; min-width: 0; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5; }
 .nlabel { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-right: 6px; }
 .ntitle { color: var(--fg); font-weight: 600; }
-.nthumbs { display: flex; gap: 6px; flex: none; }
-.nthumbs img { height: 54px; width: auto; max-width: 96px; object-fit: cover; border-radius: 3px; display: block; }
-@media (max-width: 600px) { .nthumbs img { height: 42px; max-width: 64px; } .nthumbs img:nth-child(n+2) { display: none; } }
+.nthumbs { display: flex; gap: 8px; flex: none; }
+.nthumbs img { height: 96px; width: auto; max-width: 160px; object-fit: cover; border-radius: 4px; display: block; }
+@media (max-width: 600px) { .news { gap: 10px; } .nflag, .nflag img { width: 36px; } .nflag img { height: 27px; } .ntext { -webkit-line-clamp: 5; } .nthumbs img { height: 84px; max-width: 72px; } .nthumbs img:nth-child(n+2) { display: none; } }
 #newsbox { max-width: min(760px, 94vw); width: 100%; border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); color: var(--fg); padding: 20px 22px; }
 #newsbox::backdrop { background: rgba(0, 0, 0, .45); }
 #newsbox .nclose { float: right; font-size: 22px; line-height: 1; background: none; border: 0; color: var(--muted); cursor: pointer; }
@@ -278,7 +283,7 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
     <div id="about" hidden><p class="lede">Halo Sky Atlas is an experimental site: a proof of concept, and hopefully the start of something much bigger. The display pictures belong to their observers. If you would like a picture removed or credited differently, or you know of a display that should be here, write to <a href="mailto:contact@haloskyatlas.com">contact@haloskyatlas.com</a>.</p>
     <p class="lede">The cloud modes are fingerprints of about 2,600 sites from hourly ECMWF model data: set a window with the sliders, and the map colours every site by the share of the hours counted that fall inside it. <b>High cloud</b> looks for cirrus with a clear view; <b>Mid layer</b> for an isolated middle layer, either ECMWF's mid-cloud band or cloud in a chosen temperature range; <b>Seasons</b> for the time of year when high cloud is commonest. <b>Displays</b> maps actual halo displays: who, where and when, with world and national firsts.</p></div>
   </header>
-  <div class="news" id="news" role="button" tabindex="0" aria-haspopup="dialog" hidden></div>
+  <div class="news" id="news" role="button" tabindex="0" aria-haspopup="dialog" hidden></div><!-- moved below the map when NEWS_POS is "below" -->
   <dialog id="newsbox" aria-label="News"></dialog>
 
   <div class="panel controls">
@@ -1667,13 +1672,18 @@ let DISP = null, DFORMS = {}, dispLoading = null, dispPicked = [], dispSel = [],
 const dState = { q: "", y0: null, y1: null, light: new Set(["sun", "moon", "artificial"]), cloud: new Set(["High", "Mid", "Low", "Ice fog", "Contrail"]), firsts: false };
 // ---------- news: the newest item as one line above the controls; click for the full text, photos and earlier items ----------
 const NEWS = __NEWS__;
+const NEWS_POS = "top";
 (function newsInit() {
   const box = document.getElementById("news"), dlg = document.getElementById("newsbox");
   if (!NEWS.length) return;
   const e = s => String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
   const fmt = d => new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   const n = NEWS[0];
-  box.innerHTML = `<div class="ntext"><span class="nlabel">News</span>${e(fmt(n.date))} · <span class="ntitle">${e(n.title)}</span> ${e(n.text)}</div>` +
+  // where the strip sits: "top" (under the header) or "below" (under the map); ?newspos= overrides, for trying
+  const pos = new URLSearchParams(location.search).get("newspos") || NEWS_POS;
+  if (pos === "below") { const mp = document.getElementById("displegend").closest(".panel"); mp.after(box); box.classList.add("below"); }
+  const flag = n.flag ? `<div class="nflag${n.flag.possible ? " poss" : ""}" title="${n.flag.possible ? "Possible national first" : "National first"}: ${e(n.flag.country)}"><img src="data/flags/${e(n.flag.cc)}.svg" alt="${e(n.flag.country)}">${n.flag.possible ? "<b>?</b>" : ""}</div>` : "";
+  box.innerHTML = flag + `<div class="ntext"><span class="nlabel">News</span>${e(fmt(n.date))} · <span class="ntitle">${e(n.title)}</span> ${e(n.text)}</div>` +
     (n.photos?.length ? `<div class="nthumbs">${n.photos.slice(0, 3).map(ph => `<img src="data/news/${e(ph.file)}" alt="" loading="lazy">`).join("")}</div>` : "");
   box.hidden = false;
   dlg.innerHTML = `<button type="button" class="nclose" aria-label="Close">×</button>` + NEWS.map(it => `<article>

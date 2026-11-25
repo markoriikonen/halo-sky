@@ -22,6 +22,14 @@ for it in news:
         if not src.exists(): sys.exit(f"news photo missing: {src}")
         (out / "data" / "news").mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, out / "data" / "news" / ph["file"])
+# a news item tied to a display ("display": id) shows that country's flag when the display has a national first (faded when possible)
+dj = out / "data" / "displays.js"
+if dj.exists():
+    s = dj.read_text(encoding="utf-8"); disp = {d["id"]: d for d in json.loads(s[s.index("=") + 1:].rstrip().rstrip(";"))["displays"]}
+    for it in news:
+        d = disp.get(str(it.get("display", "")))
+        if d and d.get("cc") and (d.get("nfc") or d.get("nfp")):
+            it["flag"] = {"cc": d["cc"], "country": d.get("country", ""), "possible": not d.get("nfc")}
 t = t.replace("__NEWS__", json.dumps(news, ensure_ascii=False))
 t = ('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
      '<meta name="viewport" content="width=device-width, initial-scale=1">\n' + t + "\n</html>\n")
