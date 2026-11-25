@@ -50,16 +50,19 @@ h2 { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: u
 .news.below { margin: -6px 0 18px; }
 .news:hover .ntitle, .news:focus-visible .ntitle { text-decoration: underline; text-underline-offset: 3px; }
 .news:focus-visible { outline: 2px solid var(--muted); outline-offset: 2px; }
-.nflag { flex: none; position: relative; width: 52px; }
+.nflag { flex: none; width: 78px; display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; font-size: 11px; line-height: 1.25; color: var(--muted); }
+.nflag .fw { position: relative; }
 .nflag img { width: 52px; height: 39px; border-radius: 3px; box-shadow: 0 0 0 1px var(--rule); display: block; }
-.nflag.poss img { opacity: .4; box-shadow: none; outline: 1px dashed var(--muted); outline-offset: 2px; }
-.nflag.poss b { position: absolute; right: -9px; top: -9px; font-size: 15px; color: var(--fg); }
+.nflag.possible img { opacity: .4; box-shadow: none; outline: 1px dashed var(--muted); outline-offset: 2px; }
+.nflag .mark { position: absolute; right: -11px; top: -11px; font-size: 16px; font-weight: 700; line-height: 1; }
+.nflag.possible .mark { color: var(--fg); }
+.nflag.world .mark { color: #d0306a; font-size: 19px; }
 .ntext { flex: 1; min-width: 0; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5; }
 .nlabel { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-right: 6px; }
 .ntitle { color: var(--fg); font-weight: 600; }
 .nthumbs { display: flex; gap: 8px; flex: none; }
 .nthumbs img { height: 96px; width: auto; max-width: 160px; object-fit: cover; border-radius: 4px; display: block; }
-@media (max-width: 600px) { .news { gap: 10px; } .nflag, .nflag img { width: 36px; } .nflag img { height: 27px; } .ntext { -webkit-line-clamp: 5; } .nthumbs img { height: 84px; max-width: 72px; } .nthumbs img:nth-child(n+2) { display: none; } }
+@media (max-width: 600px) { .news { gap: 10px; } .nflag { width: 58px; font-size: 10px; } .nflag img { width: 36px; height: 27px; } .ntext { -webkit-line-clamp: 5; } .nthumbs img { height: 84px; max-width: 72px; } .nthumbs img:nth-child(n+2) { display: none; } }
 #newsbox { max-width: min(760px, 94vw); width: 100%; border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); color: var(--fg); padding: 20px 22px; }
 #newsbox::backdrop { background: rgba(0, 0, 0, .45); }
 #newsbox .nclose { float: right; font-size: 22px; line-height: 1; background: none; border: 0; color: var(--muted); cursor: pointer; }
@@ -1682,7 +1685,8 @@ const NEWS_POS = "top";
   // where the strip sits: "top" (under the header) or "below" (under the map); ?newspos= overrides, for trying
   const pos = new URLSearchParams(location.search).get("newspos") || NEWS_POS;
   if (pos === "below") { const mp = document.getElementById("displegend").closest(".panel"); mp.after(box); box.classList.add("below"); }
-  const flag = n.flag ? `<div class="nflag${n.flag.possible ? " poss" : ""}" title="${n.flag.possible ? "Possible national first" : "National first"}: ${e(n.flag.country)}"><img src="data/flags/${e(n.flag.cc)}.svg" alt="${e(n.flag.country)}">${n.flag.possible ? "<b>?</b>" : ""}</div>` : "";
+  const FK = { world: ["world first", "★"], national: ["national first", ""], possible: ["possible national first", "?"] };
+  const flag = n.flag && FK[n.flag.kind] ? `<div class="nflag ${n.flag.kind}"><div class="fw"><img src="data/flags/${e(n.flag.cc)}.svg" alt="${e(n.flag.country)}">${FK[n.flag.kind][1] ? `<span class="mark" aria-hidden="true">${FK[n.flag.kind][1]}</span>` : ""}</div><span>${FK[n.flag.kind][0]}</span></div>` : "";
   box.innerHTML = flag + `<div class="ntext"><span class="nlabel">News</span>${e(fmt(n.date))} · <span class="ntitle">${e(n.title)}</span> ${e(n.text)}</div>` +
     (n.photos?.length ? `<div class="nthumbs">${n.photos.slice(0, 3).map(ph => `<img src="data/news/${e(ph.file)}" alt="" loading="lazy">`).join("")}</div>` : "");
   box.hidden = false;
