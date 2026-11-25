@@ -68,6 +68,8 @@ h2 { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: u
 #newsbox .nclose { float: right; font-size: 22px; line-height: 1; background: none; border: 0; color: var(--muted); cursor: pointer; }
 #newsbox article + article { border-top: 1px solid var(--rule); margin-top: 18px; padding-top: 14px; }
 #newsbox h3 { margin: 2px 0 6px; font-size: 17px; }
+#newsbox .nhead { display: flex; gap: 14px; align-items: center; margin: 6px 0 8px; }
+#newsbox .nhead h3 { margin-bottom: 0; }
 #newsbox .ndate { font-size: 13px; color: var(--muted); }
 #newsbox p { margin: 0 0 10px; white-space: pre-line; }
 #newsbox figure { margin: 0; }
@@ -1682,16 +1684,15 @@ const NEWS_POS = "top";
   const e = s => String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
   const fmt = d => new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   const n = NEWS[0];
-  // where the strip sits: "top" (under the header) or "below" (under the map); ?newspos= overrides, for trying
-  const pos = new URLSearchParams(location.search).get("newspos") || NEWS_POS;
-  if (pos === "below") { const mp = document.getElementById("displegend").closest(".panel"); mp.after(box); box.classList.add("below"); }
+  // where the strip sits: "top" (under the header, Marko's choice) or "below" (under the map)
+  if (NEWS_POS === "below") { const mp = document.getElementById("displegend").closest(".panel"); mp.after(box); box.classList.add("below"); }
   const FK = { world: ["world first", "★"], national: ["national first", ""], possible: ["possible national first", "?"] };
-  const flag = n.flag && FK[n.flag.kind] ? `<div class="nflag ${n.flag.kind}"><div class="fw"><img src="data/flags/${e(n.flag.cc)}.svg" alt="${e(n.flag.country)}">${FK[n.flag.kind][1] ? `<span class="mark" aria-hidden="true">${FK[n.flag.kind][1]}</span>` : ""}</div><span>${FK[n.flag.kind][0]}</span></div>` : "";
-  box.innerHTML = flag + `<div class="ntext"><span class="nlabel">News</span>${e(fmt(n.date))} · <span class="ntitle">${e(n.title)}</span> ${e(n.text)}</div>` +
+  const flagOf = it => it.flag && FK[it.flag.kind] ? `<div class="nflag ${it.flag.kind}"><div class="fw"><img src="data/flags/${e(it.flag.cc)}.svg" alt="${e(it.flag.country)}">${FK[it.flag.kind][1] ? `<span class="mark" aria-hidden="true">${FK[it.flag.kind][1]}</span>` : ""}</div><span>${FK[it.flag.kind][0]}</span></div>` : "";
+  box.innerHTML = flagOf(n) + `<div class="ntext"><span class="nlabel">News</span>${e(fmt(n.date))} · <span class="ntitle">${e(n.title)}</span> ${e(n.text)}</div>` +
     (n.photos?.length ? `<div class="nthumbs">${n.photos.slice(0, 3).map(ph => `<img src="data/news/${e(ph.file)}" alt="" loading="lazy">`).join("")}</div>` : "");
   box.hidden = false;
   dlg.innerHTML = `<button type="button" class="nclose" aria-label="Close">×</button>` + NEWS.map(it => `<article>
-    <div class="ndate">${e(fmt(it.date))}</div><h3>${e(it.title)}</h3><p>${e(it.text)}</p>
+    <div class="nhead">${flagOf(it)}<div><div class="ndate">${e(fmt(it.date))}</div><h3>${e(it.title)}</h3></div></div><p>${e(it.text)}</p>
     ${it.photos?.length ? `<div class="nphotos">${it.photos.slice(0, 3).map(ph => `<figure><img src="data/news/${e(ph.file)}" alt="${e(ph.alt || "")}" loading="lazy">${ph.credit ? `<figcaption>${e(ph.credit)}</figcaption>` : ""}</figure>`).join("")}</div>` : ""}</article>`).join("");
   const open = () => dlg.showModal();
   box.addEventListener("click", open);
