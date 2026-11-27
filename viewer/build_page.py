@@ -22,15 +22,24 @@ for it in news:
         if not src.exists(): sys.exit(f"news photo missing: {src}")
         (out / "data" / "news").mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, out / "data" / "news" / ph["file"])
-# a news item tied to a display ("display": id) shows that country's flag with a caption: world first (with ★), national first, or possible national first (faded, with ?)
+# a news item tied to displays ("displays": [ids]) links to their cards, and for each display with a first shows that country's flag with a caption: world first (with ★), national first, or possible national first (faded, with ?)
 dj = out / "data" / "displays.js"
 if dj.exists():
     s = dj.read_text(encoding="utf-8"); disp = {d["id"]: d for d in json.loads(s[s.index("=") + 1:].rstrip().rstrip(";"))["displays"]}
     for it in news:
-        d = disp.get(str(it.get("display", "")))
-        if d and d.get("cc") and (d.get("novel") or d.get("nfc") or d.get("nfp")):
-            kind = "world" if d.get("novel") else "national" if d.get("nfc") else "possible"
-            it["flag"] = {"cc": d["cc"], "country": d.get("country", ""), "kind": kind}
+        ids = [str(x) for x in it.get("displays", [])]
+        if not ids and it.get("display"): ids = [str(it["display"])]
+        it["displays"] = [x for x in ids if x in disp]
+        missing = [x for x in ids if x not in disp]
+        if missing: print(f"note: news '{it['title']}' refers to displays not on the map: {', '.join(missing)}")
+        flags = []
+        for x in it["displays"]:
+            d = disp[x]
+            if d.get("cc") and (d.get("novel") or d.get("nfc") or d.get("nfp")):
+                kind = "world" if d.get("novel") else "national" if d.get("nfc") else "possible"
+                f = {"cc": d["cc"], "country": d.get("country", ""), "kind": kind}
+                if f not in flags: flags.append(f)
+        it["flags"] = flags[:3]
 t = t.replace("__NEWS__", json.dumps(news, ensure_ascii=False))
 t = ('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
      '<meta name="viewport" content="width=device-width, initial-scale=1">\n' + t + "\n</html>\n")
