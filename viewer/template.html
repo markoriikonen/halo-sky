@@ -228,6 +228,8 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
 .tip .fq { position: relative; flex: none; display: inline-flex; }
 .tip.dtip.firsts { max-width: 290px; }
 .tip .nfl .who { font-size: 13px; }
+.tip .nfl .ftag { display: block; font-size: 11px; line-height: 1.3; color: var(--muted); }
+.dcard .cflag { width: 20px; height: 15px; border-radius: 2px; box-shadow: 0 0 0 1px var(--rule); vertical-align: -2px; margin-left: 7px; }
 .tip .wstar { flex: none; width: 21px; text-align: center; color: #d0306a; font-size: 18px; line-height: 17px; }
 .tip .flag.poss { opacity: .45; box-shadow: none; outline: 1px dashed var(--muted); outline-offset: 1px; }
 .tip .fq b { position: absolute; right: -7px; top: -7px; width: 13px; height: 13px; border-radius: 50%; background: var(--panel); box-shadow: 0 0 0 1px var(--rule); font: 600 10px/13px var(--f-body); text-align: center; color: var(--fg); }
@@ -1981,8 +1983,9 @@ function firstsHTML(d) {                      // ★ for world firsts; the count
     return possible ? `<span class="fq">${img}<b>?</b></span>` : img;
   };
   const pic = d.items.find(it => it.pop && it.thumb), lead = ((pic || d.items.find(it => it.by && it.by.length) || { by: [] }).by || [])[0];
-  const lines = (codes, sym, cls = "") => firstsBy(d, codes, lead).map(g => `<div class="nfl${cls}">${sym}<span>${g.names.length ? `<span class="who">${joinNames(g.names)}</span>: ` : ""}<span class="c">${g.codes.map(c => esc(hName(c))).join(", ")}</span></span></div>`).join("");
-  return lines(d.novel, `<span class="wstar" aria-label="world first">★</span>`, " wf") + lines(d.nfc, flag(false)) + lines(d.nfp, flag(true));
+  const lines = (codes, sym, cls = "", label = "") => firstsBy(d, codes, lead).map(g => `<div class="nfl${cls}">${sym}<span>${label ? `<span class="ftag">${label}</span>` : ""}${g.names.length ? `<span class="who">${joinNames(g.names)}</span>: ` : ""}<span class="c">${g.codes.map(c => esc(hName(c))).join(", ")}</span></span></div>`).join("");
+  // every flag that means a first says so in words, as in the news (elsewhere a flag only names the country)
+  return lines(d.novel, `<span class="wstar" aria-hidden="true">★</span>`, " wf", "world first") + lines(d.nfc, flag(false), "", "national first") + lines(d.nfp, flag(true), "", "possible national first");
 }
 // several displays at one place: a pop-up with their hexagons that the pointer can enter (or that a click pins);
 // hovering a hexagon shows that display, clicking it opens its card
@@ -2113,7 +2116,7 @@ function dCard(d) {
   const sc = it => ([...d.novel, ...d.nfc, ...d.nfp].some(c => dShows(it, c)) ? 2 : 0) + (it.pop ? 1 : 0);
   const thumbs = d.items.filter(it => it.thumb && it.card !== false).sort((a, b) => sc(b) - sc(a));
   el.innerHTML = `<div class="dh"><svg width="84" height="64" viewBox="-32 -32 84 64" aria-hidden="true">${hexSVG(d, 22, { big: true })}</svg>
-      <div class="dt"><div class="dname">${esc(dName(d))}</div>
+      <div class="dt"><div class="dname">${esc(dName(d))}${d.cc ? `<img class="cflag" src="data/flags/${esc(d.cc)}.svg" alt="" title="${esc(d.country || "")}">` : ""}</div>
         <div class="dmeta">${esc(d.date)}${d.enddate ? "–" + esc(d.enddate) : ""}${d.time ? " · " + esc(d.time) : ""} · ${esc(d.light)}${d.cloud.length ? " · " + d.cloud.map(esc).join(", ") : ""}</div>
         <div class="dmeta">${hCount(d)} halos${d.auto ? ` · ${camIcon} automatic camera` : ""}${d.maxsim ? ` · at most ${esc(d.maxsim)} at the same time` : ""}${d._pos && d._pos.approx ? " · location: country only" : ""}</div></div>
       <button type="button" class="dx" aria-label="Close this card">×</button></div>` +
