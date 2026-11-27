@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods · Halo Sky Atlas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@400;600&family=Newsreader:opsz,wght@6..72,500&display=swap">
+<style>
+/* A plain reading page: where the Halo Sky Atlas data come from and what they can show. */
+:root { --bg: #f4f6f7; --fg: #1c2329; --muted: #5d6973; --panel: #fff; --rule: #d8dfe4; --accent: #c4402f;
+  --f-head: "Newsreader", Georgia, serif; --f-body: "IBM Plex Sans", system-ui, sans-serif; --f-data: "IBM Plex Mono", ui-monospace, monospace; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #11171c; --fg: #e3e8ec; --muted: #94a2ad; --panel: #182129; --rule: #2a3843; --accent: #ff8a73; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #11171c; --fg: #e3e8ec; --muted: #94a2ad; --panel: #182129; --rule: #2a3843; --accent: #ff8a73; color-scheme: dark; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--f-body); padding: 40px 16px 56px; }
+.wrap { max-width: 760px; margin: 0 auto; }
+nav { font-size: 14px; margin-bottom: 18px; }
+nav a, .wrap a { color: inherit; }
+h1 { font: 500 38px/1.1 var(--f-head); margin: 0 0 8px; }
+.lede { color: var(--muted); margin: 0 0 28px; }
+h2 { font: 500 25px/1.2 var(--f-head); margin: 36px 0 10px; scroll-margin-top: 16px; }
+p { margin: 0 0 12px; }
+ul { margin: 0 0 12px; padding-left: 22px; }
+li { margin-bottom: 6px; }
+.tbl { overflow-x: auto; margin: 4px 0 16px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; background: var(--panel); border: 1px solid var(--rule); }
+th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--rule); }
+th { font-weight: 600; }
+td.n, th.n { font-family: var(--f-data); white-space: nowrap; }
+.formula { font-family: var(--f-data); font-size: 14px; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 8px 12px; display: inline-block; margin: 0 0 12px; }
+.mark { color: var(--accent); font-weight: 600; }
+.src { font-size: 14px; color: var(--muted); }
+.src li { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="../">Halo Sky Atlas</a> · <a href="../gram/">Halo Sky Gram</a></nav>
+  <h1>Methods</h1>
+  <p class="lede">Where the numbers behind the Halo Sky Atlas and its Gram come from, and what they can and cannot show.</p>
+
+  <h2 id="data">The model data</h2>
+  <p>All cloud and temperature values come from ECMWF's Integrated Forecasting System (IFS), delivered by <a href="https://open-meteo.com/">Open-Meteo</a> under CC BY 4.0. They are model values, not observations. The record of past hours is Open-Meteo's archive of the first hours of each forecast run, joined into a continuous series.</p>
+  <div class="tbl"><table>
+    <tr><th>Data</th><th>Model and grid</th><th>From</th><th>Used in</th></tr>
+    <tr><td>Low, mid and high cloud cover</td><td>IFS HRES, 9 km</td><td class="n">Jan 2017</td><td>Fingerprints (High cloud, the mid-band search, Seasons); the low/mid/high gram and the strip under the height gram</td></tr>
+    <tr><td>Temperature, relative humidity and cloud cover on 13 pressure levels, 1000 to 50 hPa</td><td>IFS 0.25°, about 25 km</td><td class="n">Jan 2024</td><td>The height gram; the temperature-range search in Fingerprints</td></tr>
+    <tr><td>Forecast of both</td><td>The same two models, latest run (ECMWF runs four times a day)</td><td>Yesterday, today and the next four days</td><td>The gram's 5-day forecast</td></tr>
+  </table></div>
+  <p>The heights of the pressure levels are worked out from the temperatures and the surface pressure (the hypsometric equation). Hours are counted as daylight when the sun is at least 0° above the horizon, and as civil twilight down to −6°. In Fingerprints the cloud cover is rounded to 10 % steps.</p>
+
+  <h2 id="bands">Low, mid and high cloud</h2>
+  <p>These are ECMWF's own cloud fields, made by the model's cloud and convection schemes. ECMWF splits them by pressure relative to the surface: low cloud lies below 0.8 of the surface pressure, mid cloud between 0.8 and 0.45, and high cloud above 0.45. At sea level that is about 800 and 450 hPa, roughly 2 and 6 km.</p>
+  <p>The split is by pressure, not by temperature. At high-altitude sites the mid band reaches cirrus heights, which is why Fingerprints hides them in the mid-band search unless asked. At continental sites in summer the mid/high boundary can be as warm as about −17 °C (as at Hotan and Tbilisi), so some of the band called mid is ice cloud.</p>
+  <p>The bands count cloud that the model puts in only part of its grid box, such as cumulus, even when the box as a whole is far from saturated.</p>
+
+  <h2 id="levels">Cloud on the height levels comes from humidity</h2>
+  <p>The 0.25° pressure-level data carry no cloud fraction of their own. Open-Meteo works the cloud cover out from the relative humidity on each level with the Sundqvist method. Comparing the two fields shows the relation exactly, the same on every level:</p>
+  <div class="tbl"><table style="max-width:420px">
+    <tr><th class="n">Relative humidity</th><th class="n">Cloud cover</th></tr>
+    <tr><td class="n">70 % or less</td><td class="n">none</td></tr>
+    <tr><td class="n">80 %</td><td class="n">18 %</td></tr>
+    <tr><td class="n">90 %</td><td class="n">42 %</td></tr>
+    <tr><td class="n">100 %</td><td class="n">full</td></tr>
+  </table></div>
+  <p>These values fit the Sundqvist formula with a critical humidity of 70 %:</p>
+  <p class="formula">cover = 1 − √((1 − RH) / (1 − 0.70)),  for RH above 70 %</p>
+  <p>ECMWF gives this humidity <a href="https://confluence.ecmwf.int/spaces/UER/pages/51711725/Relative+humidity+pressure+level">relative to liquid water above 0 °C and to ice below −23 °C</a>, with a smooth blend in between. Three things follow for halo watching:</p>
+  <ul>
+    <li>The height gram shows layers that are close to saturation, which is what sheets of cirrus and altocumulus usually are.</li>
+    <li>The humidity stops at 100 %, so the ice supersaturation in which cirrus forms cannot be seen.</li>
+    <li>With only 13 levels, a thin layer between two levels can be missed or spread out. The Smooth style blends between levels; the Pressure-level blocks style shows each level's own value.</li>
+    <li>The gram's Humidity style shades the humidity itself, from 50 % (white) to 100 % (blue), with a dashed line at 70 %, where cloud on the levels begins. It shows moist layers that give no cloud in the other styles, such as the layers where cumulus grows.</li>
+  </ul>
+
+  <h2 id="disagree">Why the two grams can disagree</h2>
+  <p>The low/mid/high bands and the height gram show two different kinds of cloud. The bands are the model's own cloud, including partial cloud such as cumulus. The height gram is humidity turned into cloud, and below 70 % humidity it shows nothing. So the bands can show cloud where the height gram is empty, most often with convective cloud in the tropics and summer.</p>
+  <p>An example: in the forecast for Puerto La Cruz, Venezuela, for 18–20 November 2026, ECMWF's mid band reaches about 20 % every afternoon around 14:00, apparently the tops of the day's cumulus. The relative humidity peaks at only 68 % at 700 hPa, 48 % at 600 hPa and 11 % at 500 hPa, so the height gram shows no mid cloud at all. Low cloud is similar: the band reaches 53 %, while the humidity at 925 and 850 hPa stays between 69 and 80 %, which gives only a faint trace.</p>
+  <p>Halo-making cloud usually comes in near-saturated layers, while cumulus mostly is not halo material. Reading the two grams together helps to tell the two kinds of cloud apart.</p>
+
+  <h2 id="upgrades">ECMWF model upgrades</h2>
+  <p>ECMWF upgrades the IFS about once a year. Two upgrades have left a clear mark in the 9 km cloud bands. We compared each calendar month with the same month in other years at 21 sites around the world, from Tampere to Lima, and looked for changes that most sites share at the same moment:</p>
+  <div class="tbl"><table>
+    <tr><th>Date</th><th>IFS cycle</th><th>What changed in the bands</th><th class="n">Sites</th></tr>
+    <tr><td class="n">12 Oct 2021</td><td><a href="https://confluence.ecmwf.int/spaces/FCST/blog/2021/10/06/235630031/ECMWF+IFS+Cycle+47r3+-+Implementation+on+12+October">47r3</a>, new cloud and convection physics</td><td>Hours with no mid cloud at all: 5 points more of all hours. Average high cloud cover: 3 points more.</td><td class="n">18 of 21</td></tr>
+    <tr><td class="n">12 May 2026</td><td><a href="https://forum.ecmwf.int/t/confirmation-ifs-cycle-50r1-and-aifs-v2-joint-implementation-on-12-may-2026/14937">50r1</a></td><td>More hours of faint cloud (1–9 %): low 3 points, mid 4 points, high 2 points more of all hours.</td><td class="n">17–19 of 21</td></tr>
+  </table></div>
+  <p>Open-Meteo began taking ECMWF's own bands for the 0.25° model around April 2025, having computed them from humidity before. That change does not touch the 9 km bands used here, and they show no break at that time.</p>
+  <p>What the upgrades mean:</p>
+  <ul>
+    <li>Fingerprints pool all the years since 2017, so their percentages blend model versions. Comparisons between sites stay fair, because every site has the same blend.</li>
+    <li>Single years can show steps that are not weather. The year-by-year view in Seasons marks the two upgrades in <span class="mark">red</span>, and years on either side of a mark are not fully comparable.</li>
+    <li>The faint cloud added in 2026 matters little so far: it covers a few months of almost ten years, and cover under 5 % rounds to zero in the 10 % steps of Fingerprints.</li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+  <ul class="src">
+    <li><a href="https://open-meteo.com/en/docs/ecmwf-api">Open-Meteo: ECMWF API</a> and <a href="https://open-meteo.com/en/docs/historical-forecast-api">historical forecast API</a></li>
+    <li><a href="https://confluence.ecmwf.int/spaces/UER/pages/51711725/Relative+humidity+pressure+level">ECMWF: relative humidity on pressure levels</a></li>
+    <li><a href="https://confluence.ecmwf.int/spaces/FCST/blog/2021/10/06/235630031/ECMWF+IFS+Cycle+47r3+-+Implementation+on+12+October">ECMWF: IFS cycle 47r3, implemented 12 October 2021</a></li>
+    <li><a href="https://forum.ecmwf.int/t/confirmation-ifs-cycle-50r1-and-aifs-v2-joint-implementation-on-12-may-2026/14937">ECMWF: IFS cycle 50r1, implemented 12 May 2026</a></li>
+  </ul>
+</div>
+</body>
+</html>

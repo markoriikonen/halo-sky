@@ -1,0 +1,274 @@
+name,lat,lon,elev_m,country,population,rule,nearest_site,nearest_km
+"Shenzhen, China",22.5455,114.0683,,China,17494398,≥25% of largest,Hong Kong,31
+"Dongguan, China",23.018,113.7487,,China,9644871,≥25% of largest,"Guangzhou, China",52
+"Wuzhong, China",37.9867,106.201,,China,7202654,≥25% of largest,"Yinchuan, China",54
+"Suzhou, China",31.3041,120.5954,,China,6715559,≥25% of largest,"Wuxi, China",41
+"Peshawar, Pakistan",34.008,71.5785,,Pakistan,4758762,≥25% of largest,"Āsmār, Afghanistan",116
+"Zibo, China",36.7906,118.0633,,China,4704138,≥1 million,"Binzhou, China",64
+"Jeddah, Saudi Arabia",21.4901,39.1862,,Saudi Arabia,4697000,largest,"Mecca, Saudi Arabia",67
+"Surat, India",21.1959,72.8302,,India,4591246,≥25% of largest,"Daman, India",87
+"Yangzhou, China",32.3972,119.4358,,China,4559797,≥1 million,"Nanjing, China",72
+"Chattogram, Bangladesh",22.3384,91.8317,,Bangladesh,3920222,≥25% of largest,"Aizawl, India",179
+"Zaozhuang, China",34.8647,117.5542,,China,3855601,≥1 million,"Bianzhuang, China",45
+"Zhongshan (22.52, 113.38), China",22.5231,113.3791,,China,3841873,≥1 million,"Macau, Macao",40
+"Faisalabad, Pakistan",31.4155,73.0897,,Pakistan,3800193,≥25% of largest,"Lahore, Pakistan",121
+"Yokohama, Japan",35.4333,139.65,,Japan,3777491,≥25% of largest,Tokyo,29
+"Ibadan, Nigeria",7.3776,3.9059,,Nigeria,3649000,≥1 million,"Lagos, Nigeria",117
+"Puyang, China",29.4568,119.8887,,China,3590000,≥1 million,"Guli, China",65
+"Rawalpindi, Pakistan",33.5973,73.0479,,Pakistan,3357612,≥25% of largest,"Peshawar, Pakistan",143
+"Lüliang, China",37.5192,111.1444,,China,3346500,≥1 million,"Jiexiu, China",87
+"Anshan, China",41.1236,122.99,,China,3325372,≥1 million,"Yingkou, China",82
+"Changzhou, China",31.7736,119.954,,China,3290918,≥1 million,"Wuxi, China",39
+"Pune, India",18.5196,73.8554,,India,3124458,≥1 million,Mumbai,120
+"Bursa, Turkey",40.1956,29.0601,,Turkey,3101833,≥1 million,"Dursunbey, Türkiye",77
+"Huainan, China",32.6264,116.9969,,China,3033528,≥1 million,"Bengbu, China",49
+"İzmir, Turkey",38.4127,27.1384,,Turkey,2938292,≥1 million,"Mytilinioí, Greece",79
+"Huizhou, China",23.1115,114.4152,,China,2900113,≥1 million,"Dongguan, China",69
+"Kanpur, India",26.4652,80.3498,,India,2823249,≥1 million,"Lucknow, India",71
+"Linyi, China",35.0631,118.3428,,China,2743843,≥1 million,"Bianzhuang, China",36
+"Kaohsiung, Taiwan",22.6163,120.3133,,Taiwan,2737660,≥25% of largest,"Hengchun, Taiwan",81
+"Bazhong, China",31.8694,106.7443,,China,2712894,≥1 million,"Guangyuan, China",108
+"Abuja, Nigeria",9.0579,7.4951,,Nigeria,2690000,≥1 million,"Baro, Nigeria",128
+"Gazipur, Bangladesh",23.9984,90.4223,,Bangladesh,2674697,≥25% of largest,"Dhaka, Bangladesh",32
+"Haiphong, Vietnam",20.8648,106.6834,,Vietnam,2625200,≥1 million,Hanoi,89
+"Gujranwala, Pakistan",32.1557,74.187,,Pakistan,2511118,≥1 million,"Lahore, Pakistan",68
+"Shaoxing, China",30.0024,120.5786,,China,2300000,≥1 million,"Hangzhou, China",52
+"Nantong, China",32.0303,120.8747,,China,2273326,≥1 million,"Juegang, China",43
+"Gaziantep, Turkey",37.0594,37.3825,,Turkey,2222415,≥1 million,"Kahramanmaraş, Türkiye",71
+"Coimbatore, India",11.0055,76.9661,,India,2136916,≥1 million,"Thrissur, India",98
+"Qingyang, China",35.7098,107.6445,,China,2125400,≥1 million,"Pingliang, China",89
+"Pretoria, South Africa",-25.7449,28.1878,,South Africa,2112693,≥1 million,"Johannesburg, South Africa",53
+"Kunshan, China",31.3776,120.9543,,China,2092496,≥1 million,"Suzhou, China",35
+"Puning, China",23.3107,116.1687,,China,1998619,≥1 million,"Shantou, China",56
+"Indore, India",22.7179,75.8333,,India,1994397,≥1 million,"Ratlām, India",106
+"Ganzhou, China",25.8466,114.9326,,China,1977253,≥1 million,"Ji’an, China",141
+"Songjiang, China",31.0344,121.2233,,China,1973500,≥1 million,Shanghai,31
+"Tijuana, Mexico",32.5027,-117.0037,,Mexico,1922523,≥1 million,"San Diego, USA",28
+"Jieyang, China",23.5418,116.3658,,China,1899394,≥1 million,"Puning, China",33
+"Jilin, China",43.8465,126.5608,,China,1895865,≥1 million,"Changchun, China",99
+"Kakamega, Kenya",0.2842,34.7523,,Kenya,1867579,≥25% of largest,Molo,124
+"Tainan, Taiwan",22.9926,120.2051,,Taiwan,1856642,≥1 million,"Kaohsiung, Taiwan",43
+"Vadodara, India",22.2994,73.2081,,India,1822221,≥1 million,"Gandhinagar, India",115
+"Abu Dhabi, United Arab Emirates",24.4512,54.397,,United Arab Emirates,1807000,≥25% of largest,"Dubai, United Arab Emirates",115
+"Sharjah, United Arab Emirates",25.3342,55.4122,,United Arab Emirates,1800000,≥25% of largest,"Dubai, United Arab Emirates",30
+"Jiangmen, China",22.5833,113.0833,,China,1795459,≥1 million,"Zhongshan (22.52, 113.38), China",31
+"Jiangyin, China",31.911,120.263,,China,1779515,≥1 million,"Changzhou, China",33
+"Chengtangcun, China",35.0836,117.1907,,China,1756300,≥1 million,"Zaozhuang, China",41
+"Chaozhou, China",23.654,116.6226,,China,1750945,≥1 million,"Jieyang, China",29
+"Qingyuan, China",23.7,113.0333,,China,1738424,≥1 million,"Guangzhou, China",69
+"Tai’an, China",36.1853,117.12,,China,1735425,≥1 million,"Jinan, China",55
+"Barcelona, Spain",41.3888,2.159,,Spain,1686208,≥25% of largest,"Tarragona, Spain",82
+"Mosul, Iraq",36.335,43.1189,,Iraq,1683000,≥1 million,"Cizre, Türkiye",138
+"Kallakurichi, India",11.7338,78.9592,,India,1682687,≥1 million,"Puducherry, India",97
+"Changshu, China",31.6461,120.7422,,China,1677050,≥1 million,"Kunshan, China",36
+"Rabat, Morocco",34.0132,-6.8326,,Morocco,1655753,≥25% of largest,Casablanca,86
+"Suzhou (33.64, 116.98), China",33.6361,116.9789,,China,1647642,≥1 million,"Tongshan, China",63
+"Lu’an, China",31.7356,116.5169,,China,1644344,≥1 million,"Hefei, China",74
+"Valencia, Venezuela",10.1615,-68.0004,,Venezuela,1619470,≥25% of largest,Caracas,128
+"Ludhiana, India",30.912,75.8538,,India,1618879,≥1 million,"Chandigarh, India",91
+"Erbil, Iraq",36.1912,44.0094,,Iraq,1612700,≥1 million,"Mosul, Iraq",81
+"Taizhou, China",32.4907,119.9081,,China,1607108,≥1 million,"Yangzhou, China",46
+"Wuhu, China",31.3526,118.4295,,China,1598165,≥1 million,"Xuanzhou, China",54
+"Dazhou, China",31.2106,107.4631,,China,1589435,≥1 million,"Wanxian, China",97
+"León de los Aldama, Mexico",21.1218,-101.6825,,Mexico,1579803,≥1 million,"Guanajuato, Mexico",45
+"Philadelphia, United States",39.9524,-75.1636,,United States,1573916,≥1 million,"Dover, USA",94
+"Quetta, Pakistan",30.1841,67.0014,,Pakistan,1565546,≥1 million,"Mastung, Pakistan",45
+"Zhaoqing, China",23.0489,112.4609,,China,1553109,≥1 million,"Yunfu, China",45
+"Onitsha, Nigeria",6.1498,6.7857,,Nigeria,1553000,≥1 million,"Benin City, Nigeria",130
+"Putian, China",25.4394,119.0103,,China,1539389,≥1 million,"Dazuocun, China",61
+"San Antonio, United States",29.4241,-98.4936,,United States,1526656,≥1 million,"Austin, USA",118
+"Kobe, Japan",34.6913,135.183,,Japan,1525152,≥1 million,"Osaka, Japan",29
+"Khulna, Bangladesh",22.8098,89.5644,,Bangladesh,1500689,≥1 million,Kolkata,127
+"Nashik, India",19.9973,73.791,,India,1486053,≥1 million,"Daman, India",110
+"Taizhou (28.66, 121.43), China",28.6627,121.4331,,China,1485502,≥1 million,"Linhai, China",35
+"Quanzhou, China",24.9139,118.5858,,China,1469157,≥1 million,"Dazuocun, China",39
+"Jinhua, China",29.1068,119.6442,,China,1463990,≥1 million,"Guli, China",45
+"Kyoto, Japan",35.0211,135.7538,,Japan,1463723,≥1 million,"Osaka, Japan",43
+"Cixi, China",30.1764,121.2457,,China,1457510,≥1 million,"Ningbo, China",44
+"Kaifeng, China",34.7986,114.3074,,China,1451741,≥1 million,"Zhengzhou, China",60
+"Karaj, Iran",35.8327,50.9915,,Iran,1448075,≥1 million,"Tehran, Islamic Republic of Iran",42
+"Suqian, China",33.9492,118.2958,,China,1437685,≥1 million,"Huai'an, China",78
+"Tirunelveli, India",8.7274,77.6838,,India,1435844,≥1 million,"Thiruvananthapuram, India",85
+"Agra, India",27.1833,78.0167,,India,1430055,≥1 million,"Gwalior, India",107
+"Kharkiv, Ukraine",49.9818,36.2548,,Ukraine,1421125,≥25% of largest,"Belgorod, Russia",74
+"Bozhou, China",33.8772,115.7703,,China,1409436,≥1 million,"Shangqiu, China",65
+"Fushun, China",41.8867,123.9436,,China,1400646,≥1 million,"Shenyang, China",44
+"Guankou, China",28.1586,113.6271,,China,1380000,≥1 million,"Pingxiang, China",64
+"Huế, Vietnam",16.4619,107.5955,,Vietnam,1380000,≥1 million,"Da Nang, Vietnam",80
+"Lianjiang, China",21.6467,110.2817,,China,1363470,≥1 million,"Zhongshan, China",47
+"Bannu, Pakistan",32.9853,70.604,,Pakistan,1357890,≥1 million,"Mianwali, Pakistan",98
+"Heze, China",35.2393,115.4736,,China,1346717,≥1 million,"Puyang Chengguanzhen, China",66
+"Jamshedpur, India",22.8028,86.1855,,India,1339438,≥1 million,"Ranchi, India",108
+"Basrah, Iraq",30.5085,47.7804,,Iraq,1326564,≥1 million,"Ahvaz, Iran",125
+"Maoming, China",21.6663,110.9136,,China,1307802,≥1 million,"Zhongshan, China",52
+"Qinzhou, China",21.9825,108.6506,,China,1296300,≥1 million,"Beihai, China",72
+"Luohe, China",33.5742,114.0326,,China,1294974,≥1 million,"Zhoukou, China",56
+"Yixing, China",31.3606,119.8202,,China,1285785,≥1 million,"Changzhou, China",48
+"Xuchang, China",34.0319,113.863,,China,1265536,≥1 million,"Luohe, China",53
+"Kalyān, India",19.2437,73.1355,,India,1262255,≥1 million,Mumbai,33
+"Jepara, Indonesia",-6.5924,110.671,,Indonesia,1257912,≥1 million,"Semarang, Indonesia",52
+"Dammam, Saudi Arabia",26.4344,50.1033,,Saudi Arabia,1252523,≥25% of largest,"Manama, Bahrain",53
+"Neijiang, China",29.5835,105.0622,,China,1251095,≥1 million,"Zigong, China",39
+"Heshan, China",28.5694,112.3473,,China,1249807,≥1 million,Changsha,73
+"Suwon, South Korea",37.2782,127.0316,,South Korea,1234582,≥1 million,Seoul,33
+"Liaocheng, China",36.4506,116.0025,,China,1229768,≥1 million,"Jinan, China",92
+"Meerut, India",28.98,77.7064,,India,1223184,≥1 million,New Delhi,63
+"Virār, India",19.4559,72.8114,,India,1222390,≥1 million,"Kalyān, India",41
+"Nowrangapur, India",19.2311,82.5483,,India,1220946,≥1 million,"Jūnāgarh, India",81
+"Karbala, Iraq",32.616,44.0249,,Iraq,1218732,≥1 million,"Baghdad, Iraq",88
+"Changzhi, China",36.1839,113.1053,,China,1214940,≥1 million,"Handan, China",130
+"Mombasa, Kenya",-4.0547,39.6636,,Kenya,1208333,≥25% of largest,"Tanga, Tanzania",129
+"Santiago de los Caballeros, Dominican Republic",19.4504,-70.6908,,Dominican Republic,1200000,≥25% of largest,"Santo Domingo, Dominican Republic",137
+"Weinan, China",34.5035,109.5089,,China,1199290,≥1 million,"Huayin, China",52
+"Dhanbad, India",23.7976,86.4299,,India,1196214,≥1 million,"Jamshedpur, India",113
+"Fes, Morocco",34.0331,-5.0003,,Morocco,1191905,≥25% of largest,"Rabat, Morocco",169
+"Jiaxing, China",30.7522,120.75,,China,1180000,≥1 million,"Songjiang, China",55
+"Zhongwei, China",37.5113,105.1907,,China,1174600,≥1 million,"Wuzhong, China",103
+"Panjin, China",41.121,122.0739,,China,1166481,≥1 million,"Yingkou, China",52
+"Aba, Nigeria",5.1066,7.3667,,Nigeria,1160000,≥1 million,"Port Harcourt, Nigeria",54
+"Amritsar, India",31.6223,74.8753,,India,1159227,≥1 million,"Lahore, Pakistan",50
+"Birmingham, United Kingdom",52.4814,-1.8998,,United Kingdom,1157603,≥1 million,Farnworth,123
+"Anyang, China",36.096,114.3828,,China,1146839,≥1 million,"Handan, China",57
+"Fengxiang, China",30.8584,121.4678,,China,1140872,≥1 million,"Songjiang, China",30
+"Bijie, China",27.3019,105.2863,,China,1137383,≥1 million,"Liupanshui, China",91
+"Zhuzhou, China",27.8333,113.15,,China,1129687,≥1 million,Changsha,44
+"Touba, Senegal",14.8623,-15.8753,,Senegal,1120824,≥25% of largest,Dakar,169
+"Zoucheng, China",35.4006,116.9656,,China,1116692,≥1 million,"Jining, China",35
+"Huaibei, China",33.9744,116.7917,,China,1113321,≥1 million,"Tongshan, China",41
+"Maiduguri, Nigeria",11.8469,13.1571,,Nigeria,1110000,≥1 million,"Madagali, Nigeria",118
+"Meishan, China",30.0439,103.837,,China,1107742,≥1 million,"Leshan, China",54
+"Ulsan, South Korea",35.5392,129.3124,,South Korea,1098421,≥1 million,"Busan, South Korea",55
+"Fuzhou (27.96, 116.33), China",27.96,116.3333,,China,1089888,≥1 million,"Nanchang, China",93
+"Guigang, China",23.116,109.5947,,China,1086327,≥1 million,"Yulin, China",78
+"Aden, Yemen",12.7796,45.0385,,Yemen,1079670,≥25% of largest,"Djibouti, Djibouti",245
+"Bogor, Indonesia",-6.5944,106.7892,,Indonesia,1078351,≥1 million,"Jakarta, Indonesia",43
+"Prayagraj, India",25.4448,81.8432,,India,1073438,≥1 million,"Varanasi, India",118
+"Jodhpur, India",26.2684,73.0059,,India,1056191,≥1 million,"Jalor, India",110
+"Xinxiang, China",35.1903,113.8015,,China,1047088,≥1 million,"Zhengzhou, China",50
+"Yichun (27.83, 114.40), China",27.8333,114.4,,China,1045952,≥1 million,"Pingxiang, China",59
+"Jos, Nigeria",9.9285,8.8921,,Nigeria,1040000,≥1 million,"Bauchi, Nigeria",113
+"Tangier, Morocco",35.7673,-5.7998,,Morocco,1035141,≥25% of largest,"Gibraltar, Gibraltar",58
+"Campinas, Brazil",-22.9056,-47.0608,,Brazil,1031554,≥1 million,"São Paulo, Brazil",84
+"Rangpur, Bangladesh",25.7466,89.2517,,Bangladesh,1031388,≥1 million,"Mankāchar, India",66
+"Kirkuk, Iraq",35.4681,44.3922,,Iraq,1031000,≥1 million,"Erbil, Iraq",87
+"Changwon, South Korea",35.2281,128.6811,,South Korea,1025702,≥1 million,"Busan, South Korea",35
+"Longyan, China",25.0749,117.0178,,China,1025087,≥1 million,"Meizhou, China",126
+"Tiruchirappalli, India",10.8155,78.6965,,India,1022518,≥1 million,"Kallakurichi, India",106
+"Huzhou, China",30.8703,120.0933,,China,1015937,≥1 million,"Yixing, China",60
+"Xinyi, China",22.373,110.9475,,China,1014577,≥1 million,"Maoming, China",79
+"Fort Worth, United States",32.7254,-97.3208,,United States,1008106,≥1 million,"Dallas, USA",49
+"Yishui, China",35.7847,118.6281,,China,1007100,≥1 million,"Chengyang, China",29
+"Hezhou, China",24.4036,111.5667,,China,1005490,≥1 million,"Lianzhou, China",92
+"Kota, India",25.1825,75.8391,,India,1001694,≥1 million,"Bhīlwāra, India",122
+"Zhu Cheng City, China",35.995,119.4026,,China,1000000,≥1 million,"Chengyang, China",69
+"Marrakesh, Morocco",31.6342,-7.9999,,Morocco,995871,≥25% of largest,Casablanca,221
+"Ciudad Guayana, Venezuela",8.3512,-62.641,,Venezuela,978202,≥25% of largest,"Ciudad Bolívar, Venezuela",102
+"Rosario, Argentina",-32.9468,-60.6393,,Argentina,948312,≥25% of largest,"Santa Fe, Argentina",144
+"Taiz, Yemen",13.5795,44.0209,,Yemen,940600,≥25% of largest,"Aden, Yemen",142
+"Bobo-Dioulasso, Burkina Faso",11.1806,-4.2949,,Burkina Faso,904920,≥25% of largest,"Sikasso, Mali",150
+"Rotterdam, The Netherlands",51.9225,4.4792,,The Netherlands,868135,largest,Amsterdam,57
+"Turin, Italy",45.0705,7.6868,,Italy,847287,≥25% of largest,"Susa, Italy",50
+"Takeo, Cambodia",10.9908,104.785,,Cambodia,843931,≥25% of largest,"Phnom Penh, Cambodia",65
+"San Pedro Sula, Honduras",15.5059,-88.0259,,Honduras,801259,≥25% of largest,"Tegucigalpa, Honduras",181
+"Homs, Syria",34.724,36.7256,,Syria,775404,≥25% of largest,"Damascus, Syria",141
+"Ibb, Yemen",13.9667,44.1833,,Yemen,771514,≥25% of largest,"Taiz, Yemen",46
+"Nampula, Mozambique",-15.1165,39.2666,,Mozambique,770379,≥25% of largest,"Ribáuè, Mozambique",108
+"Ipoh, Malaysia",4.5841,101.0829,,Malaysia,759952,≥25% of largest,"Kuala Lumpur, Malaysia",174
+"Andijon, Uzbekistan",40.7834,72.3507,,Uzbekistan,747800,≥25% of largest,"Namangan, Uzbekistan",62
+"Al Ḩudaydah, Yemen",14.7978,42.9545,,Yemen,734699,≥25% of largest,"Sanaa, Yemen",148
+"Latakia, Syria",35.5312,35.7909,,Syria,709000,≥25% of largest,"Homs, Syria",124
+"Kitwe, Zambia",-12.8024,28.2132,,Zambia,665961,≥25% of largest,"Lubumbashi, DR Congo",150
+"Łódź, Poland",51.7706,19.4739,,Poland,639890,≥25% of largest,Warsaw,117
+"Al Aḩmadī, Kuwait",29.0769,48.0839,,Kuwait,637411,largest,"Kuwait City, Kuwait",35
+"Ndola, Zambia",-12.9587,28.6366,,Zambia,627503,≥25% of largest,"Kitwe, Zambia",49
+"Pokhara, Nepal",28.2669,83.9685,,Nepal,600051,≥25% of largest,"Kathmandu, Nepal",147
+"Genoa, Italy",44.4048,8.9444,,Italy,580097,≥25% of largest,"Milan, Italy",119
+"Malacca, Malaysia",2.196,102.2405,,Malaysia,579000,≥25% of largest,"Kuala Lumpur, Malaysia",122
+"Irbid, Jordan",32.5556,35.85,,Jordan,569068,≥25% of largest,"Amman, Jordan",67
+"Kota Bharu, Malaysia",6.1236,102.2433,,Malaysia,568900,≥25% of largest,"Narathiwat, Thailand",57
+"Kuantan, Malaysia",3.8077,103.326,,Malaysia,548014,≥25% of largest,"Kuala Lumpur, Malaysia",197
+"Kota Kuala Muda, Malaysia",5.5882,100.3709,,Malaysia,544984,≥25% of largest,"Ipoh, Malaysia",137
+"Poznań, Poland",52.4069,16.9299,,Poland,536151,≥25% of largest,"Międzychód, Poland",73
+"Ar Raqqah, Syria",35.9528,39.0079,,Syria,531952,≥25% of largest,"Deir ez-Zor, Syria",123
+"Antwerp, Belgium",51.2205,4.4003,,Belgium,529247,≥25% of largest,"Brussels, Belgium",41
+"Mukim Pulai, Malaysia",1.5333,103.6667,,Malaysia,505661,≥25% of largest,Singapore,34
+"Kota Kinabalu, Malaysia",5.9749,116.0724,,Malaysia,500421,≥25% of largest,"Bandar Seri Begawan, Brunei Darussalam",174
+"Gdańsk, Poland",54.3523,18.6491,,Poland,487371,≥25% of largest,"Kaliningrad, Russia",126
+"Sandakan, Malaysia",5.8402,118.1179,,Malaysia,439050,≥25% of largest,"Kota Kinabalu, Malaysia",227
+"Tel Aviv, Israel",32.0809,34.7806,,Israel,432892,≥25% of largest,Jerusalem,54
+"Kuala Terengganu, Malaysia",5.3302,103.1408,,Malaysia,426500,≥25% of largest,"Kota Bharu, Malaysia",133
+"Chimoio, Mozambique",-19.1164,33.4833,,Mozambique,422046,≥25% of largest,"Beira, Mozambique",163
+"Alor Setar, Malaysia",6.121,100.3601,,Malaysia,417800,≥25% of largest,"Kota Kuala Muda, Malaysia",59
+"Brno, Czechia",49.1952,16.608,,Czechia,404296,≥25% of largest,"Olomouc, Czechia",64
+"Kuching, Malaysia",1.55,110.3333,,Malaysia,402738,≥25% of largest,Pontianak,208
+"Utrecht, The Netherlands",52.0908,5.1222,,The Netherlands,376435,≥25% of largest,Amsterdam,35
+"Bafoussam, Cameroon",5.4778,10.4176,,Cameroon,373268,≥25% of largest,"Bamenda, Cameroon",61
+"Seremban, Malaysia",2.7297,101.9381,,Malaysia,372917,≥25% of largest,"Kuala Lumpur, Malaysia",53
+"Tawau, Malaysia",4.2448,117.8911,,Malaysia,372615,≥25% of largest,"Tanjung Selor, Indonesia",167
+"Bharatpur, Nepal",27.6803,84.4365,,Nepal,369377,≥25% of largest,"Pokhara, Nepal",80
+"Tete, Mozambique",-16.1564,33.5867,,Mozambique,357000,≥25% of largest,"Blantyre, Malawi",158
+"Plovdiv, Bulgaria",42.1539,24.75,,Bulgaria,329489,≥25% of largest,"Stara Zagora, Bulgaria",80
+"Osh, Kyrgyzstan",40.5283,72.7985,,Kyrgyzstan,322164,≥25% of largest,"Andijon, Uzbekistan",47
+"Kaunas, Lithuania",54.9016,23.9091,,Lithuania,289380,≥25% of largest,"Raseiniai, Lithuania",73
+"Haifa, Israel",32.813,34.9993,,Israel,285316,≥25% of largest,"Tel Aviv, Israel",84
+"Sfax, Tunisia",34.7406,10.7603,,Tunisia,280566,≥25% of largest,"Lampedusa, Italy",188
+"Isfara, Tajikistan",40.1265,70.6253,,Tajikistan,274000,≥25% of largest,"Namangan, Uzbekistan",131
+"Istaravshan, Tajikistan",39.9142,69.0033,,Tajikistan,273500,≥25% of largest,"Isfara, Tajikistan",140
+"Gent, Belgium",51.05,3.7167,,Belgium,265086,≥25% of largest,"Brussels, Belgium",50
+"Yei, South Sudan",4.0944,30.6764,,South Sudan,260720,≥25% of largest,"Juba, South Sudan",131
+"Parakou, Benin",9.3372,2.6303,,Benin,255478,≥25% of largest,"Djougou, Benin",114
+"Kenema, Sierra Leone",7.8769,-11.1903,,Sierra Leone,255110,≥25% of largest,"Koidu, Sierra Leone",89
+"Porto, Portugal",41.1485,-8.611,,Portugal,252687,≥25% of largest,"Coimbra, Portugal",106
+"San Miguel, El Salvador",13.4826,-88.1821,,El Salvador,247126,≥25% of largest,"San Salvador, El Salvador",111
+"Groningen, The Netherlands",53.2192,6.5667,,The Netherlands,244807,≥25% of largest,"Emden, Germany",46
+"Eindhoven, The Netherlands",51.4408,5.4778,,The Netherlands,235691,≥25% of largest,"Utrecht, The Netherlands",76
+"Danlí, Honduras",14.0333,-86.5833,,Honduras,233789,≥25% of largest,"Tegucigalpa, Honduras",67
+"Bo, Sierra Leone",7.9647,-11.7383,,Sierra Leone,233684,≥25% of largest,"Kenema, Sierra Leone",61
+"La Ceiba, Honduras",15.7597,-86.7822,,Honduras,222055,≥25% of largest,"San Pedro Sula, Honduras",136
+"Tilburg, The Netherlands",51.5555,5.0913,,The Netherlands,221947,≥25% of largest,"Eindhoven, The Netherlands",30
+"Sousse, Tunisia",35.8254,10.637,,Tunisia,221715,≥25% of largest,"Tunis, Tunisia",118
+"Banja Luka, Bosnia and Herzegovina",44.7788,17.2063,,Bosnia and Herzegovina,221106,≥25% of largest,"Sarajevo, Bosnia and Herzegovina",138
+"Kŭlob, Tajikistan",37.9146,69.7845,,Tajikistan,214700,≥25% of largest,"Dushanbe, Tajikistan",112
+"Turku, Finland",60.4515,22.2687,,Finland,206655,≥25% of largest,Hanko,79
+"Geneva, Switzerland",46.2022,6.1457,,Switzerland,201741,≥25% of largest,"Lausanne, Switzerland",51
+"Durrës, Albania",41.3235,19.4547,,Albania,195920,≥25% of largest,"Tirana, Albania",30
+"Braga, Portugal",41.5514,-8.4231,,Portugal,193324,≥25% of largest,"Porto, Portugal",47
+"Khujand, Tajikistan",40.2826,69.6222,,Tajikistan,191000,≥25% of largest,"Istaravshan, Tajikistan",67
+"Basel, Switzerland",47.5584,7.5733,,Switzerland,177595,≥25% of largest,"Zürich, Switzerland",76
+"Santa Ana, El Salvador",13.9883,-89.5568,,El Salvador,176661,≥25% of largest,"San Salvador, El Salvador",52
+"Klaipėda, Lithuania",55.7068,21.1391,,Lithuania,172292,≥25% of largest,"Liepāja, Latvia",89
+"Prizren, Kosovo",42.2139,20.7397,,Kosovo,171464,≥25% of largest,"Pristina, Kosovo",62
+"Jaffna, Sri Lanka",9.6684,80.0074,,Sri Lanka,169102,≥25% of largest,"Tiruchirappalli, India",192
+"Hebron, Palestinian Territory",31.5294,35.0938,,Palestinian Territory,160470,≥25% of largest,Jerusalem,29
+"Limassol, Cyprus",34.6841,33.0379,,Cyprus,154000,≥25% of largest,"Nicosia, Cyprus",62
+"Ponce, Puerto Rico",18.0103,-66.624,,Puerto Rico,137491,≥25% of largest,"San Juan, Puerto Rico",75
+"Nablus, Palestinian Territory",32.2211,35.2544,,Palestinian Territory,130326,≥25% of largest,"Tel Aviv, Israel",47
+"Wau, South Sudan",7.7011,27.9897,,South Sudan,127384,≥25% of largest,"Winejok, South Sudan",153
+"Rafaḩ, Palestinian Territory",31.2972,34.2436,,Palestinian Territory,126305,≥25% of largest,"Gaza, State of Palestine",31
+"Bern, Switzerland",46.9481,7.4474,,Switzerland,121631,≥25% of largest,"Basel, Switzerland",69
+"Vlorë, Albania",40.4696,19.4838,,Albania,115261,≥25% of largest,"Durrës, Albania",95
+"Dakhla, Western Sahara",23.6848,-15.958,,Western Sahara,106277,≥25% of largest,"Oued Karaa, Western Sahara",156
+"Francistown, Botswana",-21.17,27.5078,,Botswana,103417,≥25% of largest,"Bulawayo, Zimbabwe",159
+"Maribor, Slovenia",46.5558,15.6459,,Slovenia,96209,≥25% of largest,"Zagreb, Croatia",86
+"Maun, Botswana",-19.9833,23.4167,,Botswana,85350,≥25% of largest,"Kongola, Namibia",243
+"Saint-Pierre, Reunion",-21.3393,55.4781,,Reunion,84077,≥25% of largest,"Saint-Denis, Reunion",51
+"Lae, Papua New Guinea",-6.7233,146.9961,,Papua New Guinea,76255,≥25% of largest,"Finschhafen, Papua New Guinea",96
+"Mbabane, Eswatini",-26.3167,31.1333,,Eswatini,76218,≥25% of largest,"Manzini, Eswatini",32
+"Molepolole, Botswana",-24.4066,25.4951,,Botswana,74861,≥25% of largest,"Gaborone, Botswana",50
+"Larnaca, Cyprus",34.9221,33.6279,,Cyprus,72000,≥25% of largest,"Nicosia, Cyprus",37
+"Lautoka, Fiji",-17.6169,177.4505,,Fiji,52500,≥25% of largest,Suva,119
+"Rio Claro, Trinidad and Tobago",10.3059,-61.1756,,Trinidad and Tobago,35650,≥25% of largest,"Chaguanas, Trinidad and Tobago",35
+"Kuala Belait, Brunei",4.5836,114.2312,,Brunei,31178,≥25% of largest,"Bandar Seri Begawan, Brunei Darussalam",86
+"Labasa, Fiji",-16.4332,179.3645,,Fiji,27949,≥25% of largest,Suva,214
+"Phuntsholing, Bhutan",26.8516,89.3884,,Bhutan,27658,≥25% of largest,"Thimphu, Bhutan",73
+"Moutsamoudou, Comoros",-12.1667,44.3994,,Comoros,26313,≥25% of largest,"Mamoudzou, Mayotte",113
+"Saint-Laurent-du-Maroni, French Guiana",5.5015,-54.0292,,French Guiana,24287,≥25% of largest,"Paramaribo, Suriname",132
+"Kourou, French Guiana",5.1628,-52.6427,,French Guiana,24029,≥25% of largest,"Cayenne, French Guiana",43
+"Providenciales, Turks and Caicos Islands",21.7825,-72.2521,,Turks and Caicos Islands,23769,largest,"Cockburn Town, Turks and Caicos Islands",120
+"San Ignacio, Belize",17.1588,-89.0696,,Belize,21229,≥25% of largest,"Belize City, Belize",100
+"Charlotte Amalie, U.S. Virgin Islands",18.3419,-64.9307,,U.S. Virgin Islands,20000,≥25% of largest,"Road Town, Virgin Islands, British",34
+"Tutong, Brunei",4.8028,114.6492,,Brunei,19151,≥25% of largest,"Bandar Seri Begawan, Brunei Darussalam",34
+"Point Fortin, Trinidad and Tobago",10.1741,-61.6841,,Trinidad and Tobago,19056,≥25% of largest,"Chaguanas, Trinidad and Tobago",48
+"San Pedro, Belize",17.916,-87.9659,,Belize,17429,≥25% of largest,"Belize City, Belize",52
+"Scarborough, Trinidad and Tobago",11.1823,-60.7353,,Trinidad and Tobago,17000,≥25% of largest,"Chaguanas, Trinidad and Tobago",105
+"Palikir, Micronesia",6.9248,158.1611,,Micronesia,6942,largest,"Weno, Micronesia",700
