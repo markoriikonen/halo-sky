@@ -631,7 +631,10 @@ $("savebtn").addEventListener("click", async () => {
   const p = validate(); if (p.length) { setStatus("Still needed: " + p.join(", ") + ".", true); return; }
   const id = current || nextId();
   rec.items.forEach(it => { if (it.shows && rec.halos.every(c => it.shows.includes(c))) it.shows = null; });
-  const body = { ...rec, id, observers: observersOf(rec), lat: rec.lat === "" ? "" : +rec.lat, lon: rec.lon === "" ? "" : +rec.lon, updated: new Date().toISOString() };
+  const now = new Date().toISOString();
+  const body = { ...rec, id, observers: observersOf(rec), lat: rec.lat === "" ? "" : +rec.lat, lon: rec.lon === "" ? "" : +rec.lon, updated: now };
+  // the date the display first entered the log (for the Atlas's Latest additions); displays saved before this have none
+  if (!body.created && !current) body.created = now;
   $("savebtn").disabled = true; setStatus("Saving…");
   try {
     await db.collection("displays").doc(id).set(body);

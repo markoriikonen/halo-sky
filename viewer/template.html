@@ -388,7 +388,7 @@ ol.rank li span { font-family: var(--f-data); font-size: 12px; color: var(--mute
       </label>
     </div>
     <div class="controls" id="dispCtl" hidden>
-      <div><h2>Show</h2><div class="dseg" id="dscope"><button type="button" data-v="recent" aria-pressed="true">Live map</button><button type="button" data-v="all" aria-pressed="false">All displays</button></div></div>
+      <div><h2>Show</h2><div class="dseg" id="dscope"><button type="button" data-v="recent" aria-pressed="true">Live map</button><button type="button" data-v="added" aria-pressed="false">Latest additions</button><button type="button" data-v="all" aria-pressed="false">All displays</button></div></div>
       <label class="slider" for="dq"><span>Search</span><input id="dq" class="dfind" type="search" placeholder="e.g. world firsts in Rovaniemi" autocomplete="off"><span class="dunder" id="dunder" hidden></span></label>
       <label class="slider" for="dy0" style="min-width:0"><span>From year</span><select id="dy0"></select></label>
       <label class="slider" for="dy1" style="min-width:0"><span>To year</span><select id="dy1"></select></label>
@@ -1676,7 +1676,9 @@ const D_CLASSES = ["plate", "random", "column", "Parry", "Tricker", "Lowitz"];  
 const D_LIGHT = { sun: "#ffa500", moon: "#cd9b9b", artificial: "#4876ff" };
 const D_TEXT = { "#ffa500": "#1c2329", "#cd9b9b": "#1c2329", "#4876ff": "#ffffff", "#8d99a6": "#1c2329" };
 const D_MIXED = "#8d99a6";
-const D_TROPIC = 20, LIVE_DAYS = 30, LIVE_MIN = 20, PLACE_KM = 25;
+const D_TROPIC = 20, LIVE_DAYS = 30, LIVE_MIN = 20, PLACE_KM = 25, ADDED_N = 20;
+// a display's unit in the live and latest-additions views: an automatic camera's displays count as one
+const dUnit = d => d.auto ? `cam:${(d.place || "").toLowerCase()}:${Math.round(+d.lat * 10)}:${Math.round(+d.lon * 10)}` : `id:${d.id}`;
 const C_ALIAS = { "us": "united states of america", "usa": "united states of america", "united states": "united states of america", "czech republic": "czechia", "uk": "united kingdom", "great britain": "united kingdom" };
 let DISP = null, DFORMS = {}, dispLoading = null, dispPicked = [], dispSel = [], dispLoc = null, dScope = "recent", dLatest = null, dLiveNote = "";
 const dState = { q: "", y0: null, y1: null, light: new Set(["sun", "moon", "artificial"]), cloud: new Set(["High", "Mid", "Low", "Ice fog", "Contrail"]), firsts: false };
@@ -2167,12 +2169,12 @@ function dispList() {
   const body = document.getElementById("dlistbody");
   let list = dispSel.slice();
   if (dispLoc) list = dispLoc.ids.map(id => DISP.find(d => d.id === id)).filter(Boolean);
-  list.sort((a, b) => dKey(b).localeCompare(dKey(a)));
+  if (dScope === "added" && !dispLoc) list.sort((a, b) => +b.id - +a.id); else list.sort((a, b) => dKey(b).localeCompare(dKey(a)));
   body.innerHTML = list.map(d => `<tr data-id="${esc(d.id)}" class="${dispPicked.includes(d.id) ? "on" : ""}"><td class="num">${esc(d.date)}</td><td>${esc(dName(d))}${d._pos ? "" : ' <span class="dmeta">(not on map)</span>'}</td><td class="num">${hCount(d)}</td>` +
     `<td>${[...d.novel.map(c => "★ " + hName(c)), ...d.nfc.map(hName), ...d.nfp.map(c => hName(c) + " (possible)")].map(esc).join("; ")}</td><td>${obsList(dObs(d))}</td></tr>`).join("") ||
     `<tr><td colspan="5" class="empty">No display matches.</td></tr>`;
   body.querySelectorAll("tr[data-id]").forEach(tr => tr.addEventListener("click", () => dPick(tr.dataset.id)));
-  document.getElementById("displisth").innerHTML = dispLoc ? `Displays at ${esc(dispLoc.title)}: ${list.length} <button type="button" class="linkbtn" id="dlistall">show the whole list</button>` : `Displays: ${list.length}${dScope === "recent" ? " recent" : ` of ${DISP.length}`}`;
+  document.getElementById("displisth").innerHTML = dispLoc ? `Displays at ${esc(dispLoc.title)}: ${list.length} <button type="button" class="linkbtn" id="dlistall">show the whole list</button>` : `Displays: ${list.length}${dScope === "recent" ? " recent" : dScope === "added" ? ", latest additions first" : ` of ${DISP.length}`}`;
   const all = document.getElementById("dlistall"); if (all) all.addEventListener("click", () => { dispLoc = null; dispCards(); dispList(); });
 }
 let dQ = parseQuery("");
@@ -2197,7 +2199,7 @@ async function dispUpdate() {
     // an automatic camera counts as one display here; once in, it brings all its displays, from the whole period
     const cut = new Date(Date.now() - LIVE_DAYS * 864e5).toISOString().slice(0, 10);
     const byNew = DISP.slice().sort((a, b) => dKey(b).localeCompare(dKey(a)));
-    const unitOf = d => d.auto ? `cam:${(d.place || "").toLowerCase()}:${Math.round(+d.lat * 10)}:${Math.round(+d.lon * 10)}` : `id:${d.id}`;
+    const unitOf = dUnit;
     const units = [], seen = new Set();
     byNew.forEach(d => { const k = unitOf(d); if (!seen.has(k)) { seen.add(k); units.push({ k, d, cam: !!d.auto }); } });
     const inWin = units.filter(u => (u.d.enddate || u.d.date) >= cut);
@@ -2208,17 +2210,25 @@ async function dispUpdate() {
       : chosen.length === units.length ? `all ${pool.length} displays, as there are fewer than ${LIVE_MIN}${cams ? " (an automatic camera counting as one)" : ""}`
       : `the ${chosen.length} latest displays${chosen.length ? `, since ${chosen[chosen.length - 1].d.date}` : ""}${cams}`;
     dLatest = byNew[0] || null;
+  } else if (dScope === "added") {     // the 20 displays most recently entered in the Log (by running number); an automatic camera counts as one
+    const byAdded = DISP.slice().sort((a, b) => +b.id - +a.id);
+    const units = [], seen = new Set();
+    byAdded.forEach(d => { const k = dUnit(d); if (!seen.has(k)) { seen.add(k); units.push({ k, d, cam: !!d.auto }); } });
+    const chosen = units.slice(0, ADDED_N), keys = new Set(chosen.map(u => u.k));
+    pool = byAdded.filter(d => keys.has(dUnit(d)));
+    const cams = chosen.some(u => u.cam) ? "; an automatic camera counts as one" : "";
+    dLiveNote = chosen.length === units.length ? `all ${pool.length} displays, as there are fewer than ${ADDED_N}${cams}` : `the ${chosen.length} displays most recently added to the log${cams}`;
   }
   dispSel = pool.filter(d => dPass(d, dQ));
   const off = dispSel.filter(d => !d._pos).length;
-  document.getElementById("maptitle").textContent = (dScope === "recent" ? `Live map: ${dLiveNote}` : `All displays: ${dispSel.length} of ${DISP.length} shown`) + (off ? ` (${off} without a location)` : "");
+  document.getElementById("maptitle").textContent = (dScope === "recent" ? `Live map: ${dLiveNote}` : dScope === "added" ? `Latest additions: ${dLiveNote}` : `All displays: ${dispSel.length} of ${DISP.length} shown`) + (off ? ` (${off} without a location)` : "");
   const und = document.getElementById("dunder");
   und.hidden = !dState.q.trim(); und.innerHTML = dQ.chips.length ? "Searching for: " + dQ.chips.map(c => `<span>${esc(c)}</span>`).join("") : "";
   dispDraw(); dispList(); dispCards();
 }
 function setScope(s) { dScope = s; document.querySelectorAll("#dscope button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === s)); }
 document.getElementById("dscope").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; setScope(b.dataset.v); dispLoc = null; dispUpdate(); });
-document.getElementById("dq").addEventListener("input", e => { dState.q = e.target.value; if (dState.q.trim() && dScope === "recent") setScope("all"); dispLoc = null; dispUpdate(); });
+document.getElementById("dq").addEventListener("input", e => { dState.q = e.target.value; if (dState.q.trim() && dScope !== "all") setScope("all"); dispLoc = null; dispUpdate(); });
 ["dy0", "dy1"].forEach((id, k) => document.getElementById(id).addEventListener("change", e => { dState[k ? "y1" : "y0"] = +e.target.value || null; if (e.target.value) setScope("all"); dispLoc = null; dispUpdate(); }));
 [["dlight", "light"], ["dcloud", "cloud"]].forEach(([id, key]) => document.getElementById(id).addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
